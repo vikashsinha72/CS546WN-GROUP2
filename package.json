@@ -1,0 +1,17 @@
+{
+    "name": "finalgroupproject",
+    "version": "1.0.0",
+    "description": "Final Project - Event Management System",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "author": "Bhamidipati,Sriya 20017428, Brule, Alexis 20021566, Qureshi, Anam 20018851,Vikash Sinha 20022550",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.19.2",
+      "mongodb": "^6.8.0",
+      "package.json": "^2.0.1"
+    }
+  }
