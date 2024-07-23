@@ -14,4 +14,4 @@ export const getCollectionFn = (collection) => {
 };
 
 // NOTE: YOU WILL NEED TO CHANGE THE CODE BELOW TO HAVE THE COLLECTION(S) REQUIRED BY THE ASSIGNMENT
-export const bands = getCollectionFn(' ');
+export const users = getCollectionFn('users');
