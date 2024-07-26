@@ -23,7 +23,7 @@ main {
     margin-top: 500px auto;
     margin-left:450px;
     padding: 10px;
-    background-color: #0b3b6b;
+    background-color: #6b9ed2;
     box-shadow: 0 0 10px rgba(8, 1, 1, 0.1);
 }
 
@@ -76,14 +76,4 @@ ol, ul {
   li {
     padding: 0.5em;
     margin: 0.5em 0;
-  }
-  
-  .prime {
-    color: #00ff00;
-    text-align: center;
-  }
-  
-  .not-prime {
-    color: #ff0000;
-    text-align: center;
   }
