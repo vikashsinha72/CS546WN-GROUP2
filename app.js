@@ -1,24 +1,25 @@
 
 import express from 'express';
-//import constructorMethod from "./routes/index.js";
+import { create } from 'express-handlebars';
 import path from 'path';
-
-const __dirname = path.resolve();
+import eventRouter from './routes/events.js';
 
 const app = express();
+const hbs = create({ defaultLayout: 'main' });
 
-const router = express.Router();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/public', express.static(path.join(__dirname,'public'))); 
-//app.use('/', constructorMethod);
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+app.use('/public', express.static(path.resolve('public')));
 
-//constructorMethod(app);
+app.use('/', eventRouter);
+
+
+
 
 app.listen(3000, () => {
  console.log("We've now got a server!");
  console.log('Your routes will be running on http://localhost:3000');
-});
-
-router.route('/').get((req, res) => {
-    res.render('home', { title: 'Event Management System' });
 });

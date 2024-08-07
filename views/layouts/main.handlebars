@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{title}}</title>
-    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/styles.css">
   </header>
   <head>
-    <nav>
-      <link href = "/views/eventRegistration.handlebars"/><h3>Profile Page</h3>
-      <link href = "/views/profilePage.handlebars"/><h3>Event registration</h3>
-      <link href = "/views/ratings.handlebars"/><h3>Event Ratings</h3>
-      <link href = "/views/userSignUp.handlebars"/><h3>Sign Up</h3>
-    </nav>
+    <div class = "topnav">
+      <a href = "/"><h3>Home</h3></a>
+      <a href = "/eventRegistration"><h3>Event Registration</h3></a>
+      <a href = "/ratings"><h3>Event Ratings</h3></a>
+      <a href = "/userSignUp"><h3>Sign Up</h3></a>
+    </div>
   </head>
-  <body>
-	<script src="index.js"></script>
-  </body>
+  </br>
+    <body>
+    <script src="index.js"></script>
+    {{{body}}}
+    </body>
 </html>

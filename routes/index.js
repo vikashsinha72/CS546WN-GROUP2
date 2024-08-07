@@ -1,7 +1,13 @@
-import express from 'express';
 
-const router = express.Router();
+import router from './events.js';
 
-router.route('/').get((req, res) => {
-  res.render('home', { title: 'Event Management System' });
-});
+const eventRouter = (app) => {
+  app.use('/events', router);
+  // app.use('/eventRegistration', router);
+
+  app.use('*', (req, res) => {
+    return res.status(404).json({error: 'Not found'});
+  });
+}
+
+export default eventRouter
