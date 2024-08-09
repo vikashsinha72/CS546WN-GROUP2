@@ -1,9 +1,9 @@
 import { users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
-import bcrypt, { hash } from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import axios from 'axios'
 
-const createUser = async (username, password, email, firstName, lastName) => {
+export const createUser = async (username, password, email, firstName, lastName) => {
 
     //username error handling
     if (!username) throw new Error("Must provide a username.");
@@ -39,6 +39,10 @@ const createUser = async (username, password, email, firstName, lastName) => {
     //initialize empty reviews subdocument
     const reviews = [];
 
+    // This is going to connect the events db to the user one 
+    // for easier authentication
+    let events = [];
+
     //hash password - 8 salt round
     const hashedPassword = await bcrypt.hash(password, 8);
 
@@ -49,7 +53,8 @@ const createUser = async (username, password, email, firstName, lastName) => {
        "email": email.toLowerCase(),
        "firstName": firstName,
        "lastName": lastName,
-       reviews,
+       reviews: reviews,    // This is to store all this users review
+       events: events
     }
 
     //insert user into the db
@@ -59,7 +64,7 @@ const createUser = async (username, password, email, firstName, lastName) => {
 
 }
 
-const getUser = async (userId) => {
+export const getUser = async (userId) => {
     //userId error handling
     if (!userId) throw new Error("Must provide an ID.");
     if (typeof userId !== 'string') throw new Error("ID must be a string.");
@@ -77,7 +82,7 @@ const getUser = async (userId) => {
     return user;
 }
 
-const getAllUsers = async (userId) => {
+export const getAllUsers = async (userId) => {
     const usersCollection = await users();
 
     let userList = await usersCollection.find({}).toArray();

@@ -1,0 +1,80 @@
+<body class="createEvent">
+    <h1>Create Your Event</h1>
+    <main class="createEvent">
+        <form class="createEvent" id="eventCreation-form" method="POST">
+            <label for="eventName">
+                Event Name:
+                <input type="text" name="eventNameInput" id="eventNameInput">
+            </label>
+            <br>
+            
+            {{! This might be better with a calander input? Unsure how to implement}}
+            <label for="dateInput">
+                Date:
+                <input type="date" name="dateInput" id="dateInput"
+                min="2024-01-01">
+            </label>
+            <br>
+
+            <label for="locationInput">
+                Location:
+                <input type="text" name="locationInput" id="locationInput">
+            </label>
+            <br>
+
+            <label for="descriptionInput">
+                Description:
+                <input type="text" name="descriptionInput" id="descriptionInput">
+            </label>
+            <br>
+
+            <label for="modeInput">
+                Event Mode:
+                <select type="eventMode" name="modeInput" id="modeInput">
+                   <option value="online">Online</option>
+                   <option value="person">In-Person</option>
+                </select>
+            </label>
+            <br>
+
+            <label for="feeInput">
+                Registration Fee:
+                <input type="text" name="feeInput" id="feeInput">
+            </label>
+            <br>
+
+            <label for="permInput">
+                Who's Coming:
+                <select type="permission" name="permInput" id="permInput">
+                   <option value="public">Public</option>
+                   <option value="private">Private</option>
+                </select>
+            </label>
+            <br>
+
+            <label for="categoryInput">
+                Cateogry:
+                <input type="text" name="categoryInput" id="categoryInput">
+            </label>
+            <br>
+
+            <label for="portInput">
+                Nearest Port:
+                <input type="text" name="portInput" id="portInput">
+            </label>
+            <br>
+            <button type="submit" name="action" value="save">Save For Later</button>
+            <button type="submit" name="action" value="publish">Publish Event</button>
+        </form>
+    </main>
+    {{#if hasErrors}}
+        <ul class="error-list">
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+    {{! <a href="/profile">Back to your profile</a> once routes are worked out}}
+</body>
