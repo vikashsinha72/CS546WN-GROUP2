@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+ <h1>Create Event</h1>
+<main>
+    <form id = "eventForm">
+        <table>
+        <tr>
+            <td>
+                <label type= "text" id = "userName">User name</label>
+                <input type= "text" id="userName" name="userName">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type= "text" id = "eventName">Event name</label>
+                <input type= "text" id = "eventName" name="eventName">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type= "text" id = "date">Date</label>
+                <input type="datetime-local">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type="text" id = "location">Location</label>
+                <input type="text" id="location" name="location">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="dropdown">
+                <label type= "text" id = "category">Category</label>
+                <select class = "category" name = "category">
+                    <option value="Party">Party</option>
+                    <option value="Birthday">Birthday</option>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Anniversary">Anniversary</option>
+                    <option value="Baby Shower">Baby Shower</option>
+                    <option value="Holiday Celebration">Holiday Celebration</option>
+                    <option value="Religious Holiday">Religious Holiday</option>
+                    <option value="Get Together">Get Together</option>
+                    <option value="Business Meeting">Business Meeting</option>
+                    <option value="Casual Hangout">Casual Hangout</option>
+                    <option value="Business Get-Together">Business Get-Together</option>
+                    <option value="Vacation">Vacation</option>
+                    <option value="Other">Other</option>
+                </select>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <label type="text" id = "description">Description</label>
+            <input type="text" id="description" name="description">
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <label type="text" id = "nearByPort">Near By Port</label>
+            <input type="text" id="nearByPort" name="nearByPort">
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <label type="text" id = "eventMode">Event Mode</label>
+            <input type="text" id="eventMode" name="eventMode">
+            </td>
+        </tr>
+             <td>
+            <label type="text" id = "registrationFee">Registration Fee</label>
+            <input type="text" id="registrationFee" name="registrationFee">
+            </td>
+        </tr>
+         </tr>
+             <td>
+            <label type="text" id = "contactPerson">Contact Person</label>
+            <input type="text" id="contactPerson" name="contactPerson">
+            </td>
+        </tr>
+        </tr>
+             <td>
+                <button type = "Submit">Submit</button>
+            </td>
+        </tr>
+
+    </table>
+
+    </form>
+</main>
+
+    {{!-- //create new event object
+    const newEvent = {
+       "username": username, 
+       "eventName": eventName,
+       "date": date,
+       "location": location,
+       "category": category,
+       "description": description,
+       "nearByPort": nearByPort,
+       "eventMode": eventMode,
+       "registrationFee": registrationFee,
+       "contactPerson": contactPerson
+    } --}}

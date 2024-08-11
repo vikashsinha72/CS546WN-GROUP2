@@ -1,12 +1,23 @@
-import { events } from '../config/mongoCollections.js'
+import { events, users} from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
-import bcrypt, { hash } from 'bcryptjs'
-import axios from 'axios'
+
 
 const createEvent = async (username, eventName, date, location, category, description, nearByPort, eventMode, registrationFee,
     contactPerson
 ) => {
 
+    //check if username already exists 
+    const count = await usersCollection.countDocuments()
+
+    if (count !== 0) {
+        let findUserName = await usersCollection.findOne({ 'userName': username});
+        if (findUserName !== 0) {
+            return findUserName;
+        }
+        else {
+            throw new Error("Entered userName does not exist. Please create a user name by signing up for an account.");
+        }
+    }
     //username error handling
     if (!username) throw new Error("Must provide a username.");
     if (typeof username !== 'string') throw new Error("Username must be a string.");
@@ -15,6 +26,11 @@ const createEvent = async (username, eventName, date, location, category, descri
     if (username.length < 4 || username.length > 15) throw new Error("Username must be between 4 and 15 characters long.")
     
     //eventName error handling
+    if (!eventName) throw new Error("Must provide a unqiue event name.");
+    if (typeof eventName !== 'string') throw new Error("Event Name must be a string value.");
+    eventName.trim()
+    if (!eventName) throw new Error("eventName cannot be empty.")
+    if (eventName.length < 1 || username.length > 20) throw new Error("Username must be between 1 and 20 characters long.")
 
     //date error handling
 
@@ -33,75 +49,46 @@ const createEvent = async (username, eventName, date, location, category, descri
     //contactPerson error handling
 
     const eventsCollection = await events();
-    
-    //check if username already exists 
-    const count = await eventsCollection.countDocuments()
-    if (count !== 0) {
-        findEventName = await eventsCollection.findOne({ 'eventName': eventName});
-        if (findEventName !== 0) {
-            throw new Error ("EventName already exists. Please enter a unique name.");
-        }
-    }
-
-    //check if email already exists
-    const emailCount = await usersCollection.countDocuments();
-    if (emailCount !== 0) {
-        findEmail = await usersCollection.findOne({ 'email': email });
-        if (findEmail !== 0) throw new Error ("Email already exists.");
-    }
 
     //initialize empty reviews subdocument
     const reviews = [];
 
     //create new event object
     const newEvent = {
-       "username": username, 
-       "eventName": eventName,
-       "date": date,
-       "category": category,
-       "description": description,
-       "location": location,
-       "nearByPort": nearByPort,
-       "eventMode": eventMode,
-       "registrationFee": registrationFee
-    }
+        "username": username, 
+        "eventName": eventName,
+        "date": date,
+        "location": location,
+        "category": category,
+        "description": description,
+        "nearByPort": nearByPort,
+        "eventMode": eventMode,
+        "registrationFee": registrationFee,
+        "contactPerson": contactPerson
+     }
 
   //creating one instance of events
   let eventsInstance = await events();
-  const event =  await bandsInstance.insertOne(event);
+  const event =  await eventsInstance.insertOne(newEvent);
 
 }
 
-const getEvent = async (userId) => {
-    //userId error handling
-    if (!userId) throw new Error("Must provide an ID.");
-    if (typeof userId !== 'string') throw new Error("ID must be a string.");
-    userId = userId.trim();
-    if (!userId) throw new Error("ID cannot be empty.");
-    if (!ObjectId.isValid(userId)) throw new Error("Invalid Object ID.");
+const getEvent = async (eventId) => {
+    //eventId error handling
+    if (!eventId) throw new Error("Must provide an ID.");
+    if (typeof eventId !== 'string') throw new Error("ID must be a string.");
+    eventId = eventId.trim();
+    if (!eventId) throw new Error("ID cannot be empty.");
+    if (!ObjectId.isValid(eventId)) throw new Error("Invalid Object ID.");
 
-    const usersCollection = await users();
-    const user = await usersCollection.findOne({ _id: new ObjectId(userId) })
+    const eventsCollection = await events();
+    const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) })
     
-    if (!user) throw new Error("User could not be found.");
+    if (!event) throw new Error("Event could not be found.");
 
-    user._id = user._id.toString();
+    event._id = event._id.toString();
 
-    return user;
+    return event;
 }
 
-const getAllUsers = async (userId) => {
-    const usersCollection = await users();
-
-    let userList = await usersCollection.find({}).toArray();
-    if (!userList) throw new Error("Could not get all users.");
-    
-    userList = userList.map((element) => {
-      element._id = element._id.toString();
-      return element;
-    })
-  
-    return userList;
-}
-
-export default { createUser, getUser, getAllUsers }
+export default { createEvent, getEvent }

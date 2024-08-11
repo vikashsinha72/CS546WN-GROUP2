@@ -10,4 +10,4 @@ const eventRouter = (app) => {
   });
 }
 
-export default eventRouter
+export default eventRouter;
