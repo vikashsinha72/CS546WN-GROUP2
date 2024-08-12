@@ -1,4 +1,4 @@
-import {dbConnection} from './mongoConnection.js';
+import {dbConnection} from './mongoConnections.js';
 
 export const getCollectionFn = (collection) => {
   let _col = undefined;
@@ -15,3 +15,4 @@ export const getCollectionFn = (collection) => {
 
 // NOTE: YOU WILL NEED TO CHANGE THE CODE BELOW TO HAVE THE COLLECTION(S) REQUIRED BY THE ASSIGNMENT
 export const users = getCollectionFn('users');
+export const events = getCollectionFn('events');

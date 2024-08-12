@@ -1,66 +1,66 @@
-<body class="editEvent">
+<body class="createEvent">
     <h1>Create Your Event</h1>
-    <main class="editEvent">
-        <form class="editEvent" id="eventEdit-form" method="POST">
+    <main class="createEvent">
+        <form class="createEvent" id="eventCreation-form" method="POST">
             <label for="eventName">
                 Event Name:
-                <input type="text" name="eventNameEdit" id="eventNameEdit">
+                <input type="text" name="eventNameInput" id="eventNameInput">
             </label>
             <br>
             
             {{! This might be better with a calander input? Unsure how to implement}}
-            <label for="dateEdit">
+            <label for="dateInput">
                 Date:
-                <input type="date" name="dateEdit" id="dateEdit"
+                <input type="date" name="dateInput" id="dateInput"
                 min="2024-01-01">
             </label>
             <br>
 
-            <label for="locationEdit">
+            <label for="locationInput">
                 Location:
-                <input type="text" name="locationEdit" id="locationEdit">
+                <input type="text" name="locationInput" id="locationInput">
             </label>
             <br>
 
-            <label for="descriptionEdit">
+            <label for="descriptionInput">
                 Description:
-                <input type="text" name="descriptionEdit" id="descriptionEdit">
+                <input type="text" name="descriptionInput" id="descriptionInput">
             </label>
             <br>
 
-            <label for="modeEdit">
+            <label for="modeInput">
                 Event Mode:
-                <select type="eventMode" name="modeEdit" id="modeEdit">
+                <select type="eventMode" name="modeInput" id="modeInput">
                    <option value="online">Online</option>
                    <option value="person">In-Person</option>
                 </select>
             </label>
             <br>
 
-            <label for="feeEdit">
+            <label for="feeInput">
                 Registration Fee:
-                <input type="text" name="feeEdit" id="feeEdit">
+                <input type="text" name="feeInput" id="feeInput">
             </label>
             <br>
 
-            <label for="permEdit">
+            <label for="permInput">
                 Who's Coming:
-                <select type="permission" name="permEdit" id="permEdit">
+                <select type="permission" name="permInput" id="permInput">
                    <option value="public">Public</option>
                    <option value="private">Private</option>
                 </select>
             </label>
             <br>
 
-            <label for="categoryEdit">
+            <label for="categoryInput">
                 Cateogry:
-                <input type="text" name="categoryEdit" id="categoryEdit">
+                <input type="text" name="categoryInput" id="categoryInput">
             </label>
             <br>
 
-            <label for="portEdit">
+            <label for="portInput">
                 Nearest Port:
-                <input type="text" name="portEdit" id="portEdit">
+                <input type="text" name="portInput" id="portInput">
             </label>
             <br>
             <button type="submit" name="action" value="save">Save For Later</button>
