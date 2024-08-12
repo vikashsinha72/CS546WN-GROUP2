@@ -22,19 +22,3 @@ app.listen(3000, () => {
  console.log("We've now got a server!");
  console.log('Your routes will be running on http://localhost:3000');
 });
-
-// async function main()
-//  {
-//     try {
-//         console.log("Create")
-//         const pinkFloyd = await events.createEvent("Sriya", "Birthday", "05/02/2025", "Edison", "Birthday", "Fun Party","Uber",
-//             "Fun", "10.00", "Sriya")
-//             console.log(pinkFloyd);
-//     }
-//     catch(e) {
-//         console.log("Incorrect input:" + e);
-//     } 
-
-//  }
-
-//  main();
