@@ -50,32 +50,30 @@ export const createEventRegistration = async (
   const eventsCollection = await events();
 
   const newEventRegistration = {
+    _id: new ObjectId(),
     username: username,
     eventName: eventName,
     emailId: emailId,
     phoneNumber: phoneNumber,
-    bestTimetoCall: bestTimetoCall,
+    bestTimetoCall: bestTimetoCall
   };
-  const eventRegistration = await eventsCollection.insertOne(
-    newEventRegistration
+
+  const eventRegistration = await eventsCollection.updateOne(
+    { _id: new ObjectId(productId) },
+    { $push: { registration: newEventRegistration } }
   );
+  if (updateInfo.modifiedCount === 0) throw 'Could not add registration for specific event';
   return eventRegistration;
+
 };
 
-// const getEvent = async (eventId) => {
-//     //eventId error handling
-//     if (!eventId) throw new Error("Must provide an ID.");
-//     if (typeof eventId !== 'string') throw new Error("ID must be a string.");
-//     eventId = eventId.trim();
-//     if (!eventId) throw new Error("ID cannot be empty.");
-//     if (!ObjectId.isValid(eventId)) throw new Error("Invalid Object ID.");
+export const getEvents = async () => {
+    const eventsCollection = await events();
+    const eventsList = await eventsCollection.find({}, {projection: {eventName:1,  _id: 1}}).toArray();
 
-//     const eventsCollection = await events();
-//     const event = await eventsCollection.findOne({ _id: new ObjectId(eventId)})
+    console.log("eventsList: ", eventsList);
 
-//     if (!event) throw new Error("Event could not be found.");
+    if (!eventsList) throw new Error("Event could not be found.");
 
-//     event._id = event._id.toString();
-
-//     return event;
-// }
+    return eventsList;
+}

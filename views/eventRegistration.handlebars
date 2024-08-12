@@ -1,7 +1,7 @@
 <!DOCTYPE html>
  <h1>Event Registration</h1>
 <main>
-    <form id = "registrationForm">
+    <form action="/createEventRegistration" method="POST" id = "registrationForm">
         <table>
         <tr>
             <td>
@@ -13,7 +13,9 @@
             <td>
                 <label type= "text" id = "eventName">View Available Events</label>
                  <select class = "eventDropdown" name = "eventDropdown">
-                    <option value="event">{{this.event}}</option>
+                    {{#each events}}
+                        <option value="{{this._id}}">{{this.eventName}}</option>
+                    {{/each}}
                 </select>
             </td>
         </tr>
