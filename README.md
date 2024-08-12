@@ -6,3 +6,5 @@ The site has multiple useful core features such as event registration, event sea
  Our user friendly tools will help even the smallest business owners create and manage events in their area. 
  Our system will empower all users, from creators to attendees.
  Whether you’re hosting a small gathering or a large scale conference, our system will cater to all your event management needs.
+
+ Additional, some advance features will also be added to event management system.
