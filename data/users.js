@@ -3,7 +3,7 @@ import axios from 'axios';
 import bcrypt, { hash } from 'bcrypt'
 import { users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
-import exp from 'constants';
+
 
 export const registerUser = async (
   username,
@@ -62,6 +62,10 @@ export const registerUser = async (
     //initialize empty reviews array
     const reviews = [];
 
+    // This is going to connect the events db to the user one 
+    // for easier authentication
+    let events = [];
+
     //hash password - 8 salt round
     const hashedPassword = await bcrypt.hash(password, 8);
   
@@ -75,6 +79,12 @@ export const registerUser = async (
        reviews
       }
   
+
+       reviews: reviews,    // This is to store all this users review
+
+    }
+
+
     //insert user into the db
     await usersCollection.insertOne(newUser);
   
@@ -111,7 +121,7 @@ export const loginUser = async (emailAddress, password) => {
 
 };
 
-const getUser = async (userId) => {
+export const getUser = async (userId) => {
     //userId error handling
     if (!userId) throw new Error("Must provide an ID.");
     if (typeof userId !== 'string') throw new Error("ID must be a string.");
@@ -129,7 +139,7 @@ const getUser = async (userId) => {
     return user;
 }
 
-const getAllUsers = async (userId) => {
+export const getAllUsers = async (userId) => {
     const usersCollection = await users();
 
     let userList = await usersCollection.find({}).toArray();

@@ -1,0 +1,17 @@
+{{! When using res.render please add an argument for {title: ?} and {stylesheet: ?} so that we can dynamically use the code}}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>    {{! Using this for a dynamic title, please pass your titles when calling in routes}}
+    <link rel="stylesheet" href="/public/css/styles.css">
+    {{! This will dynamically load a css file}}
+    {{#if stylesheet}}
+        <link rel="stylesheet" href="/public/css/{{stylesheet}}.css">
+    {{/if}}
+  </head>
+  <body>
+    {{{body}}}      {{! Remeber the 3 brackets for specific dynamic elements}}
+  </body>
+</html>

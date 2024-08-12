@@ -1,0 +1,80 @@
+<body class="editEvent">
+    <h1>Create Your Event</h1>
+    <main class="editEvent">
+        <form class="editEvent" id="eventEdit-form" method="POST">
+            <label for="eventName">
+                Event Name:
+                <input type="text" name="eventNameEdit" id="eventNameEdit">
+            </label>
+            <br>
+            
+            {{! This might be better with a calander input? Unsure how to implement}}
+            <label for="dateEdit">
+                Date:
+                <input type="date" name="dateEdit" id="dateEdit"
+                min="2024-01-01">
+            </label>
+            <br>
+
+            <label for="locationEdit">
+                Location:
+                <input type="text" name="locationEdit" id="locationEdit">
+            </label>
+            <br>
+
+            <label for="descriptionEdit">
+                Description:
+                <input type="text" name="descriptionEdit" id="descriptionEdit">
+            </label>
+            <br>
+
+            <label for="modeEdit">
+                Event Mode:
+                <select type="eventMode" name="modeEdit" id="modeEdit">
+                   <option value="online">Online</option>
+                   <option value="person">In-Person</option>
+                </select>
+            </label>
+            <br>
+
+            <label for="feeEdit">
+                Registration Fee:
+                <input type="text" name="feeEdit" id="feeEdit">
+            </label>
+            <br>
+
+            <label for="permEdit">
+                Who's Coming:
+                <select type="permission" name="permEdit" id="permEdit">
+                   <option value="public">Public</option>
+                   <option value="private">Private</option>
+                </select>
+            </label>
+            <br>
+
+            <label for="categoryEdit">
+                Cateogry:
+                <input type="text" name="categoryEdit" id="categoryEdit">
+            </label>
+            <br>
+
+            <label for="portEdit">
+                Nearest Port:
+                <input type="text" name="portEdit" id="portEdit">
+            </label>
+            <br>
+            <button type="submit" name="action" value="save">Save For Later</button>
+            <button type="submit" name="action" value="publish">Publish Event</button>
+        </form>
+    </main>
+    {{#if hasErrors}}
+        <ul class="error-list">
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+    {{! <a href="/profile">Back to your profile</a> once routes are worked out}}
+</body>
