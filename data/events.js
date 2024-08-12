@@ -127,3 +127,20 @@ export const getAllEvents = async () => {
   
     return eventList;
 }
+
+export const updateEvent = async (
+    eventId, 
+    username,
+    eventName, 
+    date, 
+    location, 
+    category,
+    permission,     
+    description, 
+    nearByPort, 
+    eventMode, 
+    registrationFee,
+    publish, 
+) => {
+
+}
