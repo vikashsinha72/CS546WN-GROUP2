@@ -128,19 +128,37 @@ export const getAllEvents = async () => {
     return eventList;
 }
 
-export const updateEvent = async (
-    eventId, 
-    username,
-    eventName, 
-    date, 
-    location, 
-    category,
-    permission,     
-    description, 
-    nearByPort, 
-    eventMode, 
-    registrationFee,
-    publish, 
-) => {
+export const updateEventPatch = async (eventId, updatedEvent) => {
+    const updatedEventData = {};
 
+    if (updatedEvent.eventName) {
+        updatedEventData['eventName'] = helperFuncs.checkStringLimited(updatedEvent.eventName, 'Edit Event Name');
+    }
+    if (updatedEvent.date) {
+        // to do check dates
+    }
+    if (updatedEvent.location) {
+        updatedEventData['location'] = helperFuncs.checkStringLimited(updatedEvent.location, 'Edit Event Location');
+    }
+    if (updatedEvent.category) {
+        updatedEventData['category'] = helperFuncs.checkStringLimited(updatedEvent.category, 'Edit Event Location');
+    }
+    if (updatedEvent.permission) {
+        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permission);
+    }
+    if (updatedEvent.description) {
+        updatedEventData['description'] = helperFuncs.checkString(updatedEvent.description, 'Edit Event Description');
+    }
+    if (updatedEvent.nearByPort) {
+        updatedEventData['nearByPort'] = helperFuncs.checkStringLimited(updatedEvent.nearByPort, 'Edit Event Port');
+    }
+    if (updatedEvent.eventMode) {
+        updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.eventMode);
+    }
+    if (updatedEvent.eventMode) {
+        updatedEventData['eventName'] = helperFuncs.checkStringFee(updatedEvent.registrationFee);
+    }
+    if (updatedEvent.publish) {
+        updatedEventData['eventName'] = helperFuncs.checkPublishStatus(updatedEvent.publish);
+    }
 }

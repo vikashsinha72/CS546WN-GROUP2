@@ -255,7 +255,12 @@ router
            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
         }
 
-        // NOT COMPLETE TO EDIT
+        try {
+            const updatePost = await updateEventPatch()
+        }
+        catch(e) {
+            
+        }
 
    })
 export default router;
