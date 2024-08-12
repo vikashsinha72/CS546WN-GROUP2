@@ -62,8 +62,7 @@ export const registerUser = async (
     //initialize empty reviews array
     const reviews = [];
 
-    // This is going to connect the events db to the user one 
-    // for easier authentication
+    // This is going to connect the events db to the user one  for easier authentication
     let events = [];
 
     //hash password - 8 salt round
@@ -76,13 +75,12 @@ export const registerUser = async (
        "emailAddress": emailAddress.toLowerCase(),
        "firstName": firstName,
        "lastName": lastName,
-       reviews
+       reviews,
+       events
       }
   
 
        reviews: reviews,    // This is to store all this users review
-
-    }
 
 
     //insert user into the db
