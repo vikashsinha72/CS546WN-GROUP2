@@ -3,7 +3,6 @@ import {ObjectId} from 'mongodb';
 const exportedMethods = {
 
   checkObjectId(id, idName) {
-    console.log("checkObjectId :", idName);
     if (!id) {
         throw `${idName} is missing`;
     }
@@ -29,7 +28,6 @@ checkStrings(...params) {
     });
 },
 checkString(strVal, varName) {
-    console.log("checkString :", varName);
 
     if (!strVal) {
         throw `${varName} is missing.`;
@@ -53,7 +51,6 @@ checkString(strVal, varName) {
 
 checkArray(arr, varName, valueType='string', emptyCheck=true) {
 
-    console.log("checkArray :", varName);
 
     if (!arr || !Array.isArray(arr)) {
         throw `${varName} is not an Array`;
@@ -102,7 +99,6 @@ checkArray(arr, varName, valueType='string', emptyCheck=true) {
 
 // TODO: improvise to check date in a fomrat passed as parameter
 checkDate(date, varName) {
-    console.log("checkDate :", varName);
 
     if (!date) {
         throw `${varName} is missing`;
@@ -124,7 +120,6 @@ checkDate(date, varName) {
 
 checkUrl(url, varName) {
 
-    console.log("checkUrl :", varName);
 
     if (!url) {
         throw `${varName} is missing`;
@@ -145,7 +140,6 @@ checkUrl(url, varName) {
 },
 
 checkPrice(price, varName) {
-    console.log("checkPrice :", varName);
 
     if (!price) {
         throw `${varName} is missing`;
@@ -162,7 +156,6 @@ checkPrice(price, varName) {
 },
 
 checkRating(rating, varName) {
-    console.log("checkRating :", varName);
 
     if (!rating) {
         throw `${varName} is missing`;
@@ -179,7 +172,6 @@ checkRating(rating, varName) {
 },
 
 checkBoolean(bolVal, varName) {
-    console.log("checkBoolean :", varName);
 
     if (bolVal=== undefined) {
         throw `${varName} is missing`;

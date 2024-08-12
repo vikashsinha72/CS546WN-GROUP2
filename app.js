@@ -1,35 +1,74 @@
 import express from 'express';
-const app = express(); 
-import configRoutes from './routes/index.js';
+import session from 'express-session';
 import exphbs from 'express-handlebars';
+import {
+  logRequest,
+  rootRequest,
+  redirectAuthenticatedLogin,
+  redirectAuthenticatedRegister,
+  ensureAuthenticated,
+  ensureLogout
+} from './middleware.js';
 
-const staticDir = express.static('public');
 
-// Creating the custom config for handlebars
-const handlebarsInstance = exphbs.create({
-    defaultLayout: 'main',      // master template
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-    // If we need to create java objects as JSON strings for embedding data
-    helpers: {
-        asJSON: (obj, spacing) => {
-            if (typeof spacing === 'number') return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
-
-            return new Handlebars.SafeString(JSON.stringify(obj));
-        }
-    }
-});
-
-app.use('/public', staticDir);
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));      // Parsing req
-
-app.engine('handlebars', handlebarsInstance.engine);    // setting engine to use handlebars and custom engines
+app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-configRoutes(app);
+import configRoutes from './routes/index.js';
 
-// Set up port
-app.listen(3000, () => {
-    console.log("We've now got a server!");
-    console.log('Your routes will be running on http://localhost:3000');
+
+// Middleware setup
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static('public'));
+
+
+app.use(session({
+    name: 'AuthState',
+    secret: 'UpDown',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {maxAge: 1800000} // 1800000 milli seconds
+  }));
+  
+  
+  
+  // Logging middleware
+  
+  // Apply logging middleware to all routes
+  app.use( logRequest);
+  
+  
+  // Route middleware
+  //for root
+  app.use('/',  rootRequest);
+  
+  //for login
+  app.use('/auth',  redirectAuthenticatedLogin);
+  
+  //for register
+  app.use('/register', redirectAuthenticatedRegister);
+  
+  
+  // for event
+  app.use('/event',ensureAuthenticated)
+  
+  //logout
+  app.use('/logout', ensureLogout);
+  
+  configRoutes(app);
+  
+  app.listen(PORT, () => {
+    console.log(`Event Management Server is running on http://localhost:${PORT}`);
   });
+  
+  
+

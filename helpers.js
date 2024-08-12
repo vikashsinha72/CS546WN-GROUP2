@@ -1,6 +1,6 @@
 // I've added just a general string helper functions that I think could come in handy. 
 // Feel free to add any you need
-
+import mailer from nodemailer;
 const helperFuncs = {
 
     // Check string input and return a trimmed version 
@@ -12,6 +12,8 @@ const helperFuncs = {
         if (!isNaN(strVal)) throw `Error: ${strVal || 'input'} must not be only numbers.`;
         return strVal;
     }
+
+    
 }
 
 export default helperFuncs;

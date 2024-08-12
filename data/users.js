@@ -22,8 +22,8 @@ const exportedMethods = {
 async registerUser(
   firstName,
   lastName,
-  email,
-  hashedPassword,
+  emailAddress,
+  password,
   role
 )  {
   try{
@@ -119,7 +119,7 @@ async updateUser(
     userId,
     firstName,
     lastName,
-    email,
+    emailAddress,
     password,
     role
   )  {
@@ -128,7 +128,7 @@ async updateUser(
         [userId, 'User Id'],
         [firstName, 'First Name'],
         [lastName, 'Last Name'],
-        [email, 'Email Address'],
+        [emailAddress, 'Email Address'],
         [password, 'Password'],
         [role, 'Role']
       );
@@ -137,7 +137,7 @@ async updateUser(
       validators.checkObjectId(userId, "User Id");
       validators.checkFirstname(firstName);
       validators.checkLastname(lastName);
-      validators.checkEmail(email);
+      validators.checkEmail(emailAddress);
       validators.checkPassword(password);
       //validators.checkRole(role);
   
@@ -161,7 +161,7 @@ async updateUser(
     const updatedUser = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        email: email.trim(),
+        emailAddress: emailAddress.trim(),
         hashedPassword: hashedPassword,
         role: role.trim()
       };
