@@ -90,6 +90,7 @@ form {
 
 .eventForm {
     color:black;
+    margin: 1em 0;
 }
 
 label {
@@ -109,7 +110,34 @@ ol, ul {
     padding-left: 20px;
 }
   
-li {
-  padding: 0.5em;
-  margin: 0.5em 0;
+
+.error {
+    color: red;
+    text-align: center;
+  }
+  
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 0.5em;
+    margin: 0.5em 0;
+  }
+  
+  .prime {
+    color: #00ff00;
+    text-align: center;
+  }
+  
+  .not-prime {
+    color: #ff0000;
+    text-align: center;
+  }
+
+.createEvent {
+    display: block;
+    text-align: center;
 }
+

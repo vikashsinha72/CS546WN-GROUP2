@@ -1,15 +1,30 @@
-<!DOCTYPE html>
-<main>
-  <h1>Welcome to the Event Management System Website!</h1>
-  <p>
-      This site allows you to register,schedule, manage and sell events in an efficient and organized manner.
-      Get started today by signing up for a free account!
-   </p>
-    <footer>
-      <p>
-        For more information, contact:
-          group2Stevens@stevens.edu
-      </p>
-    </footer>
-</main>
+{{! Simple extension to the main html file}}
+{{! Remember that you don't full html structure for extensions}}
 
+<body>
+    <main>
+        {{! Displays error for unauthorized access}}
+        {{#if hasErrors}}
+            <p id="unauthErr">You are not authorized to see this page.</p>
+            <a href="/">Back to Homepage</a>
+        {{/if}}
+        
+
+        <div id="topOfPage">
+        <h3 id="eName">{{eventRes.eventName}}</h3>
+        <h3 id="eHost">Hosted By: {{userRes.firstName}} {{userRes.lastName}}</h3>
+        <h3 id="eDate">Date: {{eventRes.date}}</h3>
+        <h3 id="eFee">Price: {{eventRes.registrationFee}}</h3>
+        <h3 id="eLocation">Location: {{eventRes.location}}</h3>
+        <h3 id="eMode">Mode: {{eventRes.eventMode}}</h3>
+        <br>
+        </div>
+
+        <div id="pageInfo">
+        <h3 id="eDescript">Details: {{eventRes.description}}</h3>
+        <h3 id="eCategory">Category: {{eventRes.category}}</h3>
+        <h3 id="ePort">Nearest Port: {{eventRes.nearByPort}}</h3>
+        </div>
+    </main>
+    {{! <a href="/event">Back to your events</a>}}
+</body>

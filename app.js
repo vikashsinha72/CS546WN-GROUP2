@@ -2,7 +2,7 @@
 import express from 'express';
 import { create } from 'express-handlebars';
 import path from 'path';
-import eventRouter from './routes/events.js';
+import eventRouter from './routes/eventRegistration.js';
 import * as events from "./data/events.js";
 
 const app = express();

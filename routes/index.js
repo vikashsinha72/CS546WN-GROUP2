@@ -1,13 +1,24 @@
+import authRoutes from './auth.js';
+import userRoutes from './user.js';
+import eventRoutes from './event.js';
+import eventRegistrationRouter from './eventRegistration.js';
+import searchRoutes from './search.js';
+import busRoutes from './business.js';
 
-import router from './events.js';
+const constructorMethod = (app) => {
+    app.use('/auth', authRoutes);       // signup registration, login
+    app.use('/user', userRoutes);       // profile, user event register form
+    app.use('/event', eventRoutes);     // event management, create event, edit event, event page
+    app.use('/eventRegistration', eventRegistrationRouter);     // event management, create event, edit event, event page
+    app.use('/search', searchRoutes);   // search results
+    app.use('/business', busRoutes);    // business profiles
 
-const eventRouter = (app) => {
-  app.use('/events', router);
-  // app.use('/eventRegistration', router);
+    // --- Consider ---
+    // Should we use a redirect to the homepage if something isn't found?
+    app.use('*', (req, res) => {
+        res.status(404).json({error: 'Route Not Found'});
+    });
 
-  app.use('*', (req, res) => {
-    return res.status(404).json({error: 'Not found'});
-  });
 }
 
-export default eventRouter;
+export default constructorMethod;
