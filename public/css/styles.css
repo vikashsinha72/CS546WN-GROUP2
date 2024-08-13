@@ -8,6 +8,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: rgb(243, 224, 201);
     color: black;
+    background-color: rgb(240, 242, 243);
+    color: #f8f7f7f5;
     margin: 0;
     padding: 0;
 }
@@ -24,6 +26,7 @@ button {
 
 .category {
    font-size: 15px; 
+    background-color: rgb(255, 255, 255);
 }
 
 /* Main content styles */
@@ -62,6 +65,13 @@ main {
 .topnav a.active {
     background-color: #04AA6D;
     color: white;
+    max-width: 800px;
+    max-height:1000px;
+    margin-top: 500px auto;
+    margin-left:450px;
+    padding: 10px;
+    background-color: #0b3b6b;
+    box-shadow: 0 0 10px rgba(8, 1, 1, 0.1);
 }
 
 /* Headings */
@@ -70,6 +80,7 @@ h1, h2 {
     text-align: center;
     margin-left: 200px;
     margin-right: 150px;
+    margin-left:80px
 }
 
 /* Paragraphs */
@@ -78,6 +89,7 @@ p {
     text-align: center;
     font-size: large;
 
+    line-height: 1.6;
 }
 
 /* Forms */
@@ -90,6 +102,7 @@ form {
 
 .eventForm {
     color:black;
+    margin: 1em 0;
 }
 
 label {
@@ -113,3 +126,24 @@ li {
   padding: 0.5em;
   margin: 0.5em 0;
 }
+
+.error {
+    color: red;
+    text-align: center;
+  }
+  
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 0.5em;
+    margin: 0.5em 0;
+  }
+
+.createEvent {
+    display: block;
+    text-align: center;
+}
+
