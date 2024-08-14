@@ -1,0 +1,133 @@
+/*
+You will style your page using at least 10 CSS selectors for general CSS styling. You will place the CSS in its own file. 
+*/
+
+/*This file should have 10 CSS rulesets */
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(243, 224, 201);
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    background-color: black;
+    color: white;
+    width: 100px;
+    height: 50px;
+    font-size: 17px;
+    margin-left: 400px;
+    margin-right: 400px;
+}
+
+.category {
+   font-size: 15px; 
+}
+
+/* Main content styles */
+main {
+    max-width: 1000px;
+    max-height: 2000px;
+    margin-top: 500px auto;
+    margin-left: 350px;
+    margin-right: 300px;
+    background-color: white;
+}
+
+
+.topnav {
+    text-align: center;
+    overflow: hidden;
+    background-color: black;
+    max-width:6000px;
+}
+  
+.topnav a {
+    float: left;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+    margin-left: 250px;
+}
+
+.topnav a:hover {
+    text-decoration: underline;
+    color: white;
+    max-height:60px;
+}
+
+.topnav a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+/* Headings */
+h1, h2 {
+    color: black;
+    text-align: center;
+    margin-left: 200px;
+    margin-right: 150px;
+}
+
+/* Paragraphs */
+p {
+    line-height: 2;
+    text-align: center;
+    font-size: large;
+
+}
+
+/* Forms */
+form {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    
+}
+
+.eventForm {
+    color:black;
+    margin: 1em 0;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input, button {
+    padding: 0.5em;
+    margin: 0.5em;
+  }
+
+/* Lists */
+ol, ul {
+    padding-left: 20px;
+}
+  
+
+.error {
+    color: red;
+    text-align: center;
+  }
+  
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 0.5em;
+    margin: 0.5em 0;
+  }
+  
+.createEvent {
+    display: block;
+    text-align: center;
+}
+

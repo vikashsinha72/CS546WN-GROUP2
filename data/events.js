@@ -98,16 +98,20 @@ import validators from '../validators.js';
   
   },
   
-  async getEventList() {
-  
-    try {
-      const eventCollection = await events();
-      const eventList = await eventCollection.find({}, { projection: { eventName: 1 } }).toArray();
-      return eventList || [];
-    } catch (e) {
+  async getEvents() {
+    try{
+
+      const eventsCollection = await events();
+      const eventsList = await eventsCollection.find({}, {projection: {eventName:1,  _id: 1}}).toArray();
+      
+      console.log("eventsList: ", eventsList);
+      
+      if (!eventsList) throw new Error("Event could not be found.");
+      
+      return eventsList;
+    } catch (e) {  
       throw 'MongoDB connection error :', e;  
     }
-  
   },
   
   async getEvent(eventId) {

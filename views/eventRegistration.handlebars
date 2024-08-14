@@ -1,0 +1,48 @@
+
+ <h1>Event Registration</h1>
+    <form action="/createEventRegistration" method="POST" id = "registrationForm">
+        <table>
+        <tr>
+            <td>
+                <label type= "text" id = "userName">User name</label>
+                <input type= "text" id="userName" name="userName">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type= "text" id = "eventName">View Available Events</label>
+                 <select class = "eventDropdown" name = "eventDropdown">
+                    {{#each events}}
+                        <option value="{{this._id}}">{{this.eventName}}</option>
+                    {{/each}}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type= "text" id = "emailId">Email Id</label>
+                <input type= "text" id = "emailId" name ="emailId">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label type="text" id = "Phone Number">Phone Number</label>
+                <input type="text" id = "phone number" name="phone number">
+            </td>
+        </tr>
+          <tr>
+            <td>
+                <label type= "text" id = "date">Best Time to call</label>
+                <input type="datetime-local">
+                <p>to</p>
+                <label type= "text" id = "date"></label>
+                <input type="datetime-local">
+            </td>
+        </tr>
+        </tr>
+             <td>
+                <button>Submit</button>      
+            </td>
+        </tr>
+    </table>
+    </form>
