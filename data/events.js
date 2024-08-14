@@ -1,7 +1,6 @@
 import { users, events } from '../config/mongoCollections.js';
 import { ObjectId, ReturnDocument } from 'mongodb';
 import helperFuncs from '../helpers.js';
-import axios from 'axios';
 
 export const createEvent = async (
     userId, 
