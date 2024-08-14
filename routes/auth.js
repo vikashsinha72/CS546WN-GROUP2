@@ -22,17 +22,6 @@ router
     if (req.session.user) {
 
         return res.redirect('/event');
-
-        if (req.session.user.role === 'admin') {
-            return res.redirect('/event');
-        }
-        else if (req.session.user.role === 'user') {
-            return res.redirect('/profile');
-        }
-        else{
-            //return next();
-            return res.status(403).json({error: '403: Forbidden, You do not have permission to view this page.'});
-        }  
     }
 
     return res.render('login', { title:"Login" });
@@ -51,19 +40,30 @@ router
 
         return res.redirect('/event');
 
-
-        if (user.role === 'admin') {
-            return res.redirect('/event');
-        } else if (user.role === 'user') {
-            return res.redirect('/profile');
-        }
-        else{
-            return res.status(403).json({error: '403: Forbidden, You do not have permission to view this page.'});
-        }
     } catch (e) {
         res.status(400).render('login', { title:"Login", error: e });
     }
 
+});
+
+
+router
+.route('/logout')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+
+        return res.redirect('/auth');
+    }
+    return res.render('login', { title:"Login" });
+
+})
+.post(async (req, res) => {
+    //code here for POST
+    // After processing the POST request, redirect to a GET route
+    return    res.redirect('/logout');
 });
 
 export default router;
