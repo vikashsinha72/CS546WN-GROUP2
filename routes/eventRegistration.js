@@ -45,7 +45,7 @@ router.route('/')
     try{
       const events = await eventsData.getEvents();
       console.log("events from route: ", events)
-      res.render('eventRegistration', { title: 'Event Registration', events })   
+      res.render('eventRegistration', { title: 'Event Registration', events, user: req.session.user })   
     } 
     catch (e) {
       console.log(e)
