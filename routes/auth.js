@@ -54,6 +54,7 @@ router
 
     if (req.session.user) {
 
+        req.session.user = null;
 
         return res.redirect('/auth');
     }
