@@ -19,8 +19,6 @@ router
 .get(async (req, res) => {
     //code here for GET
 
-
-
     if (req.session.user) {
 
         return res.redirect('/event');

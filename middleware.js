@@ -117,6 +117,7 @@ const ensureAuthenticated = async (req, res, next) => {
         if (req.originalUrl !== '/auth') {
             return res.redirect('/auth');
         }
+        return next();
     }
 
     if (req.originalUrl !== '/event') {

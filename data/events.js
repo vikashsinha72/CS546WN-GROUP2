@@ -49,12 +49,12 @@ import validators from '../validators.js';
           [eventLocation, 'Event Location'],
           [category, 'Category'],
           [nearByPort, 'Near-By Port'],
-          [eventMode, 'Event Mode']
+          [eventMode, 'Event Mode'],
+          [contactPersonId, 'Contact PersonId']
 
         );
         validators.checkDate(eventDate,'Event Date');
         validators.checkPrice(registrationFee,'Registration Fee');
-        validators.checkObjectId(contactPersonId, 'Contact PersonId');
         validators.checkBoolean(status, "Status");
       } catch (e) {
         throw 'Validation Error :', e;  
@@ -71,7 +71,7 @@ import validators from '../validators.js';
         nearByPort: nearByPort.trim(),
         eventMode: eventMode.trim(),
         registrationFee,
-        contactPersonId,
+        contactPerson,
         status,
         subscribers: [],
         reviews: [],

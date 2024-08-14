@@ -29,14 +29,14 @@
     <h2>Events</h2>
 <ul>
     {{#each events}}
-    <li><a href="/events/{{this._id}}">{{this.eventName}}</a></li>
+    <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>
     {{/each}}
 </ul>
 </div>
 
 <div id="eventForm">
 <h2>Create Event</h2>
-<form id="event-form" action="/events/create" method="POST">
+<form id="event-form" action="/event/create" method="POST">
   <label for="eventNameInput">Event Name:</label>
   <input type="text" id="eventNameInput" name="eventNameInput" required>
   

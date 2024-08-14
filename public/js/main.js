@@ -192,13 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             // Event Name validation (Optional, so no strict validation)
-            if (eventName.length > 100) {
-                errors.push('Event Name is too long.');
+            if (!eventName || eventName.length > 100) {
+                errors.push('Event Name should not be empty and upto 100 characters.');
             }
 
             // Category validation (Optional, so no strict validation)
-            if (category.length > 100) {
-                errors.push('Category is too long.');
+            if (category != '' && category.length > 100) {
+                errors.push('Category should be upto 100 characters.');
             }
 
             // Date validation (Optional field)
@@ -207,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 errors.push('Please enter a valid future date for the event.');
             }            
 
+            if (registrationFee !==''  &&  typeof registrationFee !== 'number') {
+                errors.push('Please enter a valid future date for the event.');
+            }            
 
 
             if (errors.length > 0) {
@@ -215,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 //registerForm.submit();
  
                 // AJAX logic for form submission
-                
                 fetch('/event/search', {
                     method: 'POST',
                     body: eventSearchform,
