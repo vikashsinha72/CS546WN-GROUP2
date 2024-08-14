@@ -1,5 +1,5 @@
 import authRoutes from './auth.js';
-import userRoutes from './user.js';
+import userRoutes from './users.js';
 import eventRoutes from './event.js';
 import eventRegistrationRouter from './eventRegistration.js';
 import searchRoutes from './search.js';
@@ -7,7 +7,7 @@ import busRoutes from './business.js';
 
 const constructorMethod = (app) => {
     app.use('/auth', authRoutes);       // signup registration, login
-    app.use('/user', userRoutes);       // profile, user event register form
+    app.use('/users', userRoutes);       // profile, user event register form
     app.use('/event', eventRoutes);     // event management, create event, edit event, event page
     app.use('/eventRegistration', eventRegistrationRouter);     // event management, create event, edit event, event page
     app.use('/search', searchRoutes);   // search results

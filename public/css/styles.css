@@ -126,16 +126,6 @@ ol, ul {
     margin: 0.5em 0;
   }
   
-  .prime {
-    color: #00ff00;
-    text-align: center;
-  }
-  
-  .not-prime {
-    color: #ff0000;
-    text-align: center;
-  }
-
 .createEvent {
     display: block;
     text-align: center;

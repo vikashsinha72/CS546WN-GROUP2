@@ -13,14 +13,13 @@ import { request } from 'http';
 
 router
     // This will be the creation page for events
-    .route('/create')
+    .route('/createEvent')
     .get(async (req, res) => {
         // Checking if logged in when route is complete
         // if (!req.session.user) {
         //     res.redirect('/userProfile')
         // }
-
-        res.render(path.resolve('views/createEvent'), {title: 'Create Event'});
+        res.render('createEvent', { title: 'createEvent' })   
         
     })
     .post(async (req, res) => {

@@ -167,6 +167,7 @@ export const createEventRegistration = async (
   //get eventsCollection
   const eventsCollection = await events();
 
+
   const newEventRegistration = {
     _id: new ObjectId(),
     username: username,
@@ -175,6 +176,16 @@ export const createEventRegistration = async (
     phoneNumber: phoneNumber,
     bestTimetoCall: bestTimetoCall
   };
+
+     // Error handling
+    // Check for valid userId 
+    userId = helperFuncs.checkUserId(_id);
+
+    // Check for valid strings
+    username = helperFuncs.checkStringLimited(username, 'Create Event userName');
+    eventName = helperFuncs.checkStringLimited(eventName, 'Create Event Name');
+    emailId = helperFuncs.checkStringLimited(emailId, 'Create Event Location');
+    phoneNumber = helperFuncs.checkStringLimited(phoneNumber, 'Create Event Category');
 
   const eventRegistration = await eventsCollection.updateOne(
     { _id: new ObjectId(productId) },

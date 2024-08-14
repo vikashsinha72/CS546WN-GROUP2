@@ -4,6 +4,7 @@ import { create } from 'express-handlebars';
 import path from 'path';
 import eventRouter from './routes/eventRegistration.js';
 import * as events from "./data/events.js";
+import * as users from "./data/users.js";
 
 const app = express();
 const hbs = create({ defaultLayout: 'main' });

@@ -77,3 +77,5 @@ router.route('/error').get(async (req, res) => {
       res.render('logout')
     })
   });
+
+export default router;
