@@ -2,13 +2,7 @@
 {{! Remember that you don't full html structure for extensions}}
 
 <body>
-    <main>
-        {{! Displays error for unauthorized access}}
-        {{#if hasErrors}}
-            <p id="unauthErr">You are not authorized to see this page.</p>
-            <a href="/">Back to Homepage</a>
-        {{/if}}
-        
+    <main>        
 
         <div id="topOfPage">
         <h3 id="eName">{{eventRes.eventName}}</h3>
@@ -25,6 +19,12 @@
         <h3 id="eCategory">Category: {{eventRes.category}}</h3>
         <h3 id="ePort">Nearest Port: {{eventRes.nearByPort}}</h3>
         </div>
+    {{#if hasErrors}}
+    <ul class="error-list">
+        <li>{{errors}}</li>
+        </ul>
+    {{/if}}
     </main>
-    {{! <a href="/event">Back to your events</a>}}
+    <a href="/event/">Back to your events</a>
+    <a href="/event/edit/{{eventRes._id}}">Edit This event</a>
 </body>

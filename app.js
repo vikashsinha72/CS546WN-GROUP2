@@ -3,7 +3,7 @@ const app = express();
 import configRoutes from './routes/index.js';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
-import { createUser, getUser, getAllUsers } from './data/users.js';
+
 
 // // JUST TO POPULATE A USER
 // let userName = 'alexisbrule';
@@ -18,6 +18,14 @@ import { createUser, getUser, getAllUsers } from './data/users.js';
 
 
 const staticDir = express.static('public');
+// Middleware for different browser methods namely post/put
+const rewriteMethods = ('/edit/:id', (req, res, next) => {
+    if (req.body && req.body._method) {
+        req.method = req.body._method;
+        delete req.body._method;
+    }
+    next();
+})
 
 // Creating the custom config for handlebars
 const handlebarsInstance = exphbs.create({
@@ -36,6 +44,7 @@ const handlebarsInstance = exphbs.create({
 app.use('/public', staticDir);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));      // Parsing req
+app.use(rewriteMethods);
 
 app.engine('handlebars', handlebarsInstance.engine);    // setting engine to use handlebars and custom engines
 app.set('view engine', 'handlebars');

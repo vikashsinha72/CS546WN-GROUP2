@@ -88,8 +88,11 @@ ol, ul {
     text-align: center;
   }
 
-.createEvent {
+.createEvent, .editEvent {
     display: block;
     text-align: center;
+}
+.error-list li {
+  color: #ff0000;
 }
 

@@ -1,0 +1,30 @@
+{{! Simple extension to the main html file}}
+{{! Remember that you don't full html structure for extensions}}
+
+<body>
+    <h1>Your Events:</h1>
+    <main>
+        {{#if eventRes.length}}
+        <ul>
+            {{#each eventRes}}
+            <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#else}}
+            <p>No events to show!</p>
+        {{/else}}
+
+        {{#if hasErrors}}
+        <ul class="error-list">
+            {{#each errors}}
+                    <li>
+                        {{this}}
+                    </li>
+                {{/each}}
+            </ul>
+        {{/if}}
+    </main>
+    <a href="/event/create">Create an Event</a>
+</body>
