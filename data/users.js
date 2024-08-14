@@ -1,6 +1,6 @@
 import 'express-session';
 import axios from 'axios';
-import bcrypt, { hash } from 'bcrypt'
+import bcryptjs from 'bcryptjs'
 import { users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
 
@@ -81,9 +81,6 @@ export const registerUser = async (
   
 
        reviews: reviews,    // This is to store all this users review
-
-    }
-
 
     //insert user into the db
     await usersCollection.insertOne(newUser);

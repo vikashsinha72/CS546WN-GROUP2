@@ -1,5 +1,5 @@
 import { users, events } from '../config/mongoCollections.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
 import helperFuncs from '../helpers.js';
 import axios from 'axios';
 
@@ -48,6 +48,7 @@ export const createEvent = async (
     //create new event object
     const newEvent = {
         _id: new ObjectId(),
+        userId: userId,
         username: username, 
         eventName: eventName,
         date: date,
@@ -70,8 +71,7 @@ export const createEvent = async (
     if (!insertEv.acknowledged || !insertEv.insertedId) throw 'Could not add event';
     const updateUser = await userCollection.updateOne({_id: userObjId}, {$push: {events:{_id: newEvent._id, eventName: eventName}}});
 
-
-    let newId = insertEv._id.toString();
+    let newId = insertEv.insertedId.toString();
     return newId;
 }
 
@@ -102,8 +102,12 @@ export const getEvent = async (eventId) => {
     return event;
 }
 
-export const getAllEvents = async () => {
+export const getAllEvents = async (userId) => {
     const eventCollection = await events();
+    let eventChecker = await eventCollection.findOne({userId: userId});
+
+    if (!eventChecker) throw `Cannot find events for that user!`;
+
 
     // excluded openClose and publish from users
     let eventList = await eventCollection.find({}).project({
@@ -131,34 +135,69 @@ export const getAllEvents = async () => {
 export const updateEventPatch = async (eventId, updatedEvent) => {
     const updatedEventData = {};
 
-    if (updatedEvent.eventName) {
-        updatedEventData['eventName'] = helperFuncs.checkStringLimited(updatedEvent.eventName, 'Edit Event Name');
+    if (updatedEvent.eventNameEdit) {
+        updatedEventData['eventName'] = helperFuncs.checkStringLimited(updatedEvent.eventNameEdit, 'Edit Event Name');
     }
-    if (updatedEvent.date) {
+    if (updatedEvent.dateEdit) {
         // to do check dates
+        updatedEventData['date'] = updatedEvent.dateEdit;
     }
-    if (updatedEvent.location) {
-        updatedEventData['location'] = helperFuncs.checkStringLimited(updatedEvent.location, 'Edit Event Location');
+    if (updatedEvent.locationEdit) {
+        updatedEventData['location'] = helperFuncs.checkStringLimited(updatedEvent.locationEdit, 'Edit Event Location');
     }
-    if (updatedEvent.category) {
-        updatedEventData['category'] = helperFuncs.checkStringLimited(updatedEvent.category, 'Edit Event Location');
+    if (updatedEvent.categoryEdit) {
+        updatedEventData['category'] = helperFuncs.checkStringLimited(updatedEvent.categoryEdit, 'Edit Event Location');
     }
-    if (updatedEvent.permission) {
-        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permission);
+    if (updatedEvent.permEdit) {
+        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permEdit);
     }
-    if (updatedEvent.description) {
-        updatedEventData['description'] = helperFuncs.checkString(updatedEvent.description, 'Edit Event Description');
+    if (updatedEvent.descriptionEdit) {
+        updatedEventData['description'] = helperFuncs.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
     }
-    if (updatedEvent.nearByPort) {
-        updatedEventData['nearByPort'] = helperFuncs.checkStringLimited(updatedEvent.nearByPort, 'Edit Event Port');
+    if (updatedEvent.portEdit) {
+        updatedEventData['nearByPort'] = helperFuncs.checkStringLimited(updatedEvent.portEdit, 'Edit Event Port');
     }
-    if (updatedEvent.eventMode) {
-        updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.eventMode);
+    if (updatedEvent.modeEdit) {
+        updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.modeEdit);
     }
-    if (updatedEvent.eventMode) {
-        updatedEventData['eventName'] = helperFuncs.checkStringFee(updatedEvent.registrationFee);
+    if (updatedEvent.feeEdit) {
+        updatedEventData['registrationFee'] = helperFuncs.checkStringFee(updatedEvent.feeEdit);
     }
-    if (updatedEvent.publish) {
-        updatedEventData['eventName'] = helperFuncs.checkPublishStatus(updatedEvent.publish);
+    if (updatedEvent.action) {
+        updatedEventData['publish'] = helperFuncs.checkPublishStatus(updatedEvent.action);
     }
+
+    const eventCollection = await events();
+    let updateEvent = await eventCollection.findOneAndUpdate(
+        {_id: new ObjectId(eventId)},
+        {$set: updatedEventData},
+        {ReturnDocument: 'after'}
+    );
+
+    if (!updateEvent) throw `Could not update this event`;
+
+    return updateEvent._id.toString();
+}
+
+export const deleteEvent = async (eventId) => {
+    eventId = helperFuncs.checkEventId(eventId);
+
+    const eventCollection = await events();
+    const userCollection = await users();
+
+    const deleteEvent = await eventCollection.findOneAndDelete({
+        _id: new ObjectId(eventId)
+    });
+    if (deleteEvent.lastErrorObject.n === 0) {
+        throw `Could not delete from events`
+    }
+
+    // const deleteUserEvent = await userCollection.findOneAndDelete({
+    //     _id: new ObjectId(eventId)
+    // });
+    // if (deleteUserEvent.lastErrorObject.n === 0) {
+    //     throw `Could not delete from events`
+    // }
+
+    return {deleted: true}
 }
