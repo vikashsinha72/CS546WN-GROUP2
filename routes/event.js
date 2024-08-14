@@ -7,19 +7,38 @@ import { ObjectId } from 'mongodb';
 import path from 'path';
 import helperFuncs from '../helpers.js';
 import { users, events } from '../config/mongoCollections.js'
-import {createEvent, getEvent, getAllEvents} from '../data/events.js';
-import { request } from 'http';
+import {createEvent, getEvent, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
 
+router
+    .route('/')
+    .get(async (req, res) => {
+        // let currentUser = helperFuncs.checkUserId(req.session.user);
+        let currentUser = {
+            _id: '66b157fe426ee3fdfea402da',
+            username: 'alexisbrule'
+        }
+        
+        if (currentUser._id) {
+            let eventRes = await getAllEvents(currentUser._id);
+            if (eventRes.length === 0) {
+                return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+            }
+            else {
+                return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+            }
+        }
+    })
 
 router
     // This will be the creation page for events
-    .route('/createEvent')
+    .route('/create')
     .get(async (req, res) => {
         // Checking if logged in when route is complete
         // if (!req.session.user) {
         //     res.redirect('/userProfile')
         // }
-        res.render('createEvent', { title: 'createEvent' })   
+
+        res.render(path.resolve('views/createEvent'), {title: 'Create Event'});
         
     })
     .post(async (req, res) => {
@@ -104,11 +123,15 @@ router
             return res.status(400).render(path.resolve('views/createEvent'), {errors: errors, hasErrors: true});
         }
 
-        let user = req.session.user
-        let username = user.username    
-        let userId = await userCollection.findOne({username: username})
-        if (!userId) throw `Can't find user.`;
-        userId = userId._id.toString();
+        // let user = req.session.user
+        // let username = user.username    
+        // let userId = await userCollection.findOne({username: username})
+        // if (!userId) throw `Can't find user.`;
+        // userId = userId._id.toString();
+        
+        // for testing- DELETE
+        let userId = '66b157fe426ee3fdfea402da';
+        let username = 'alexisbrule';
 
         try {
             // Returns id if successful
@@ -130,11 +153,11 @@ router
             // redirect to event page
             if (typeof submission === 'string') {
                 submission = '/event/' + submission;
-                res.redirect(submission);
+                return res.redirect(submission);
             }
         }
         catch(e) {
-            return res.status(500).render(path.resolve('views/createEvent'), {errors: e, hasErrors: true});
+            return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
         }
         
     });
@@ -163,9 +186,10 @@ router
             }
             if (eventId.publish !== 'publish') {
                 if (currentUser.username !== eventId.username) {
-                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', hasErrors: true}));
+                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'Cannot edit a published event.', hasErrors: true}));
                 }
                 else {
+                    eventId._id = eventId._id.toString();
                     return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, title: eventId.eventName, hasErrors: false}));
                 }
             }
@@ -186,7 +210,7 @@ router
         eventUrl = eventUrl.substring(splitIndex + 1);
         let eventsCollection = await events();
         let eventId = await eventsCollection.findOne(new ObjectId(eventUrl));
-
+        
         // Only accessing users for first and last name
         let userCollection = await users();
         let userId = await userCollection.findOne({username: eventId.username});
@@ -195,17 +219,21 @@ router
         // UNCOMMENT THIS
         // let currentUser = req.session.user;
         let currentUser = {
-            username: 'alexisbrule'
+            username: 'alexisbrule',
+            _id: '66b157fe426ee3fdfea402da'
         }
 
         // If the event is published you can't edit
         if (currentUser.username === eventId.username) {
             if (eventId.publish !== 'publish') {
-                res.render(path.resolve('views/editEvent'), ({title: eventId.eventName}));
+                return res.render(path.resolve('views/editEvent'), ({eventId: eventId._id.toString(), title: eventId.eventName}));
+            }
+            else {
+                return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, errors: 'Cannot edit published events.', hasErrors: true}));
             }
         }
         else {
-            res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, hasErrors: false}));
+            return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, errors: 'Unauthorized to edit event.', hasErrors: true}));
         }
    }) 
    .patch(async (req, res) => {
@@ -219,42 +247,80 @@ router
         try {
             // checking parameters
             req.params.id = helperFuncs.checkEventId(req.params.id);
-            if (requestBody.eventName) {
-                requestBody.eventName = helperFuncs.checkStringLimited(requestBody.eventName, 'Edit Event Name');
+            if (requestBody.eventNameEdit) {
+                requestBody.eventNameEdit = helperFuncs.checkStringLimited(requestBody.eventNameEdit, 'Edit Event Name');
             }
-            if (requestBody.date) {
+            if (requestBody.dateEdit) {
                 // to do check dates
             }
-            if (requestBody.location) {
-                requestBody.location = helperFuncs.checkStringLimited(requestBody.location, 'Edit Event Location');
+            if (requestBody.locationEdit) {
+                requestBody.locationEdit = helperFuncs.checkStringLimited(requestBody.locationEdit, 'Edit Event Location');
             }
-            if (requestBody.category) {
-                requestBody.category = helperFuncs.checkStringLimited(requestBody.category, 'Edit Event Location');
+            if (requestBody.categoryEdit) {
+                requestBody.categoryEdit = helperFuncs.checkStringLimited(requestBody.categoryEdit, 'Edit Event Location');
             }
-            if (requestBody.permission) {
-                requestBody.permission = helperFuncs.checkPermission(requestBody.permission);
+            if (requestBody.permEdit) {
+                requestBody.permEdit = helperFuncs.checkPermission(requestBody.permEdit);
             }
-            if (requestBody.description) {
-                requestBody.description = helperFuncs.checkString(requestBody.description, 'Edit Event Description');
+            if (requestBody.descriptionEdit) {
+                requestBody.descriptionEdit = helperFuncs.checkString(requestBody.descriptionEdit, 'Edit Event Description');
             }
-            if (requestBody.nearByPort) {
-                requestBody.nearByPort = helperFuncs.checkStringLimited(requestBody.nearByPort, 'Edit Event Port');
+            if (requestBody.portEdit) {
+                requestBody.portEdit = helperFuncs.checkStringLimited(requestBody.portEdit, 'Edit Event Port');
             }
-            if (requestBody.eventMode) {
-                requestBody.eventMode = helperFuncs.checkEventMode(requestBody.eventMode);
+            if (requestBody.modeEdit) {
+                requestBody.modeEdit = helperFuncs.checkEventMode(requestBody.modeEdit);
             }
-            if (requestBody.eventMode) {
-                requestBody.registrationFee = helperFuncs.checkStringFee(requestBody.registrationFee);
+            if (requestBody.feeEdit) {
+                requestBody.feeEdit = helperFuncs.checkStringFee(requestBody.feeEdit);
             }
-            if (requestBody.publish) {
-                requestBody.publish = helperFuncs.checkPublishStatus(requestBody.publish);
+            if (requestBody.action) {
+                requestBody.action = helperFuncs.checkPublishStatus(requestBody.action);
             }
         }
         catch(e) {
            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
         }
 
-        // NOT COMPLETE TO EDIT
+        let updatePost = await updateEventPatch(req.params.id, requestBody);
+        if (typeof updatePost === 'string') {
+            updatePost = '/event/' + updatePost;
+            return res.redirect(updatePost);
+        }
+        else {
+            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+        }
+   })
+   .delete(async (req, res) => {
+        const requestBody = req.body;
+        const requestId = req.params.id;
+
+        // try {
+        //     const userCollection = await users(); 
+        //     const userId = await userCollection.findOne({
+        //         'events._id': requestId
+        //     })
+        //     if (!userId) throw `Cannot find event attatched to a user.`
+        // }
+        // catch(e) {
+        //     return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+        // }
+
+        try {
+            if (requestBody.delete === 'delete') {
+                let deletion = await deleteEvent(requestId);
+                if (deletion.deleted === true) {
+                    res.redirect('/');
+                }
+                else {
+                    throw `Could not delete event.`
+                }
+            }
+        }
+        catch(e) {
+            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+        }
+
 
    })
 export default router;

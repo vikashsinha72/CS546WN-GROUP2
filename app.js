@@ -1,41 +1,67 @@
-
 import express from 'express';
-import { create } from 'express-handlebars';
-import path from 'path';
-import eventRouter from './routes/eventRegistration.js';
-import * as events from "./data/events.js";
-import * as users from "./data/users.js";
-
-const app = express();
-const hbs = create({ defaultLayout: 'main' });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-app.use('/public', express.static(path.resolve('public')));
-
-app.use('/', eventRouter);
+const app = express(); 
+import configRoutes from './routes/index.js';
+import exphbs from 'express-handlebars';
+import session from 'express-session';
 
 
-app.listen(3000, () => {
- console.log("We've now got a server!");
- console.log('Your routes will be running on http://localhost:3000');
+// // JUST TO POPULATE A USER
+// let userName = 'alexisbrule';
+// let password = 'alexisPassword';
+// let email = 'someemail@gmail.com';
+// let firstName = 'Alexis';
+// let lastName = 'Brule';
+
+// createUser(userName, password, email, firstName, lastName);
+
+// // CONTINUES 
+
+
+const staticDir = express.static('public');
+// Middleware for different browser methods namely post/put
+const rewriteMethods = ('/edit/:id', (req, res, next) => {
+    if (req.body && req.body._method) {
+        req.method = req.body._method;
+        delete req.body._method;
+    }
+    next();
+})
+
+// Creating the custom config for handlebars
+const handlebarsInstance = exphbs.create({
+    defaultLayout: 'main',      // master template
+
+    // If we need to create java objects as JSON strings for embedding data
+    helpers: {
+        asJSON: (obj, spacing) => {
+            if (typeof spacing === 'number') return new Handlebars.SafeString(JSON.stringify(obj, null, spacing));
+
+            return new Handlebars.SafeString(JSON.stringify(obj));
+        }
+    }
 });
 
-// async function main()
-//  {
-//     try {
-//         console.log("Create")
-//         const pinkFloyd = await events.createEvent("Sriya", "Birthday", "05/02/2025", "Edison", "Birthday", "Fun Party","Uber",
-//             "Fun", "10.00", "Sriya")
-//             console.log(pinkFloyd);
-//     }
-//     catch(e) {
-//         console.log("Incorrect input:" + e);
-//     } 
+app.use('/public', staticDir);
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));      // Parsing req
+app.use(rewriteMethods);
 
-//  }
+app.engine('handlebars', handlebarsInstance.engine);    // setting engine to use handlebars and custom engines
+app.set('view engine', 'handlebars');
 
-//  main();
+app.use(
+    session({
+        name: 'AuthState', 
+        secret: 'some secret string!',
+        resave: false,
+        saveUninitialized: false
+    })
+);
+
+configRoutes(app);
+
+// Set up port
+app.listen(3000, () => {
+    console.log("We've now got a server!");
+    console.log('Your routes will be running on http://localhost:3000');
+  });
