@@ -3,7 +3,7 @@ const app = express();
 import configRoutes from './routes/index.js';
 import exphbs from 'express-handlebars';
 import session from 'express-session';
-import { createUser, getUser, getAllUsers } from './data/users.js';
+// import { registerUser, loginUser, getUser, getAllUsers } from './data/users.js';
 
 // // JUST TO POPULATE A USER
 // let userName = 'alexisbrule';

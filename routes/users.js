@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUser, registerUser, getAllUsers, getUser } from '../data/users.js'; 
+import { loginUser, registerUser, getUser } from '../data/users.js'; 
 
 const router = Router();
 
@@ -23,7 +23,7 @@ router
         const newUser = await registerUser(username, firstName, lastName, emailAddress, password);
         if (newUser.userInserted) res.render('login');
       } catch (error) {
-        res.render('error') //status 400 code
+        res.status(400).render('error') //status 400 code
       }
     }
   });
@@ -51,7 +51,7 @@ router
       res.redirect('/home');
     } catch (error) {
       console.error(error)
-      res.render('error');
+      res.status(400).render('error');
     }
 });
 router
@@ -60,15 +60,21 @@ router
     const user = req.session.user.userId;
     if (!user) return res.status(400).render('error')
     try {
-        const loggedInUser = await getUser(userId)
-        res.render('profilePage')
+        const loggedInUser = await getUser(user)
+        if (loggedInUser) res.render('profilePage', {
+            username,
+            firstName,
+            lastName,
+            reviews,
+            events
+        })
     } catch (error) {
         return res.status(400).render('error')
     }
 })
 router.route('/error').get(async (req, res) => {
     //code here for GET
-    res.render('error')
+    res.status(400).render('error')
   });
   
   router.route('/logout').get(async (req, res) => {
@@ -77,3 +83,5 @@ router.route('/error').get(async (req, res) => {
       res.render('logout')
     })
   });
+
+  export default router;
