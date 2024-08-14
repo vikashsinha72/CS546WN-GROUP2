@@ -18,11 +18,7 @@ router.route('/').get(async (req, res) => {
         return res.render('eventHome', { title: "Events", user: req.session.user});
 
     }
-
     return res.redirect('/auth');    
-
-
-
 });
     
 router

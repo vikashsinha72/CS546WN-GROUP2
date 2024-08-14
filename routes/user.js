@@ -22,16 +22,6 @@ router.route('/').get(async (req, res) => {
         if (req.session.user) {
             return res.redirect('/event');
 
-            if (req.session.user.role === 'admin') {
-                return res.redirect('/admin');
-            }
-            else if (req.session.user.role === 'user') {
-                return res.redirect('/protected');
-            }
-            else{
-                //return res.status(400).json({error: `User with this role[${req.session.user.role}] doesnot have any authorization`});
-                return res.status(403).json({error: '403: Forbidden, You do not have permission to view this page.'});
-            }
         }
     
         return res.render('register', { title: "User Registration"});
@@ -53,8 +43,6 @@ router.route('/').get(async (req, res) => {
         validators.checkPassword(passwordInput);
         validators.checkPassword(confirmPasswordInput);
         validators.checkRole(roleInput);
-    
-    
     
         if (passwordInput !== confirmPasswordInput) {
             throw 'Passwords do not match.';
