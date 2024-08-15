@@ -1,11 +1,14 @@
-<head>
-    <title>Error</title>
-</head>
+{{!--
+
+You can use this if they try to access a route that they should not be able to. You will redirect them here. For
+example, if they go to /protected without being logged in, or they try to access /admin without beinging logged in or
+they are not an admin user.
+
+--}}
+
+
 <body>
-    <h1>You're not supposed to be here.</h1>
-    <p>Lets get you back to where you belong.</p>
-    <div class="text-center">
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
-    </div>
+    <h1>{{title}}</h1>
+    <p id="error">{{error}}</p>
+    <a href="/auth">Go to Login</a>
 </body>
