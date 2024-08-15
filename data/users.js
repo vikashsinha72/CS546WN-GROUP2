@@ -67,7 +67,7 @@ export const registerUser = async (
     let events = [];
 
     //hash password - 8 salt round
-    const hashedPassword = await bcrypt.hash(password, 8);
+    const hashedPassword = await bcryptjs.hash(password, 8);
   
     //now create user object
     const newUser = {
@@ -110,7 +110,7 @@ export const loginUser = async (emailAddress, password) => {
   const usersCollection = await users();
   const user = await usersCollection.findOne({ emailAddress })
 
-  const checkPassword = await bcrypt.compare(password, user.password);
+  const checkPassword = await bcryptjs.compare(password, user.password);
   if (!checkPassword) throw new Error("Password does not match.");
 
   const { username, firstName, lastName, email } = user;

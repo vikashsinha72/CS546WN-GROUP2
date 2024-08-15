@@ -13,20 +13,23 @@ router
     .route('/')
     .get(async (req, res) => {
         // let currentUser = helperFuncs.checkUserId(req.session.user);
-        let currentUser = {
-            _id: '66b157fe426ee3fdfea402da',
-            username: 'alexisbrule'
-        }
+        let currentUser = '66be4c176ec51c1d0959d96e';
         
-        if (currentUser._id) {
-            let eventRes = await getAllEvents(currentUser._id);
-            if (eventRes.length === 0) {
-                return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
-            }
-            else {
-                return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+        try {
+            if (currentUser) {
+                let eventRes = await getAllEvents(currentUser);
+                if (eventRes.length === 0) {
+                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+                }
+                else {
+                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+                }
             }
         }
+        catch(e) {
+            return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', errors: e, hasErrors: true}));
+        }
+    
     })
 
 router
@@ -130,14 +133,12 @@ router
         // userId = userId._id.toString();
         
         // for testing- DELETE
-        let userId = '66b157fe426ee3fdfea402da';
-        let username = 'alexisbrule';
+        let userId = '66be4c176ec51c1d0959d96e';
 
         try {
             // Returns id if successful
             let submission = await createEvent(
-                userId, 
-                username, 
+                userId,
                 inputs.eventNameInput, 
                 inputs.dateInput, 
                 inputs.locationInput,
@@ -175,17 +176,15 @@ router
 
             // Only accessing users for first and last name
             let userCollection = await users();
-            let userId = await userCollection.findOne({username: eventId.username});
+            let userId = await userCollection.findOne({_id: eventId.userId});
 
             // Checking access rights
 
             // UNCOMMENT THIS
-            // let currentUser = req.session.user;
-            let currentUser = {
-                username: 'alexisbrule'
-            }
+            // let currentUser = req.session.user._id;
+            let currentUser = '66be4c176ec51c1d0959d96e';
             if (eventId.publish !== 'publish') {
-                if (currentUser.username !== eventId.username) {
+                if (currentUser !== eventId.userId) {
                     return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'Cannot edit a published event.', hasErrors: true}));
                 }
                 else {
@@ -209,77 +208,163 @@ router
         let splitIndex = eventUrl.lastIndexOf('/');
         eventUrl = eventUrl.substring(splitIndex + 1);
         let eventsCollection = await events();
-        let eventId = await eventsCollection.findOne(new ObjectId(eventUrl));
-        
-        // Only accessing users for first and last name
         let userCollection = await users();
-        let userId = await userCollection.findOne({username: eventId.username});
-
-        // Check access
-        // UNCOMMENT THIS
-        // let currentUser = req.session.user;
-        let currentUser = {
-            username: 'alexisbrule',
-            _id: '66b157fe426ee3fdfea402da'
+        let eventId;
+        let userIdCheck;
+        // if the event cannot be found
+        try {
+            eventId = await eventsCollection.findOne(new ObjectId(eventUrl));
+        }
+        catch (e) {
+            return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot find event.', hasErrors: true}));
         }
 
+        // let currentUser = req.session.user._id
+        
+        let currentUser = '66be4c176ec51c1d0959d96e';
+
+        // If event.userId does not match current user's id
+        try {
+            userIdCheck = await userCollection.findOne({"events._id": currentUser});   
+        }
+        catch (e) {
+            return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot find event attatched to current user', hasErrors: true}));
+        }
+
+        // Check access
         // If the event is published you can't edit
-        if (currentUser.username === eventId.username) {
+        if (currentUser === eventId.userId) {
             if (eventId.publish !== 'publish') {
-                return res.render(path.resolve('views/editEvent'), ({eventId: eventId._id.toString(), title: eventId.eventName}));
+                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: false}));
+            }
+            else if (eventId.status === 'closed' || eventId.status === 'executed'){
+                return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot edit closed/executed events.', hasErrors: true}));
             }
             else {
-                return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, errors: 'Cannot edit published events.', hasErrors: true}));
+                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: true}));
             }
         }
         else {
-            return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, errors: 'Unauthorized to edit event.', hasErrors: true}));
+            return res.render(path.resolve('views/eventHome'), ({errors: 'Unauthorized to edit event.', hasErrors: true}));
         }
    }) 
    .patch(async (req, res) => {
         const requestBody = req.body; 
-        
+        let errors = [];
+
         // check for content
         if (!requestBody || Object.keys(requestBody).length === 0) {
             return res.status(400).render(path.resolve('views/eventHome'), ({errors: 'There are no fields in request body.', hasErrors: true}))
         }
 
+        // checking parameters
+        req.params.id = helperFuncs.checkEventId(req.params.id);
         try {
-            // checking parameters
-            req.params.id = helperFuncs.checkEventId(req.params.id);
             if (requestBody.eventNameEdit) {
                 requestBody.eventNameEdit = helperFuncs.checkStringLimited(requestBody.eventNameEdit, 'Edit Event Name');
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
             if (requestBody.dateEdit) {
                 // to do check dates
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
             if (requestBody.locationEdit) {
                 requestBody.locationEdit = helperFuncs.checkStringLimited(requestBody.locationEdit, 'Edit Event Location');
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+        try {
             if (requestBody.categoryEdit) {
                 requestBody.categoryEdit = helperFuncs.checkStringLimited(requestBody.categoryEdit, 'Edit Event Location');
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
             if (requestBody.permEdit) {
                 requestBody.permEdit = helperFuncs.checkPermission(requestBody.permEdit);
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
             if (requestBody.descriptionEdit) {
                 requestBody.descriptionEdit = helperFuncs.checkString(requestBody.descriptionEdit, 'Edit Event Description');
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try{
             if (requestBody.portEdit) {
                 requestBody.portEdit = helperFuncs.checkStringLimited(requestBody.portEdit, 'Edit Event Port');
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try{
             if (requestBody.modeEdit) {
                 requestBody.modeEdit = helperFuncs.checkEventMode(requestBody.modeEdit);
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
             if (requestBody.feeEdit) {
                 requestBody.feeEdit = helperFuncs.checkStringFee(requestBody.feeEdit);
             }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try{
             if (requestBody.action) {
                 requestBody.action = helperFuncs.checkPublishStatus(requestBody.action);
+                let eventCollection = await events();
+                let finder = await eventCollection.findOne({_id: new ObjectId(req.params.id)});
+
+                if (requestBody.action === 'publish' && finder.publish === 'save') {
+                    requestBody.statusEdit = 'published';
+                }
             }
         }
         catch(e) {
-           return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+            errors.push(e);
+        }
+
+        try{
+            if (requestBody.statusEdit) {
+                requestBody.statusEdit = helperFuncs.checkStatus(requestBody.action, requestBody.statusEdit, 'Edit Event Status');
+            }
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).render(path.resolve('views/editEvent'), {errors: errors, hasErrors: true});
         }
 
         let updatePost = await updateEventPatch(req.params.id, requestBody);
@@ -295,22 +380,22 @@ router
         const requestBody = req.body;
         const requestId = req.params.id;
 
-        // try {
-        //     const userCollection = await users(); 
-        //     const userId = await userCollection.findOne({
-        //         'events._id': requestId
-        //     })
-        //     if (!userId) throw `Cannot find event attatched to a user.`
-        // }
-        // catch(e) {
-        //     return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
-        // }
+        try {
+            const userCollection = await users(); 
+            const userId = await userCollection.findOne({
+                'events._id': new ObjectId(requestId)
+            });
+            if (!userId) throw `Cannot find event attatched to a user.`
+        }
+        catch(e) {
+            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+        }
 
         try {
             if (requestBody.delete === 'delete') {
                 let deletion = await deleteEvent(requestId);
                 if (deletion.deleted === true) {
-                    res.redirect('/');
+                    res.redirect('/event/');
                 }
                 else {
                     throw `Could not delete event.`

@@ -1,10 +1,11 @@
 import { users, events } from '../config/mongoCollections.js';
-import { ObjectId, ReturnDocument } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import helperFuncs from '../helpers.js';
+import validators from '../validators.js';
 
 export const createEvent = async (
+    // I took away username as it is not needed here
     userId, 
-    username,
     eventName, 
     date, 
     location, 
@@ -18,28 +19,37 @@ export const createEvent = async (
 ) => {
 
     // Error handling
-    // Check for valid userId 
-    userId = helperFuncs.checkUserId(userId);
+    // Changing error handling to a mix of Vikash's validators and mine
 
-    // Check for valid strings
-    username = helperFuncs.checkStringLimited(username, 'Create Event userName');
-    eventName = helperFuncs.checkStringLimited(eventName, 'Create Event Name');
-    location = helperFuncs.checkStringLimited(location, 'Create Event Location');
-    category = helperFuncs.checkStringLimited(category, 'Create Event Category');
-    description = helperFuncs.checkString(description, 'Create Event Description');
-    nearByPort = helperFuncs.checkStringLimited(nearByPort, 'Create Event Port');
-    registrationFee = helperFuncs.checkStringFee(registrationFee);
-    
-    // Special checks
-    publish = helperFuncs.checkPublishStatus(publish);
-    eventMode = helperFuncs.checkEventMode(eventMode);
-    permission = helperFuncs.checkPermission(permission);
-    
-    // --- TODO check date ---
+    try {
+        userId = validators.checkObjectId(userId, 'Create Event userId');
+        validators.checkStrings(
+            [eventName, 'Create Event Name'],
+            [location, 'Create location'],
+            [category, 'Create category'],
+            [description, 'Create description'],
+            [nearByPort, 'Create nearByPort'],
+        );
+        // date = validators.checkDate(date, 'Create date');   // This will be updated to check the time as well 
+        registrationFee = validators.checkPrice(Number(registrationFee), 'Create fee');
+        eventMode = helperFuncs.checkEventMode(eventMode);
+        permission = helperFuncs.checkPermission(permission);
+        publish = helperFuncs.checkPublishStatus(publish, 'Create publish/save');
+    }
+    catch(e) {
+        throw 'Validation Error: ', e;
+    }
 
+    let eventStatus = '';
     //initialize empty reviews subdocument
     let reviews = [];
-    let eventStatus = 'open'
+    if (publish === 'publish') {
+        eventStatus = 'published';
+    }
+    else {
+        eventStatus = 'planned';
+    }
+    
 
     // making a string into ObjectId format
     const userObjId = new ObjectId(userId);
@@ -48,7 +58,6 @@ export const createEvent = async (
     const newEvent = {
         _id: new ObjectId(),
         userId: userId,
-        username: username, 
         eventName: eventName,
         date: date,
         category: category,
@@ -69,6 +78,7 @@ export const createEvent = async (
     const insertEv = await eventCollection.insertOne(newEvent);
     if (!insertEv.acknowledged || !insertEv.insertedId) throw 'Could not add event';
     const updateUser = await userCollection.updateOne({_id: userObjId}, {$push: {events:{_id: newEvent._id, eventName: eventName}}});
+    if (!updateUser.acknowledged) throw 'Could not add event to user profile';
 
     let newId = insertEv.insertedId.toString();
     return newId;
@@ -80,6 +90,7 @@ export const getEvent = async (eventId) => {
     eventId = helperFuncs.checkEventId(eventId);
     
     // Get event
+    // CHANGE USERNAME TO FIRST AND LAST? 
     const eventCollection = await events();
     const event = await eventCollection.findOne(
         { _id: new ObjectId(eventId)},
@@ -107,7 +118,7 @@ export const getAllEvents = async (userId) => {
 
     if (!eventChecker) throw `Cannot find events for that user!`;
 
-
+    // CHANGE USERNAME TO FIRST AND LAST? 
     // excluded openClose and publish from users
     let eventList = await eventCollection.find({}).project({
         username: 1, 
@@ -165,6 +176,9 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
     if (updatedEvent.action) {
         updatedEventData['publish'] = helperFuncs.checkPublishStatus(updatedEvent.action);
     }
+    if (updatedEvent.statusEdit) {
+        updatedEventData['eventStatus'] = helperFuncs.checkStatus(updatedEvent.action, updatedEvent.statusEdit, 'Edit Event Status');
+    }
 
     const eventCollection = await events();
     let updateEvent = await eventCollection.findOneAndUpdate(
@@ -179,24 +193,36 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
 }
 
 export const deleteEvent = async (eventId) => {
-    eventId = helperFuncs.checkEventId(eventId);
+    eventId = validators.checkObjectId(eventId);
 
     const eventCollection = await events();
     const userCollection = await users();
+    
+    // Check if they can delete the event
+    try { 
+        const userId = await userCollection.findOne({
+            'events._id': new ObjectId(eventId)
+        });
+        if (!userId) throw `Cannot find event attatched to a user.`;
+    }
+    catch(e) {
+        return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+    } 
 
+    // Need error checking on delete but not sure how to do that
     const deleteEvent = await eventCollection.findOneAndDelete({
         _id: new ObjectId(eventId)
     });
-    if (deleteEvent.lastErrorObject.n === 0) {
-        throw `Could not delete from events`
-    }
 
-    // const deleteUserEvent = await userCollection.findOneAndDelete({
-    //     _id: new ObjectId(eventId)
-    // });
-    // if (deleteUserEvent.lastErrorObject.n === 0) {
-    //     throw `Could not delete from events`
-    // }
+
+    // Can't use find and delete because it will delete the whole user
+    const deleteUserEvent = await userCollection.findOneAndUpdate(
+        {'events._id': new ObjectId(eventId)},
+        {$pull: {events: {_id: new ObjectId(eventId)}}},
+        {returnDocument: 'after'}
+    );
+
+
 
     return {deleted: true}
 }

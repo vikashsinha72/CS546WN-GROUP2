@@ -64,12 +64,40 @@ const helperFuncs = {
         return numVal;
     },
 
+    // Status can be changed through editing
+    checkStatus(pubStat, status, varName) {
+        const eventStatus = {
+            unpublished: ['planned', 'ready', 'suspended'],   // on save creation status will auto planned
+            published: ['published', 'executed', 'closed']    // on publish creation status will auto published
+        };
+
+        if (pubStat === 'publish') {
+            for (let i = 0; i < 3; i++) {
+                if (status === eventStatus.published[i]) {
+                    return status;
+                }
+            }
+        }
+        else {
+            for (let i = 0; i < 3; i++) {
+                if (status === eventStatus.unpublished[i]) {
+                    return status;
+                }
+            }
+        }
+        return new Error('Status not found.');
+    },
+
     checkPublishStatus(pubStat, varName) {
-        if (!pubStat) throw `You must provide a(n) ${varName}.`;
+        if (!pubStat) throw `Error: You must supply a ${varName || 'string'}.`;
+        if (typeof pubStat !== 'string') throw `Error: ${varName || 'input'} must be a string.`;
+        pubStat.trim();
+        if (pubStat.length === 0) throw `Error: ${varName || 'input'} must not be blank or all spaces.`;
         pubStat = pubStat.toLowerCase().trim(); 
         if (pubStat !== 'publish' && pubStat !== 'save') throw `${varName} must be either admin or user.`;
+
         return pubStat;
-    },
+    }
 }
 
 export default helperFuncs;
