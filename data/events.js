@@ -1,7 +1,6 @@
 
 import { events } from "../config/mongoCollections.js";
 import {ObjectId} from 'mongodb';
-
 import validators from '../validators.js';
 
 
@@ -26,7 +25,7 @@ import validators from '../validators.js';
 
   const exportedMethods = {
 
-    async create(
+    async createEvent(
     eventName,
     eventDescription,
     eventDate,
@@ -314,10 +313,6 @@ import validators from '../validators.js';
   
         
       }
-    
-  
-  
-  
   }
   
   export default exportedMethods;

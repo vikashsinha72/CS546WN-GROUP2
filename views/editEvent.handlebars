@@ -1,7 +1,130 @@
-{{! Simple extension to the main html file}}
-{{! Remember that you don't full html structure for extensions}}
+<body class="editEvent">
+    <h1>Edit Your Event</h1>
+    <h2>Only fill out the ones you have to change!</h2>
+    <main class="editEvent">
+        {{#unless published}}
+        <form class="editEvent" id="eventEdit-form" method="POST">
+            {{! This is to actually patch the form with the middleware in app.js}}
+            <input type="hidden" name="_method" value="PATCH">
 
-<body>
-    <h1>--- Insert Header Here---</h1>
-    <main></main>
+            <label for="eventName">
+                Event Name:
+                <input type="text" name="eventNameEdit" placeholder="{{event.eventName}}" id="eventNameEdit">
+            </label>
+            <br>
+            
+            <label for="dateEdit">
+                Date:
+                <input type="date" name="dateEdit" placeholder="{{event.date}}" id="dateEdit"
+                min="2024-01-01">
+            </label>
+            <br>
+
+            <label for="locationEdit">
+                Location:
+                <input type="text" name="locationEdit" placeholder="{{event.location}}" id="locationEdit">
+            </label>
+            <br>
+
+            <label for="descriptionEdit">
+                Description:
+                <input type="text" name="descriptionEdit" placeholder="{{event.description}}" id="descriptionEdit">
+            </label>
+            <br>
+
+            <label for="modeEdit">
+                Event Mode:
+                <select type="eventMode" name="modeEdit" placeholder="{{event.mode}}" id="modeEdit">
+                   <option value="online">Online</option>
+                   <option value="person">In-Person</option>
+                </select>
+            </label>
+            <br>
+
+            <label for="feeEdit">
+                Registration Fee:
+                <input type="text" name="feeEdit" placeholder="{{event.registrationFee}}" id="feeEdit">
+            </label>
+            <br>
+
+            <label for="permEdit">
+                Who's Coming:
+                <select type="permission" name="permEdit" placeholder="{{event.permission}}" id="permEdit">
+                   <option value="public">Public</option>
+                   <option value="private">Private</option>
+                </select>
+            </label>
+            <br>
+
+            {{! Category input from Sriya}}
+            <div class="dropdown">
+                <label for="categoryEdit">
+                    Category:
+                    <select class = "categoryEdit" placeholder="{{event.category}}" name = "categoryEdit">
+                        <option value="Party">Party</option>
+                        <option value="Birthday">Birthday</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Anniversary">Anniversary</option>
+                        <option value="Baby Shower">Baby Shower</option>
+                        <option value="Holiday Celebration">Holiday Celebration</option>
+                        <option value="Religious Holiday">Religious Holiday</option>
+                        <option value="Get Together">Get Together</option>
+                        <option value="Business Meeting">Business Meeting</option>
+                        <option value="Casual Hangout">Casual Hangout</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Vacation">Vacation</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label>
+            </div>
+            <br>
+
+            <label for="portEdit">
+                Nearest Port:
+                <input type="text" name="portEdit" placeholder="{{event.nearByPort}}" id="portEdit">
+            </label>
+            <br>
+
+            <label for="statusEdit">
+                Change Event Status? 
+                <select type="status" name="statusEdit" placeholder="{{event.status}}" id="statusEdit">
+                    <option value="planned">Planned: Default Status</option>
+                    <option value="ready">Ready: Prepared to Publish</option>
+                    <option value="suspended">Suspended: On hold to be Published</option>
+                </select>
+            </label>
+
+            <button type="submit" name="action" value="save">Save For Later</button>
+            <button type="submit" name="action" value="publish">Publish Event</button>
+        </form>
+        <form class="deleteEvent" id="eventDelete-form" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="delete" name="delete" onclick="return confirm('Are you sure you want to delete this event?')" value="delete">DELETE EVENT</button>
+        </form> 
+        {{/unless}}
+        {{#if published}}
+        <form class="editEvent" id="eventEdit-form" method="POST" action="/event/{{event._id}}" >
+            <label for="statusEdit">
+                Change Event Status? 
+                <select type="status" name="statusEdit" placeholder="{{event.status}}" id="statusEdit">
+                    <option value="published">Published: Default Status</option>
+                    <option value="closed">Closed: Cancelled event, can't be edited or deleted!</option>
+                    <option value="executed">Executed: Finished event, can't be edited or deleted!</option>
+                </select>
+            </label>
+            <button type="submit" name="action" value="publish">Confirm Status Change?</button>
+        </form>
+        {{/if}}
+    {{#if hasErrors}}
+    <ul class="error-list">
+        {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+    </main>
+    <a href="/event/">Back to your events</a>
+    <script src="../public/js/events.js"></script>
 </body>
