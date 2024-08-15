@@ -90,12 +90,10 @@ export const getEvent = async (eventId) => {
     eventId = helperFuncs.checkEventId(eventId);
     
     // Get event
-    // CHANGE USERNAME TO FIRST AND LAST? 
     const eventCollection = await events();
     const event = await eventCollection.findOne(
         { _id: new ObjectId(eventId)},
         {projection: {
-            username: 1, 
             eventName: 1, 
             date: 1, 
             location: 1, 
@@ -118,10 +116,8 @@ export const getAllEvents = async (userId) => {
 
     if (!eventChecker) throw `Cannot find events for that user!`;
 
-    // CHANGE USERNAME TO FIRST AND LAST? 
     // excluded openClose and publish from users
     let eventList = await eventCollection.find({}).project({
-        username: 1, 
         eventName: 1, 
         date: 1, 
         location: 1, 
@@ -146,32 +142,32 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
     const updatedEventData = {};
 
     if (updatedEvent.eventNameEdit) {
-        updatedEventData['eventName'] = helperFuncs.checkStringLimited(updatedEvent.eventNameEdit, 'Edit Event Name');
+        updatedEventData['eventName'] = validators.checkString(updatedEvent.eventNameEdit, 'Edit Event Name');
     }
     if (updatedEvent.dateEdit) {
         // to do check dates
         updatedEventData['date'] = updatedEvent.dateEdit;
     }
     if (updatedEvent.locationEdit) {
-        updatedEventData['location'] = helperFuncs.checkStringLimited(updatedEvent.locationEdit, 'Edit Event Location');
+        updatedEventData['location'] = validators.checkString(updatedEvent.locationEdit, 'Edit Event Location');
     }
     if (updatedEvent.categoryEdit) {
-        updatedEventData['category'] = helperFuncs.checkStringLimited(updatedEvent.categoryEdit, 'Edit Event Location');
+        updatedEventData['category'] = validators.checkString(updatedEvent.categoryEdit, 'Edit Event Location');
     }
     if (updatedEvent.permEdit) {
         updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permEdit);
     }
     if (updatedEvent.descriptionEdit) {
-        updatedEventData['description'] = helperFuncs.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
+        updatedEventData['description'] = validators.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
     }
     if (updatedEvent.portEdit) {
-        updatedEventData['nearByPort'] = helperFuncs.checkStringLimited(updatedEvent.portEdit, 'Edit Event Port');
+        updatedEventData['nearByPort'] = validators.checkString(updatedEvent.portEdit, 'Edit Event Port');
     }
     if (updatedEvent.modeEdit) {
         updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.modeEdit);
     }
     if (updatedEvent.feeEdit) {
-        updatedEventData['registrationFee'] = helperFuncs.checkStringFee(updatedEvent.feeEdit);
+        updatedEventData['registrationFee'] = validators.checkPrice(updatedEvent.feeEdit);
     }
     if (updatedEvent.action) {
         updatedEventData['publish'] = helperFuncs.checkPublishStatus(updatedEvent.action);

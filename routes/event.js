@@ -6,7 +6,8 @@ const router = Router();
 import { ObjectId } from 'mongodb';
 import path from 'path';
 import helperFuncs from '../helpers.js';
-import { users, events } from '../config/mongoCollections.js'
+import validators from '../validators.js';
+import { users, events } from '../config/mongoCollections.js';
 import {createEvent, getEvent, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
 
 router
@@ -51,11 +52,40 @@ router
         // Error checking
         // Event Name
         try {
-            inputs.eventNameInput = helperFuncs.checkStringLimited(inputs.eventNameInput, 'POST eventNameInput');
+            inputs.eventNameInput = validators.checkString(inputs.eventNameInput, 'POST Event Name');
         }
         catch(e) {
             errors.push(e);
         }
+
+        try {
+            inputs.locationInput = validators.checkString(inputs.locationInput, 'POST Event location');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
+            inputs.categoryInput = validators.checkString(inputs.categoryInput, 'POST Event category');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
+            inputs.descriptionInput = validators.checkString(inputs.descriptionInput, 'POST Event description');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        try {
+            inputs.portInput = validators.checkString(inputs.portInput, 'POST Event nearByPort');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
 
         // TODO -- check date validity --
         // try {
@@ -65,23 +95,6 @@ router
         //     errors.push(e);
         // }
 
-        // Location
-        try {
-            inputs.locationInput = helperFuncs.checkStringLimited(inputs.locationInput, 'POST locationInput');
-        }
-        catch(e) {
-            errors.push(e);
-        }
-
-        // Description
-        try {
-            inputs.descriptionInput = helperFuncs.checkString(inputs.descriptionInput, 'POST descriptionInput');
-        }
-        catch(e) {
-            errors.push(e);
-        }
-
-        // Mode
         try {
             inputs.modeInput = helperFuncs.checkEventMode(inputs.modeInput);
         }
@@ -91,7 +104,7 @@ router
 
         // Fee
         try {
-            inputs.feeInput = helperFuncs.checkStringFee(inputs.feeInput, 'POST feeInput');
+            inputs.feeInput =  validators.checkPrice(Number(inputs.feeInput), 'POST fee');
         }
         catch(e) {
             errors.push(e);
@@ -100,22 +113,6 @@ router
         // Permissions
         try {
             inputs.permInput = helperFuncs.checkPermission(inputs.permInput);
-        }
-        catch(e) {
-            errors.push(e);
-        }
-
-        // Category
-        try {
-            inputs.categoryInput = helperFuncs.checkStringLimited(inputs.categoryInput, 'Event categoryInput');
-        }
-        catch(e) {
-            errors.push(e);
-        }
-
-        // Near By Port
-        try {
-            inputs.portInput = helperFuncs.checkStringLimited(inputs.portInput, 'Event portInput');
         }
         catch(e) {
             errors.push(e);
@@ -185,7 +182,7 @@ router
             let currentUser = '66be4c176ec51c1d0959d96e';
             if (eventId.publish !== 'publish') {
                 if (currentUser !== eventId.userId) {
-                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'Cannot edit a published event.', hasErrors: true}));
+                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'You do not have access to this event.', hasErrors: true}));
                 }
                 else {
                     eventId._id = eventId._id.toString();
@@ -261,7 +258,7 @@ router
         req.params.id = helperFuncs.checkEventId(req.params.id);
         try {
             if (requestBody.eventNameEdit) {
-                requestBody.eventNameEdit = helperFuncs.checkStringLimited(requestBody.eventNameEdit, 'Edit Event Name');
+                requestBody.eventNameEdit = validate.checkString(requestBody.eventNameEdit, 'Edit Event Name');
             }
         }
         catch(e) {
@@ -279,7 +276,7 @@ router
 
         try {
             if (requestBody.locationEdit) {
-                requestBody.locationEdit = helperFuncs.checkStringLimited(requestBody.locationEdit, 'Edit Event Location');
+                requestBody.locationEdit = validate.checkString(requestBody.locationEdit, 'Edit Event Location');
             }
         }
         catch(e) {
@@ -287,7 +284,7 @@ router
         }
         try {
             if (requestBody.categoryEdit) {
-                requestBody.categoryEdit = helperFuncs.checkStringLimited(requestBody.categoryEdit, 'Edit Event Location');
+                requestBody.categoryEdit = validate.checkString(requestBody.categoryEdit, 'Edit Event Location');
             }
         }
         catch(e) {
@@ -305,7 +302,7 @@ router
 
         try {
             if (requestBody.descriptionEdit) {
-                requestBody.descriptionEdit = helperFuncs.checkString(requestBody.descriptionEdit, 'Edit Event Description');
+                requestBody.descriptionEdit = validate.checkString(requestBody.descriptionEdit, 'Edit Event Description');
             }
         }
         catch(e) {
@@ -314,7 +311,7 @@ router
 
         try{
             if (requestBody.portEdit) {
-                requestBody.portEdit = helperFuncs.checkStringLimited(requestBody.portEdit, 'Edit Event Port');
+                requestBody.portEdit = validate.checkString(requestBody.portEdit, 'Edit Event Port');
             }
         }
         catch(e) {
@@ -332,7 +329,7 @@ router
 
         try {
             if (requestBody.feeEdit) {
-                requestBody.feeEdit = helperFuncs.checkStringFee(requestBody.feeEdit);
+                requestBody.feeEdit = validate.checkPrice(requestBody.feeEdit);
             }
         }
         catch(e) {
@@ -345,6 +342,7 @@ router
                 let eventCollection = await events();
                 let finder = await eventCollection.findOne({_id: new ObjectId(req.params.id)});
 
+                // If an event is going from saved to published we assign it the new status
                 if (requestBody.action === 'publish' && finder.publish === 'save') {
                     requestBody.statusEdit = 'published';
                 }
