@@ -1,7 +1,7 @@
 
 /**create log for each request */
 const logRequest = async (req, res, next) => {
-    const authenticated = req.session.user ? 'user' : 'guest';
+    const authenticated = req.session.user ? req.session.user.firstName + " "  + req.session.user.lastName: 'guest';
     console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${authenticated})`);
     return next();
 } 
@@ -67,10 +67,10 @@ const ensureAuthenticated = async (req, res, next) => {
         }
         return next();
     }
-
+/* 
     if (req.originalUrl !== '/event') {
         return res.redirect('/event');
-    }
+    } */
     
     return next();
 };

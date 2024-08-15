@@ -5,7 +5,7 @@
 <div id="eventSearch">
 <h2>Search Events</h2>
 <form id="eventSearch-form" action="/event/search" method="POST">
-  <label for="eventName">Event Name:</label>
+  <label for="eventNameInput">Event Name:</label>
   <input type="text" id="eventNameInput" name="eventNameInput">
   
   <label for="categoryInput">Category:</label>
@@ -25,8 +25,9 @@
 </form>
 </div>
 
-<div id="eventList" >
-    <h2>Events</h2>
+<div id="eventList">
+    <h2>Event List</h2>
+    <div id="eventSearchList">Search Result</div>
 <ul>
     {{#each events}}
     <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>

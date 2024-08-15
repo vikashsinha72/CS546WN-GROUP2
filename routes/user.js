@@ -2,8 +2,9 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
-import userData from '../data/users.js';
+import xss from 'xss';
 
+import userData from '../data/users.js';
 import validators from '../validators.js';
 
 const router = Router(); 
@@ -31,8 +32,13 @@ router.route('/').get(async (req, res) => {
         //code here for POST
     
         try {
-        const { firstNameInput, lastNameInput, emailAddressInput, passwordInput, confirmPasswordInput, roleInput } = req.body;
-        if (!firstNameInput || !lastNameInput || !emailAddressInput || !passwordInput || !confirmPasswordInput || !roleInput) {
+        const firstNameInput = xss(req.body.firstNameInput);
+        const lastNameInput = xss(req.body.lastNameInput);
+        const emailAddressInput = xss(req.body.emailAddressInput);
+        const passwordInput = xss(req.body.passwordInput);
+        const confirmPasswordInput = xss(req.body.confirmPasswordInput);
+        
+        if (!firstNameInput || !lastNameInput || !emailAddressInput || !passwordInput || !confirmPasswordInput ) {
             throw 'All fields must be supplied.';
         }
     
@@ -42,12 +48,11 @@ router.route('/').get(async (req, res) => {
         validators.checkEmail(emailAddressInput);
         validators.checkPassword(passwordInput);
         validators.checkPassword(confirmPasswordInput);
-        validators.checkRole(roleInput);
     
         if (passwordInput !== confirmPasswordInput) {
             throw 'Passwords do not match.';
         }
-        let userRegistered = await userData.registerUser(firstNameInput, lastNameInput, emailAddressInput, passwordInput, roleInput);
+        let userRegistered = await userData.registerUser(firstNameInput, lastNameInput, emailAddressInput, passwordInput);
         
         if(userRegistered.insertedUser)
         {      

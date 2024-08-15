@@ -239,6 +239,47 @@ import validators from '../validators.js';
   
     },
 
+
+
+    async searchEvent(
+      eventName,
+      eventDate, 
+      locationInput, 
+      category, 
+      registration
+    ) {
+  
+      try {
+        const eventCollection = await events();
+
+        // Building the query object
+        const query = {};
+
+        if (eventName) {
+          query.eventName = { $regex: eventName, $options: 'i' }; // Case-insensitive search
+        }
+        if (eventDate) {
+          query.eventDate = eventDate;
+        }
+        if (locationInput) {
+          query.locationInput = { $regex: locationInput, $options: 'i' };
+        }
+        if (category) {
+          query.category = { $regex: category, $options: 'i' };
+        }
+        if (registration) {
+          query.registrationFee = registration;
+        }
+
+        const eventList = await eventCollection.find(query).toArray();
+        return eventList || [];        
+
+      } catch (e) {
+        throw 'MongoDB connection error :', e;  
+      }
+    
+    },
+
     async addSubscriber (
         eventId,
         userId

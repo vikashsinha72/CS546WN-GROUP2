@@ -11,8 +11,7 @@ UsersSchema =Schema({
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
-    hashedPassword: { type: String, required: true },
-    role: { type: String, required: true }
+    hashedPassword: { type: String, required: true }
   });
   */
 
@@ -23,16 +22,14 @@ async registerUser(
   firstName,
   lastName,
   emailAddress,
-  password,
-  role
+  password
 )  {
   try{
     validators.checkStrings(
       [firstName, 'First Name'],
       [lastName, 'Last Name'],
       [emailAddress, 'Email Address'],
-      [password, 'Password'],
-      [role, 'Role']
+      [password, 'Password']
     );
   
     // Add further validation
@@ -40,8 +37,6 @@ async registerUser(
     validators.checkLastname(lastName);
     validators.checkEmail(emailAddress);
     validators.checkPassword(password);
-    //validators.checkRole(role);
-
   }
   catch (e) {
     throw 'Validation Error :', e;
@@ -60,8 +55,7 @@ async registerUser(
     firstName,
     lastName,
     emailAddress: emailAddress.toLowerCase(),
-    password: hashedPassword,
-    role: role.toLowerCase()
+    password: hashedPassword
   };
 
   const insertResult = await usersCollection.insertOne(newUser);
@@ -120,8 +114,7 @@ async updateUser(
     firstName,
     lastName,
     emailAddress,
-    password,
-    role
+    password
   )  {
     try{
       validators.checkStrings(
@@ -129,8 +122,7 @@ async updateUser(
         [firstName, 'First Name'],
         [lastName, 'Last Name'],
         [emailAddress, 'Email Address'],
-        [password, 'Password'],
-        [role, 'Role']
+        [password, 'Password']
       );
     
       // Add further validation
@@ -139,7 +131,6 @@ async updateUser(
       validators.checkLastname(lastName);
       validators.checkEmail(emailAddress);
       validators.checkPassword(password);
-      //validators.checkRole(role);
   
     }
     catch (e) {
@@ -162,8 +153,7 @@ async updateUser(
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         emailAddress: emailAddress.trim(),
-        hashedPassword: hashedPassword,
-        role: role.trim()
+        hashedPassword: hashedPassword
       };
 
     const objectId =  new ObjectId(userId);
@@ -218,10 +208,10 @@ async loginUser(emailAddress, password) {
         }
 
         return {
+            userId: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             emailAddress: user.emailAddress,
-            role: user.role
         };
 
 } catch (e) {

@@ -165,3 +165,10 @@ header nav ul li a.active {
   background-color: #04AA6D; /* Active link color */
   border-radius: 5px;
 }
+
+
+#eventSearchList {
+  color: #290cac;
+  text-align: center;
+  margin-top: 20px;
+}

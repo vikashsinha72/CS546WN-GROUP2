@@ -86,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const errors = [];
 
+            alert("Event Create");
+
             const eventName = document.getElementById('eventNameInput').value.trim();
             const eventDate = document.getElementById('eventDateInput').value.trim();
             const location = document.getElementById('locationInput').value.trim();
@@ -95,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const eventMode = document.getElementById('eventModeInput').value.trim();
             const registrationFee = document.getElementById('registrationFeeInput').value.trim();
             const contactPerson = document.getElementById('contactPersonInput').value.trim();
+
+            alert("Event Create");
 
 
             // Validate Event Name
@@ -158,6 +162,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 //registerForm.submit();
  
                 // AJAX logic for form submission
+                let requestConfig = {
+                    method: 'POST',
+                    url: '/event/create',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        eventNameInput: eventName,
+                        dateInput: date,
+                        locationInput = location ,
+                        categoryInput: category,
+                        descriptionInput = description,
+                        nearByPortInput =  nearByPort,
+                        eventModeInput = eventMode,
+                        registrationFeeInput = registrationFee,
+                        contactPersonInput =  contactPerson
+                    })
+                  };
+
+
+                //Make AJAX Call
+
+                $.ajax(requestConfig)
+                .done((response) => {
+                    // `response` is already parsed JSON
+                    alert("Create result: " + JSON.stringify(response)); // Alert the result as a string
+
+                    if (response.success) {
+                        // Handle successful search results
+                        //displaySearchResults(response.events);
+                        alert(" Event created sussessfully.");
+
+                    } else {
+                        alert('Error in searching event');
+                    }
+                })
+                .fail((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while searching for events.');
+                });
+
+
+
                 
                 fetch('/event/create', {
                     method: 'POST',
@@ -208,32 +253,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }            
 
             if (registrationFee !==''  &&  typeof registrationFee !== 'number') {
-                errors.push('Please enter a valid future date for the event.');
+                errors.push('Please enter a valid numeric fee value.');
             }            
 
 
             if (errors.length > 0) {
                 alert(errors.join('\n'));
             } else {
-                //registerForm.submit();
+                //eventSearchform.submit();
  
                 // AJAX logic for form submission
-                fetch('/event/search', {
-                    method: 'POST',
-                    body: eventSearchform,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Handle successful search results
-                        const results = JSON.parse(response);
-                        displaySearchResults(response);
 
+                let requestConfig = {
+                    method: 'POST',
+                    url: '/event/search',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        eventNameInput: eventName,
+                        categoryInput: category,
+                        dateInput: date,
+                        registrationFeeInput: registrationFee 
+                    })
+                  };
+
+
+                //Make AJAX Call
+
+                $.ajax(requestConfig)
+                .done((response) => {
+                    // `response` is already parsed JSON
+                    alert("Search result: " + JSON.stringify(response)); // Alert the result as a string
+
+                    if (response.success) {
+                        // Handle successful search results
+                        displaySearchResults(response.events);
                     } else {
                         alert('Error in searching event');
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .fail((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while searching for events.');
+                });
 
             }
         });
@@ -245,7 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function displaySearchResults(results) {
-    const searchResultsDiv = document.getElementById('eventList');
+    const searchResultsDiv = document.getElementById('eventSearchList');
+    alert("Search result:" + results);
     searchResultsDiv.innerHTML = ''; // Clear previous results
 
     if (results.length === 0) {
@@ -259,8 +321,17 @@ function displaySearchResults(results) {
                 <p>Category: ${event.category}</p>
                 <p>Date: ${event.date}</p>
                 <p>Registration Fee: ${event.registrationFee}</p>
+                <p><a href="/event/subscribe/${event._id}" id="subscribeEvent" >Subscribe</p>
+
             `;
             searchResultsDiv.appendChild(eventDiv);
         });
     }
 }
+
+
+
+
+/* (function ($) {
+ 
+})(window.jQuery); */

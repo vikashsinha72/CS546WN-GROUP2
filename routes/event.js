@@ -3,8 +3,9 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
-import eventData from '../data/events.js';
+import xss from 'xss';
 
+import eventData from '../data/events.js';
 import validators from '../validators.js';
 
 const router = Router(); 
@@ -39,7 +40,16 @@ router
     //code here for POST
 
     try {
-    const { eventNameInput, eventDateInput, locationInput, categoryInput, descriptionInput, nearByPortInput, eventModeInput, registrationFeeInput, contactPersonInput } = req.body;
+    const eventNameInput = xss(req.body.eventNameInput);
+    const eventDateInput = xss(req.body.eventDateInput);
+    const locationInput = xss(req.body.locationInput);
+    const categoryInput = xss(req.body.categoryInput);
+    const descriptionInput = xss(req.body.descriptionInput);
+    const nearByPortInput = xss(req.body.nearByPortInput);
+    const eventModeInput = xss(req.body.eventModeInput);
+    const registrationFeeInput = xss(req.body.registrationFeeInput);
+    const contactPersonInput = xss(req.body.contactPersonInput);
+
     if (!eventNameInput || !eventDateInput || !locationInput || !categoryInput || !descriptionInput || !nearByPortInput || !eventModeInput || !registrationFeeInput || !contactPersonInput) {
         throw 'All fields must be supplied.';
     }
@@ -95,36 +105,95 @@ router
 })
 .post(async (req, res) => {
     //code here for POST
-
     try {
-    const { eventNameInput, eventDateInput, locationInput, registrationFeeInput, contactPersonInput } = req.body;
-    if (!eventNameInput && !eventDateInput && !locationInput && !categoryInput  &&!registrationFeeInput ) {
-        throw 'All fields must not be empty.';
-    }
+        const eventNameInput = xss(req.body.eventNameInput);
+        const eventDateInput = xss(req.body.eventDateInput);
+        const locationInput = xss(req.body.locationInput);
+        const categoryInput = xss(req.body.categoryInput);
+        const registrationFeeInput = xss(req.body.registrationFeeInput);
 
 
-        if(!eventDateInput)
+        if (!eventNameInput && !eventDateInput && !locationInput && !categoryInput  && !registrationFeeInput ) {
+            throw 'All fields must not be empty.';
+        }
+
+
+        if(eventDateInput)
             validators.checkDate(eventDateInput,'Event Date');
 
-        if(!registrationFeeInput)
-        validators.checkPrice(registrationFeeInput,'Registration Fee');
+        if(registrationFeeInput)
+            validators.checkPrice(registrationFeeInput,'Registration Fee');
 
-        let eventCreated = await eventData.create(eventNameInput, descriptionInput, eventDateInput, locationInput, categoryInput, nearByPortInput, eventModeInput, registrationFeeInput, contactPersonInput, true);
+        let eventSearched = await eventData.searchEvent(eventNameInput, eventDateInput, locationInput, categoryInput, registrationFeeInput);
         
-        if(eventCreated._id)
+        if(eventSearched)
         {      
-            return res.redirect('/event');
+            return res.json({
+                success: true,
+                events: eventSearched
+            });
         }
         else
         {
-            return res.status(500).render('event', { title:"Event Creation Error", error: "Internal Server Error"});
+            return res.status(500).json({success: false,  "error": "Internal Server Error" });
     
         }
 
     } catch (e) {
-    return res.status(400).render('event', { title:"event", error: e });
-    }
+        return res.status(400).json({success: false,  "error": e });
+    };
+    
 
+});
+
+
+router
+.route('/subscribe/:id')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+        const eventId = xss(req.params.id);
+        const userId = req.user.userId;
+        if(!eventId || !userId)
+        {
+            return res.status(500).json({success: false, "error": "Not a valid request. User is not authorized or eventId missing."});
+
+        }
+        else{
+            try{
+
+                let eventSubscribed = await eventData.addSubscriber(eventNameInput, eventDateInput, locationInput, categoryInput, registrationFeeInput);
+
+                if(eventSubscribed)
+                {      
+                    return res.json({
+                        success: true,
+                        event: eventSubscribed
+                    });
+                }
+                else
+                {
+                    return res.status(500).json({success: false, "error": "Internal Server Error"});
+            
+                }
+
+            } catch (e) {
+                return res.status(400).json({success: false,  "error": e });
+            };
+
+        }
+        
+
+    }
+    return res.redirect('/auth');    
+})
+.post(async (req, res) => {
+    //code here for POST
+    const eventId = xss(req.body.id);
+    req.redirect(`/event/subscribe/${eventId}`);
+    
 });
 
 

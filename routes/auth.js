@@ -2,6 +2,8 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
+import xss from 'xss';
+
 import userData from '../data/users.js';
 import validators from '../validators.js';
 
@@ -31,7 +33,8 @@ router
     //code here for POST
     try {
 
-        const { emailAddressInput, passwordInput } = req.body;
+        const emailAddressInput = xss(req.body.emailAddressInput);
+        const passwordInput  = xss(req.body.passwordInput);
 
         validators.checkEmail(emailAddressInput, "Email Address");
         validators.checkPassword(passwordInput, "Password");
