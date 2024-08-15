@@ -1,7 +1,6 @@
 import { users, events } from '../config/mongoCollections.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
 import helperFuncs from '../helpers.js';
-import axios from 'axios';
 
 export const createEvent = async (
     userId, 
@@ -48,6 +47,7 @@ export const createEvent = async (
     //create new event object
     const newEvent = {
         _id: new ObjectId(),
+        userId: userId,
         username: username, 
         eventName: eventName,
         date: date,
@@ -70,8 +70,7 @@ export const createEvent = async (
     if (!insertEv.acknowledged || !insertEv.insertedId) throw 'Could not add event';
     const updateUser = await userCollection.updateOne({_id: userObjId}, {$push: {events:{_id: newEvent._id, eventName: eventName}}});
 
-
-    let newId = insertEv._id.toString();
+    let newId = insertEv.insertedId.toString();
     return newId;
 }
 
@@ -102,8 +101,12 @@ export const getEvent = async (eventId) => {
     return event;
 }
 
-export const getAllEvents = async () => {
+export const getAllEvents = async (userId) => {
     const eventCollection = await events();
+    let eventChecker = await eventCollection.findOne({userId: userId});
+
+    if (!eventChecker) throw `Cannot find events for that user!`;
+
 
     // excluded openClose and publish from users
     let eventList = await eventCollection.find({}).project({
@@ -128,19 +131,72 @@ export const getAllEvents = async () => {
     return eventList;
 }
 
-export const updateEvent = async (
-    eventId, 
-    username,
-    eventName, 
-    date, 
-    location, 
-    category,
-    permission,     
-    description, 
-    nearByPort, 
-    eventMode, 
-    registrationFee,
-    publish, 
-) => {
+export const updateEventPatch = async (eventId, updatedEvent) => {
+    const updatedEventData = {};
 
+    if (updatedEvent.eventNameEdit) {
+        updatedEventData['eventName'] = helperFuncs.checkStringLimited(updatedEvent.eventNameEdit, 'Edit Event Name');
+    }
+    if (updatedEvent.dateEdit) {
+        // to do check dates
+        updatedEventData['date'] = updatedEvent.dateEdit;
+    }
+    if (updatedEvent.locationEdit) {
+        updatedEventData['location'] = helperFuncs.checkStringLimited(updatedEvent.locationEdit, 'Edit Event Location');
+    }
+    if (updatedEvent.categoryEdit) {
+        updatedEventData['category'] = helperFuncs.checkStringLimited(updatedEvent.categoryEdit, 'Edit Event Location');
+    }
+    if (updatedEvent.permEdit) {
+        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permEdit);
+    }
+    if (updatedEvent.descriptionEdit) {
+        updatedEventData['description'] = helperFuncs.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
+    }
+    if (updatedEvent.portEdit) {
+        updatedEventData['nearByPort'] = helperFuncs.checkStringLimited(updatedEvent.portEdit, 'Edit Event Port');
+    }
+    if (updatedEvent.modeEdit) {
+        updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.modeEdit);
+    }
+    if (updatedEvent.feeEdit) {
+        updatedEventData['registrationFee'] = helperFuncs.checkStringFee(updatedEvent.feeEdit);
+    }
+    if (updatedEvent.action) {
+        updatedEventData['publish'] = helperFuncs.checkPublishStatus(updatedEvent.action);
+    }
+
+    const eventCollection = await events();
+    let updateEvent = await eventCollection.findOneAndUpdate(
+        {_id: new ObjectId(eventId)},
+        {$set: updatedEventData},
+        {ReturnDocument: 'after'}
+    );
+
+    if (!updateEvent) throw `Could not update this event`;
+
+    return updateEvent._id.toString();
+}
+
+export const deleteEvent = async (eventId) => {
+    eventId = helperFuncs.checkEventId(eventId);
+
+    const eventCollection = await events();
+    const userCollection = await users();
+
+    const deleteEvent = await eventCollection.findOneAndDelete({
+        _id: new ObjectId(eventId)
+    });
+    if (deleteEvent.lastErrorObject.n === 0) {
+        throw `Could not delete from events`
+    }
+
+    // const deleteUserEvent = await userCollection.findOneAndDelete({
+    //     _id: new ObjectId(eventId)
+    // });
+    // if (deleteUserEvent.lastErrorObject.n === 0) {
+    //     throw `Could not delete from events`
+    // }
+
+    return {deleted: true}
 }

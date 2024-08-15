@@ -1,6 +1,6 @@
 import 'express-session';
 import axios from 'axios';
-import bcrypt, { hash } from 'bcrypt'
+import bcryptjs from 'bcryptjs'
 import { users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
 
