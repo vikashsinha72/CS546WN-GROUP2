@@ -28,10 +28,9 @@ router
 
     if (req.session.user) {
 
-        return res.render('eventHome', { title: "Events", user: req.session.user});
+        return res.render('createEvent', { title: "Events", user: req.session.user});
 
     }
-
     return res.redirect('/auth');    
 
 })
