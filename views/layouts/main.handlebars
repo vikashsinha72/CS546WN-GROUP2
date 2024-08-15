@@ -4,8 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>    {{! Using this for a dynamic title, please pass your titles when calling in routes}}
-    <link rel="stylesheet" href="/public/css/styles.css">
+    {{!-- <link rel="stylesheet" href="/public/css/styles.css"> --}} 
     {{! This will dynamically load a css file}}
     {{#if stylesheet}}
         <link rel="stylesheet" href="/public/css/{{stylesheet}}.css">

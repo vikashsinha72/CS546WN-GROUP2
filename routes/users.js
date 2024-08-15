@@ -1,7 +1,14 @@
 import { Router } from 'express';
-import { loginUser, registerUser, getAllUsers, getUser } from '../data/users.js'; 
+import { loginUser, registerUser, getUser } from '../data/users.js'; 
 
 const router = Router();
+
+router.route('/').get(async (req, res) => {
+  //code here for GET THIS ROUTE SHOULD NEVER FIRE BECAUSE OF MIDDLEWARE #1 IN SPECS.
+  if (!req.session.user) return res.redirect('/login')
+  if (req.session.user) return res.redirect('/eventHome')
+  return res.json({error: 'YOU SHOULD NOT BE HERE!'});
+});
 
 router
   .route('/register')
@@ -21,9 +28,9 @@ router
     if(password == confirmPassword) {
       try {
         const newUser = await registerUser(username, firstName, lastName, emailAddress, password);
-        if (newUser.userInserted) res.render('login');
+        if (newUser.userInserted) res.redirect('login');
       } catch (error) {
-        res.render('error') //status 400 code
+        res.status(400).render('error') //status 400 code
       }
     }
   });
@@ -48,27 +55,50 @@ router
         emailAddress: loggedIn.emailAddress,
         password: loggedIn.password
       }
-      res.redirect('/home');
+      res.redirect('/eventHome');
     } catch (error) {
       console.error(error)
-      res.render('error');
+      res.status(400).render('error');
     }
 });
+
+// router
+// .route('/profile/:userId')
+// .get(async (req, res) => {
+//     const user = req.session.user;
+//     if (!user) return res.status(400).render('error')
+//     try {
+//         const loggedInUser = {username, firstName, lastName, reviews, events}
+//         if (loggedInUser) res.render('profilePage', {
+//             username,
+//             firstName,
+//             lastName,
+//             reviews,
+//             events
+//         })
+//     } catch (error) {
+//         console.error()
+//         return res.status(400).render('error')
+//     }
+// })
+// http://localhost:3000/profile/66be191f44efb08153b12d90
+
 router
 .route('/profile/:userId')
 .get(async (req, res) => {
-    const user = req.session.user.userId;
-    if (!user) return res.status(400).render('error')
-    try {
-        const loggedInUser = await getUser(userId)
-        res.render('profilePage')
-    } catch (error) {
-        return res.status(400).render('error')
-    }
+  const { userId } = req.params;
+  try {
+    const user = await getUser(userId)
+    res.render('profilePage', { user })
+  } catch (error) {
+    console.error()
+    return res.status(400).render('error')
+  }
 })
+
 router.route('/error').get(async (req, res) => {
     //code here for GET
-    res.render('error')
+    res.status(400).render('error')
   });
   
   router.route('/logout').get(async (req, res) => {

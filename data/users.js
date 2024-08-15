@@ -15,28 +15,28 @@ export const registerUser = async (
     //username error handling
     if (!username) throw new Error("Must provide a username.");
     if (typeof username !== 'string') throw new Error("Username must be a string.");
-    username.trim()
+    username = username.trim()
     if (!username) throw new Error("Username cannot be empty.")
     if (username.length < 4 || username.length > 15) throw new Error("Username must be between 4 and 15 characters long.")
 
     //firstName error handling - check for numbers
     if (!firstName) throw new Error("Must provide a first name.");
     if (typeof firstName !== 'string') throw new Error("First name must be a string.");
-    firstName.trim();
+    firstName = firstName.trim();
     if (!firstName) throw new Error("First name cannot be empty or just spaces.");
     if (firstName.length < 2 || firstName.length > 25) throw new Error("First name should be at least 2 characters long with a max of 25 characters.");
    
    //lastName error handling
    if (!lastName) throw new Error("Must provide a last name.");
    if (typeof lastName !== 'string') throw new Error("Last name must be a string.");
-   lastName.trim();
+   lastName = lastName.trim();
    if (!lastName) throw new Error("Last name cannot be empty or just spaces.");
    if (lastName.length < 2 || lastName.length > 25) throw new Error("Last name should be at least 2 characters long with a max of 25 characters.");
   
    //email error handling
    if (!emailAddress) throw new Error("Must provide an email");
    if (typeof emailAddress !== 'string') throw new Error("Email must be a string");
-   emailAddress.trim();
+   emailAddress = emailAddress.trim();
    if (!emailAddress) throw new Error("Email cannot be empty or just spaces.");
    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress.toLowerCase())) throw new Error("Email must be in a proper format.");
    
@@ -79,10 +79,6 @@ export const registerUser = async (
        events
       }
   
-
-       reviews: reviews,    // This is to store all this users review
-
-
     //insert user into the db
     await usersCollection.insertOne(newUser);
   
@@ -90,13 +86,12 @@ export const registerUser = async (
 
 };
 
-export const loginUser = async (emailAddress, password) => {
+export const loginUser = async (username, password) => {
   //email error handling
-  if (!emailAddress) throw new Error("Must provide an email");
-  if (typeof emailAddress !== 'string') throw new Error("Email must be a string");
-  emailAddress.trim();
-  if (!emailAddress) throw new Error("Email cannot be empty or just spaces.");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress.toLowerCase())) throw new Error("Email must be in a proper format.");
+  if (!username) throw new Error("Must provide a username");
+  if (typeof username !== 'string') throw new Error("Username must be a string");
+  username.trim();
+  if (!username) throw new Error("Username cannot be empty or just spaces.");
 
   if (!password) throw new Error("Must provide a password");
   if (typeof password !== 'string') throw new Error("Password must be a string.");
@@ -106,15 +101,15 @@ export const loginUser = async (emailAddress, password) => {
   if (!/[0-9]/.test(password)) throw new Error("Password must have at least one number.")
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) throw new Error("Password must have at least one special character.")
 
-  emailAddress = emailAddress.toLowerCase();
+  username = username.toLowerCase();
 
   const usersCollection = await users();
-  const user = await usersCollection.findOne({ emailAddress })
+  const user = await usersCollection.findOne({ username })
 
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) throw new Error("Password does not match.");
 
-  const { username, firstName, lastName, email } = user;
+  const { firstName, lastName, email } = user;
   return { username, firstName, lastName, email };
 
 };
@@ -137,18 +132,5 @@ export const getUser = async (userId) => {
     return user;
 }
 
-export const getAllUsers = async (userId) => {
-    const usersCollection = await users();
 
-    let userList = await usersCollection.find({}).toArray();
-    if (!userList) throw new Error("Could not get all users.");
-    
-    userList = userList.map((element) => {
-      element._id = element._id.toString();
-      return element;
-    })
-  
-    return userList;
-}
-
-export default {registerUser, loginUser, getUser, getAllUsers}
+export default { registerUser, loginUser, getUser }
