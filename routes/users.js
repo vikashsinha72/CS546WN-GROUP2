@@ -3,6 +3,13 @@ import { loginUser, registerUser, getUser } from '../data/users.js';
 
 const router = Router();
 
+router.route('/').get(async (req, res) => {
+  //code here for GET THIS ROUTE SHOULD NEVER FIRE BECAUSE OF MIDDLEWARE #1 IN SPECS.
+  if (!req.session.user) return res.redirect('/login')
+  if (req.session.user) return res.redirect('/eventHome')
+  return res.json({error: 'YOU SHOULD NOT BE HERE!'});
+});
+
 router
   .route('/register')
   .get(async (req, res) => {
@@ -21,7 +28,7 @@ router
     if(password == confirmPassword) {
       try {
         const newUser = await registerUser(username, firstName, lastName, emailAddress, password);
-        if (newUser.userInserted) res.render('login');
+        if (newUser.userInserted) res.redirect('login');
       } catch (error) {
         res.status(400).render('error') //status 400 code
       }
@@ -48,7 +55,7 @@ router
         emailAddress: loggedIn.emailAddress,
         password: loggedIn.password
       }
-      res.redirect('/home');
+      res.redirect('/eventHome');
     } catch (error) {
       console.error(error)
       res.status(400).render('error');
