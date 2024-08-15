@@ -5,8 +5,8 @@ import searchRoutes from './search.js';
 import busRoutes from './business.js';
 
 const constructorMethod = (app) => {
-    app.use('/auth', authRoutes);       // signup registration, login
-    app.use('/users', userRoutes);       // profile, user event register form
+    app.use('/', authRoutes);       // signup registration, login
+    app.use('/user', userRoutes);       // profile, user event register form
     app.use('/event', eventRoutes);     // event management, create event, edit event, event page
     app.use('/search', searchRoutes);   // search results
     app.use('/business', busRoutes);    // business profiles
