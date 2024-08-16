@@ -42,7 +42,6 @@ const redirectAuthenticatedLogin = async (req, res, next) => {
 //register
 const redirectAuthenticatedRegister = async (req, res, next) => {
     if (req.session.user) {
-
         /** ignore role check and redirect request to user */
         if (req.originalUrl !== '/user') {
             return res.redirect('/user');
@@ -50,11 +49,11 @@ const redirectAuthenticatedRegister = async (req, res, next) => {
         else{
             return next();
         }
-    } else {
-        if (req.originalUrl !== '/auth') {
-            return res.redirect('/auth');
-        }
-    }
+     } //else {
+    //     if (req.originalUrl !== '/auth') {
+    //         return res.redirect('/auth');
+    //     }
+    // }
     
     return next();
 };

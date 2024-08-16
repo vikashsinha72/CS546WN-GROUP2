@@ -107,7 +107,7 @@ export const loginUser = async (username, password) => {
   const usersCollection = await users();
   const user = await usersCollection.findOne({ username })
 
-  const checkPassword = await bcrypt.compare(password, user.password);
+  const checkPassword = await bcryptjs.compare(password, user.password);
   if (!checkPassword) throw new Error("Password does not match.");
 
   const { firstName, lastName, email } = user;
@@ -134,14 +134,25 @@ export const getUser = async (userId) => {
 }
 
 
-export const getUserList = async (username) => {
-  try {
-      const usersCollection = await users();
-      const userList = await usersCollection.find({}, { projection: { username: 1 } }).toArray();
-      return userList || [];
-    } catch (e) {
-      throw 'MongoDB connection error :', e;  
-    }
+export const getUserList = async () => {
+  // try {
+  //     const usersCollection = await users();
+  //     const userList = await usersCollection.find({}, { projection: { username: 1, _id: 1 } }).toArray();
+  //     return userList || [];
+  //   } catch (e) {
+  //     throw 'MongoDB connection error :', e;  
+  //   }
+  const usersCollection = await users();
+
+  let userList = await usersCollection.find({}).toArray();
+  if (!userList) throw new Error("Could not get all users.");
+  
+  userList = userList.map((element) => {
+    element._id = element._id.toString();
+    return element;
+  })
+
+  return userList;
 }
 
 
@@ -258,4 +269,4 @@ export const changePasssword = async(userId, oldPassword, newPassword) => {
 
 
 
-export default { registerUser, loginUser, getUser }
+export default { registerUser, loginUser, getUser, getUserList, updateUser, changePasssword }
