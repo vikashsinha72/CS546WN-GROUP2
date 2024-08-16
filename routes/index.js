@@ -4,7 +4,7 @@ import eventRoutes from './event.js';
 import searchRoutes from './search.js';
 
 const constructorMethod = (app) => {
-    app.use('/', authRoutes);       // signup registration, login
+    app.use('/', authRoutes);       // registration, login, logout
     app.use('/user', userRoutes);       // profile, user event register form
     app.use('/event', eventRoutes);     // event management, create event, edit event, event page
     app.use('/search', searchRoutes);   // search results

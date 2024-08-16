@@ -235,12 +235,15 @@ checkPasswordmatch(password , confirmPassword)
 },
 
 // Validate Role
-checkRole(role)
+checkUsername(username)
 {
-  if (!role || (role !== 'admin' && role !== 'user')) {
-      throw 'Role must be either admin or user.';
-  }
-  return role.trim();
+    if (!username) throw new Error("Must provide a username.");
+    if (typeof username !== 'string') throw new Error("Username must be a string.");
+    username = username.trim()
+    if (!username) throw new Error("Username cannot be empty.")
+    if (username.length < 4 || username.length > 15) throw new Error("Username must be between 4 and 15 characters long.")
+
+    return username;
 
 }
 

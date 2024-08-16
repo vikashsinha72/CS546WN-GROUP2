@@ -8,13 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const errors = [];
+            const username = document.getElementById('usernameInput').value.trim();
             const firstName = document.getElementById('firstNameInput').value.trim();
             const lastName = document.getElementById('lastNameInput').value.trim();
             const email = document.getElementById('emailAddressInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
             const confirmPassword = document.getElementById('confirmPasswordInput').value.trim();
-            const role = document.getElementById('roleInput').value.trim();
+            // const role = document.getElementById('roleInput').value.trim();
 
+            if (!username || !/^[A-Za-z0-9]{4,15}$/.test(firstName)) {
+                errors.push('Username must be 4-15 characters long and have no special characters.');
+            }
 
             // Validate First Name
             if (!firstName || !/^[A-Za-z]{2,25}$/.test(firstName)) {
@@ -41,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 errors.push('Passwords do not match.');
             }
 
-            // Validate Role
-            if (!role || (role !== 'admin' && role !== 'user')) {
-                errors.push('Role must be either admin or user.');
-            }
+            // // Validate Role
+            // if (!role || (role !== 'admin' && role !== 'user')) {
+            //     errors.push('Role must be either admin or user.');
+            // }
 
             if (errors.length > 0) {
                 alert(errors.join('\n'));
@@ -59,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const errors = [];
 
-            const email = document.getElementById('emailAddressInput').value.trim();
+            const username = document.getElementById('usernameInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
 
-            // Validate Email Address
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                errors.push('Invalid email address.');
+            // // Validate username
+            if (!username || !/^[A-Za-z0-9]{4,15}$/.test(username)) {
+                errors.push('Username must be 4-15 characters long and have no special characters.');
             }
 
             // Validate Password

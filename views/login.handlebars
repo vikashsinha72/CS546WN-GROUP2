@@ -3,7 +3,7 @@
 </head>
 <body>
     <h1>Login</h1>
-    <form id="login-form" class="form" action="/login" method="POST">
+    <form id="login-form" class="form" action="/auth" method="POST">
         <label for="usernameInput">Username:</label>
         <input type="username" id="usernameInput" name="usernameInput" required>
         <br>
@@ -13,5 +13,5 @@
         <button type="submit" class="button">Login</button>
     </form>
     <p>Don't have an account? <a href="/register">Click here to register!</a></p>
-    <script src="public/js/client_side_validation.js"></script>
+    {{!-- /user/register --}}
 </body>
