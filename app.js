@@ -26,6 +26,15 @@ const rewriteMethods = ('/edit/:id', (req, res, next) => {
     }
     next();
 })
+import {
+  logRequest,
+  rootRequest,
+  redirectAuthenticatedLogin,
+  redirectAuthenticatedRegister,
+  ensureAuthenticated,
+  ensureLogout
+} from './middleware.js';
+
 
 // Creating the custom config for handlebars
 const handlebarsInstance = exphbs.create({
