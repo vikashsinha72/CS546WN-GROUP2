@@ -3,7 +3,7 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
-import validators from '../validators.js';
+
 
 const router = Router(); 
 import { ObjectId } from 'mongodb';
@@ -11,6 +11,7 @@ import path from 'path';
 import helperFuncs from '../helpers.js';
 import { users, events } from '../config/mongoCollections.js'
 import eventData from '../data/events.js';
+import validators from '../validators.js';
 
 router
     .route('/')
@@ -37,21 +38,85 @@ router
 .get(async (req, res) => {
     //code here for GET
 
-    if (req.session.user) {
+        res.render(path.resolve('views/createEvent'), {title: 'Create Event', user: req.session.user});
+        
+    })
+    .post(async (req, res) => {
+        const inputs = req.body;
+        let errors = [];
+        
+        // Error checking
+        // Event Name
+        try {
+            inputs.eventNameInput = validators.checkString(inputs.eventNameInput, 'POST Event Name');
+        }
+        catch(e) {
+            errors.push(e);
+        }
 
-        return res.render('createEvent', { title: "Events", user: req.session.user});
+        try {
+            inputs.locationInput = validators.checkString(inputs.locationInput, 'POST Event location');
+        }
+        catch(e) {
+            errors.push(e);
+        }
 
-    }
-    return res.redirect('/auth');    
+        try {
+            inputs.categoryInput = validators.checkString(inputs.categoryInput, 'POST Event category');
+        }
+        catch(e) {
+            errors.push(e);
+        }
 
-})
-.post(async (req, res) => {
-    //code here for POST
+        try {
+            inputs.descriptionInput = validators.checkString(inputs.descriptionInput, 'POST Event description');
+        }
+        catch(e) {
+            errors.push(e);
+        }
 
-    try {
-        const { eventNameInput, eventDateInput, locationInput, categoryInput, descriptionInput, nearByPortInput, eventModeInput, registrationFeeInput, contactPersonInput } = req.body;
-        if (!eventNameInput || !eventDateInput || !locationInput || !categoryInput || !descriptionInput || !nearByPortInput || !eventModeInput || !registrationFeeInput || !contactPersonInput) {
-            throw 'All fields must be supplied.';
+        try {
+            inputs.portInput = validators.checkString(inputs.portInput, 'POST Event nearByPort');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+
+        // TODO -- check date validity --
+        // try {
+        //     inputs.dateInput = helperFuncs.checkStringLimited(inputs.dateInput, 'POST locationInput');
+        // }
+        // catch(e) {
+        //     errors.push(e);
+        // }
+
+        try {
+            inputs.modeInput = helperFuncs.checkEventMode(inputs.modeInput);
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        // Fee
+        try {
+            inputs.feeInput =  validators.checkPrice(Number(inputs.feeInput), 'POST fee');
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        // Permissions
+        try {
+            inputs.permInput = helperFuncs.checkPermission(inputs.permInput);
+        }
+        catch(e) {
+            errors.push(e);
+        }
+
+        // If there are any errors
+        if (errors.length > 0) {
+            return res.status(400).render(path.resolve('views/createEvent'), {errors: errors, hasErrors: true});
         }
 
         // let user = req.session.user
@@ -90,11 +155,7 @@ router
         catch(e) {
             return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
         }
-    }  
-    catch(e) {
-        return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
-    }
-});
+    });
 
     // This will be the route for seeing created events
     router
@@ -119,8 +180,8 @@ router
                 username: 'alexisbrule'
             }
             if (eventId.publish !== 'publish') {
-                if (currentUser.username !== eventId.username) {
-                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'Cannot edit a published event.', hasErrors: true}));
+                if (currentUser !== eventId.userId) {
+                    return res.render(path.resolve('views/eventHome'), ({title: 'Unauthorized', errors: 'You do not have access to this event.', hasErrors: true}));
                 }
                 else {
                     eventId._id = eventId._id.toString();
@@ -182,34 +243,41 @@ router
             // checking parameters
             req.params.id = helperFuncs.checkEventId(req.params.id);
             if (requestBody.eventNameEdit) {
-                requestBody.eventNameEdit = helperFuncs.checkStringLimited(requestBody.eventNameEdit, 'Edit Event Name');
+                requestBody.eventNameEdit = validate.checkString(requestBody.eventNameEdit, 'Edit Event Name');
             }
             if (requestBody.dateEdit) {
                 // to do check dates
             }
             if (requestBody.locationEdit) {
-                requestBody.locationEdit = helperFuncs.checkStringLimited(requestBody.locationEdit, 'Edit Event Location');
+                requestBody.locationEdit = validate.checkString(requestBody.locationEdit, 'Edit Event Location');
             }
             if (requestBody.categoryEdit) {
-                requestBody.categoryEdit = helperFuncs.checkStringLimited(requestBody.categoryEdit, 'Edit Event Location');
+                requestBody.categoryEdit = validate.checkString(requestBody.categoryEdit, 'Edit Event Location');
             }
             if (requestBody.permEdit) {
                 requestBody.permEdit = helperFuncs.checkPermission(requestBody.permEdit);
             }
             if (requestBody.descriptionEdit) {
-                requestBody.descriptionEdit = helperFuncs.checkString(requestBody.descriptionEdit, 'Edit Event Description');
+                requestBody.descriptionEdit = validate.checkString(requestBody.descriptionEdit, 'Edit Event Description');
             }
             if (requestBody.portEdit) {
-                requestBody.portEdit = helperFuncs.checkStringLimited(requestBody.portEdit, 'Edit Event Port');
+                requestBody.portEdit = validate.checkString(requestBody.portEdit, 'Edit Event Port');
             }
             if (requestBody.modeEdit) {
                 requestBody.modeEdit = helperFuncs.checkEventMode(requestBody.modeEdit);
             }
             if (requestBody.feeEdit) {
-                requestBody.feeEdit = helperFuncs.checkStringFee(requestBody.feeEdit);
+                requestBody.feeEdit = validate.checkPrice(requestBody.feeEdit);
             }
             if (requestBody.action) {
                 requestBody.action = helperFuncs.checkPublishStatus(requestBody.action);
+                let eventCollection = await events();
+                let finder = await eventCollection.findOne({_id: new ObjectId(req.params.id)});
+
+                // If an event is going from saved to published we assign it the new status
+                if (requestBody.action === 'publish' && finder.publish === 'save') {
+                    requestBody.statusEdit = 'published';
+                }
             }
         }
         catch(e) {
