@@ -1,16 +1,16 @@
 
 <header></header>
  <h1>Event Registration</h1>
-    <form action="/createEventRegistration" method="POST" id = "registrationForm">
+    <form action="/eventRegistration" method="POST" id = "registrationForm">
         <table>
         <tr>
-                <label type= "text" id = "userName">User name</label>
+                <label type= "text" id ="userName">User name</label>
                 <input type= "text" id="userName" name="userName">
     
         </tr>
         <tr>
                 <label type= "text" id = "eventName">View Available Events</label>
-                 <select class = "eventDropdown" name = "eventDropdown">
+                 <select class = "eventId" name = "eventId">
                     {{#each events}}
                         <option value="{{this._id}}">{{this.eventName}}</option>
                     {{/each}}
@@ -21,15 +21,15 @@
                 <input type= "text" id = "emailId" name ="emailId">
         </tr>
         <tr>
-                <label type="text" id = "Phone Number">Phone Number</label>
-                <input type="text" id = "phone number" name="phone number">
+                <label type="text" id = "phoneNumber">Phone Number</label>
+                <input type="text" id = "phoneNumber" name="phoneNumber">
         </tr>
           <tr>
                 <label type= "text" id = "date">Best Time to call</label>
-                <input type="datetime-local">
+                <input type="datetime-local" name="bestStartDate">
                 <p>to</p>
                 <label type= "text" id = "date"></label>
-                <input type="datetime-local">
+                <input type="datetime-local" name="bestEndDate">
         </tr>
         <br>
         </tr>

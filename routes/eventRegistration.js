@@ -1,5 +1,6 @@
 import express from 'express';
 import eventsData from '../data/events.js';
+import eventsRegistrationData from '../data/eventRegistration.js';
 const router = express.Router();
 
 // router.route('/').get((req, res) => {
@@ -44,7 +45,7 @@ router.route('/')
   .get(async(req, res) => {
     try{
       const events = await eventsData.getEvents();
-      console.log("events from route: ", events)
+      // console.log("events from route: ", events)
       res.render('eventRegistration', { title: 'Event Registration', events, user: req.session.user })   
     } 
     catch (e) {
@@ -54,20 +55,21 @@ router.route('/')
 }) 
   .post(async (req, res) => {
     const { 
-
-      username,
-      eventName,
+      eventId,
+      userName,
       emailId,
       phoneNumber,
-      bestTimetoCall} = req.body;
+      bestStartDate,
+      bestEndDate} = req.body;
     
     try {
-    const newEventRegistration = await eventsData.createEventRegistration(
-      username,
-      eventName,
+    const newEventRegistration = await eventsRegistrationData.createEventRegisteredUser(
+      eventId,
+      userName,
       emailId,
       phoneNumber,
-      bestTimetoCall
+      bestStartDate,
+      bestEndDate
     );
       res.status(200).json(newEventRegistration);
     }

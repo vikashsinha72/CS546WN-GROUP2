@@ -222,7 +222,7 @@ async getAllEvents(userId) {
       const eventsCollection = await events();
       const eventsList = await eventsCollection.find({}, {projection: {eventName:1,  _id: 1}}).toArray();
       
-      console.log("eventsList: ", eventsList);
+      // console.log("eventsList: ", eventsList);
       
       if (!eventsList) throw new Error("Event could not be found.");
       
