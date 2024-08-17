@@ -13,15 +13,6 @@ async createEventRegisteredUser(
   phoneNumber,
   bestStartDate,
   bestEndDate) {
-    // productId = helpers.checkId(productId, "Product ID");
-    // title = helpers.checkString(title, "Title");
-    // reviewerName = helpers.checkString(reviewerName, "Reviewer Name");
-    // review = helpers.checkString(review, "Review");
-    // rating = helpers.checkNumber(rating, "Rating");
-  
-    // const reviewDate = helpers.getReviewDate();
-  
-    // if (rating < 1 || rating > 5) throw "Rating must be between 1 and 5";
   
     const eventCollection = await events();
     const newRegistration = {
