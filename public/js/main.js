@@ -1,20 +1,62 @@
+// import { changePassword } from "../../data/users";
+
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registration-form');
     const loginForm = document.getElementById('login-form');
     const eventForm = document.getElementById('event-form');
     const eventSearchform = document.getElementById('eventSearch-form');
+    const changePasswordForm = document.getElementById('password-form');
+
+    if (changePasswordForm) {
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const errors = [];
+
+            const password = document.getElementById('passwordInput').value.trim();
+            const newPassword = document.getElementById('newPasswordInput').value.trim();
+            const confirmPassword = document.getElementById('confirmPasswordInput').value.trim();
+
+            if (!password || !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[\S]{8,}$/.test(password)) {
+                errors.push('Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.');
+            }
+            
+            if (!newPassword || !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[\S]{8,}$/.test(newPassword)) {
+                errors.push('Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.');
+            }
+
+            if (newPassword === password) {
+                errors.push('Passwords must be different.');
+            }
+
+             // Validate Confirm Password
+            if (newPassword !== confirmPassword) {
+                errors.push('Passwords do not match.');
+            }
+
+            if (errors.length > 0) {
+                alert(errors.join('\n'));
+            } else {
+                changePasswordForm.submit();
+            }
+
+        })
+    }
 
     if (registerForm) {
         registerForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const errors = [];
+            const username = document.getElementById('usernameInput').value.trim();
             const firstName = document.getElementById('firstNameInput').value.trim();
             const lastName = document.getElementById('lastNameInput').value.trim();
             const email = document.getElementById('emailAddressInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
             const confirmPassword = document.getElementById('confirmPasswordInput').value.trim();
-            const role = document.getElementById('roleInput').value.trim();
+            // const role = document.getElementById('roleInput').value.trim();
 
+            if (!username || !/^[A-Za-z0-9]{4,15}$/.test(firstName)) {
+                errors.push('Username must be 4-15 characters long and have no special characters.');
+            }
 
             // Validate First Name
             if (!firstName || !/^[A-Za-z]{2,25}$/.test(firstName)) {
@@ -41,10 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 errors.push('Passwords do not match.');
             }
 
-            // Validate Role
-            if (!role || (role !== 'admin' && role !== 'user')) {
-                errors.push('Role must be either admin or user.');
-            }
+            // // Validate Role
+            // if (!role || (role !== 'admin' && role !== 'user')) {
+            //     errors.push('Role must be either admin or user.');
+            // }
 
             if (errors.length > 0) {
                 alert(errors.join('\n'));
@@ -59,12 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const errors = [];
 
-            const email = document.getElementById('emailAddressInput').value.trim();
+            const username = document.getElementById('usernameInput').value.trim();
             const password = document.getElementById('passwordInput').value.trim();
 
-            // Validate Email Address
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                errors.push('Invalid email address.');
+            // // Validate username
+            if (!username || !/^[A-Za-z0-9]{4,15}$/.test(username)) {
+                errors.push('Username must be 4-15 characters long and have no special characters.');
             }
 
             // Validate Password

@@ -1,29 +1,75 @@
 {{! Simple extension to the main html file}}
 {{! Remember that you don't full html structure for extensions}}
-<header></header>
-<main> 
-<body>
-        <div id="topOfPage">
-        <h3 id="eName">{{eventRes.eventName}}</h3>
-        <h3 id="eHost">Hosted By: {{userRes.firstName}} {{userRes.lastName}}</h3>
-        <h3 id="eDate">Date: {{eventRes.date}}</h3>
-        <h3 id="eFee">Price: {{eventRes.registrationFee}}</h3>
-        <h3 id="eLocation">Location: {{eventRes.location}}</h3>
-        <h3 id="eMode">Mode: {{eventRes.eventMode}}</h3>
-        <br>
-        </div>
 
-        <div id="pageInfo">
-        <h3 id="eDescript">Details: {{eventRes.description}}</h3>
-        <h3 id="eCategory">Category: {{eventRes.category}}</h3>
-        <h3 id="ePort">Nearest Port: {{eventRes.nearByPort}}</h3>
-        </div>
-    {{#if hasErrors}}
-    <ul class="error-list">
-        <li>{{errors}}</li>
-        </ul>
-    {{/if}}
-    <a href="/event/">Back to your events</a>
-    <a href="/event/edit/{{eventRes._id}}">Edit This event</a>
-</body>
-</main>
+<h1>Events</h1>
+<div id="eventSearch">
+<h2>Search Events</h2>
+<form id="eventSearch-form" action="/event/search" method="POST">
+  <label for="eventName">Event Name:</label>
+  <input type="text" id="eventNameInput" name="eventNameInput">
+  
+  <label for="categoryInput">Category:</label>
+  <input type="text" id="categoryInput" name="categoryInput">
+  
+  <label for="dateInput">Date:</label>
+  <input type="date" id="dateInput" name="dateInput">
+  
+  <label for="registrationFeeInput">Registration Fee:</label>
+  <select id="registrationFeeInput" name="registrationFeeInput">
+    <option value="">Any</option>
+    <option value="free">Free</option>
+    <option value="chargeable">Chargeable</option>
+  </select>
+  
+  <button type="submit">Search Event</button>
+</form>
+</div>
+
+<div id="eventList" >
+    <h2>Events</h2>
+<ul>
+    {{#each events}}
+    <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>
+    {{/each}}
+</ul>
+</div>
+
+<div id="eventForm">
+<h2>Create Event</h2>
+<form id="event-form" action="/event/create" method="POST">
+  <label for="eventNameInput">Event Name:</label>
+  <input type="text" id="eventNameInput" name="eventNameInput" required>
+  
+  <label for="eventDateInput">Date:</label>
+  <input type="date" id="eventDateInput" name="eventDateInput" required>
+  
+  <label for="locationInput">Location:</label>
+  <input type="text" id="locationInput" name="locationInput" required>
+  
+  <label for="categoryInput">Category:</label>
+  <input type="text" id="categoryInput" name="categoryInput" required>
+  
+  <label for="descriptionInput">Description:</label>
+  <textarea id="descriptionInput" name="descriptionInput" required></textarea>
+  
+  <label for="nearByPortInput">Near By Port:</label>
+  <input type="text" id="nearByPortInput" name="nearByPortInput">
+  
+  <label for="eventModeInput">Event Mode:</label>
+  <select id="eventModeInput" name="eventModeInput" required>
+    <option value="virtual">Virtual</option>
+    <option value="physical">Physical</option>
+  </select>
+  
+  <label for="registrationFeeInput">Registration Fee:</label>
+  <select id="registrationFeeInput" name="registrationFeeInput" required>
+    <option value="free">Free</option>
+    <option value="chargeable">Chargeable</option>
+  </select>
+  
+  <label for="contactPersonInput">Contact Person:</label>
+  <input type="text" id="contactPersonInput" name="contactPersonInput" required>
+  
+  <button type="submit">Create Event</button>
+</form>
+</div>

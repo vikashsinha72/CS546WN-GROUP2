@@ -1,7 +1,31 @@
 {{! Simple extension to the main html file}}
 {{! Remember that you don't full html structure for extensions}}
 
-<body>
+{{!-- <body>
     <h1>--- Insert Header Here---</h1>
     <main></main>
-</body>
+</body> --}}
+
+    <head>
+        <title>{{user.name}}</title>
+    </head>
+    <body>
+        <article>
+            <h1>{{user.name}}</h1>
+             <h2>Events</h2> {{!-- pass in event name and date --}}
+            {{!-- <ul>
+                {{#each character.comics.items}} -- REPLACE WITH USER EVENTS
+                <li>{{this.name}}</li>
+                {{/each}}
+            </ul> --}}
+            <h2>Reviews</h2> {{!-- pass in event name and review --}}
+             {{!-- <ul>
+                {{#each character.comics.items}} -- REPLACE WITH USER REVIEWS
+                <li>{{this.name}}</li>
+                {{/each}}
+            </ul> --}}
+            {{#if user}}
+            <a href="/user/changePassword/{{user._id}}">Change Password</a>
+            {{/if}}
+        </article>
+    </body>

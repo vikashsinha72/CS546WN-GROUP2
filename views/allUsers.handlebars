@@ -1,0 +1,12 @@
+    <head>
+        <title>All Users</title>
+    </head>
+    <body>
+        <ol>
+            {{#each users}}
+        <li>
+            <a href="/user/profile/{{this._id}}">{{this.username}}</a>
+        </li>
+        {{/each}}
+        </ol>
+    </body>
