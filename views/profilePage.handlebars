@@ -13,11 +13,11 @@
         <article>
             <h1>{{user.firstName}}{{user.lastName}}</h1>
              <h2>Events</h2> {{!-- pass in event name and date --}}
-            {{!-- <ul>
-                {{#each character.comics.items}} -- REPLACE WITH USER EVENTS
+            <ul>
+                {{#each user.username.events}} -- REPLACE WITH USER EVENTS
                 <li>{{this.eventName}}</li>
                 {{/each}}
-            </ul> --}}
+            </ul>
             <h2>Reviews</h2> {{!-- pass in event name and review --}}
              {{!-- <ul>
                 {{#each character.comics.items}} -- REPLACE WITH USER REVIEWS
