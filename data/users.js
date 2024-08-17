@@ -67,7 +67,7 @@ export const registerUser = async (
     let events = [];
 
     //hash password - 8 salt round
-    const hashedPassword = await bcryptjs.hash(password, 8);
+    const hashedPassword = await bcrypt.hash(password, 8);
   
     //now create user object
     const newUser = {
@@ -183,7 +183,7 @@ export const updateUser = async(userId, firstName, lastName, emailAddress, passw
       const emailExists = await usersCollection.findOne({ emailAddress: emailAddress.toLowerCase() });
       if (emailExists && emailExists._id != userId) throw 'There is already a user with that email address.';
   
-      const hashedPassword = await bcryptjs.hash(password, 8);
+      const hashedPassword = await bcrypt.hash(password, 8);
 
       const updatedUser = {
         firstName: firstName.trim(),
@@ -215,14 +215,13 @@ export const updateUser = async(userId, firstName, lastName, emailAddress, passw
 
 
 
-export const changePasssword = async(userId, oldPassword, newPassword) => {
+export const changePassword = async(userId, oldPassword, newPassword) => {
   try {
       validators.checkStrings(
         [userId, 'User Id'],
         [oldPassword, 'Old Passord'],
         [newPassword, 'New Password']
       );
-    
       // Add further validation
       validators.checkObjectId(userId, "User Id");
       validators.checkPassword(oldPassword);
@@ -231,19 +230,14 @@ export const changePasssword = async(userId, oldPassword, newPassword) => {
     catch (e) {
       throw 'Validation Error :', e;
     }
-  
-    try{
-  
-    const usersCollection = await users();
+    try {
+      const usersCollection = await users();
 
-    const updatedUser = new ObjectId(userId);
-    
-    const user = await usersCollection.findOne({ _id: objectId });
+      const updatedUser = new ObjectId(userId);
+      const user = await usersCollection.findOne({ _id: updatedUser });
 
-    if (!user) 
-    {
-        throw `User not found for User Id: ${userId}` ;
-    }
+      if (!user) throw `User not found for User Id: ${userId}` ;
+  
   
     const hashedPassword = await bcryptjs.hash(newPassword, 8);
     updatedUser.hashedPassword = hashedPassword;
@@ -269,4 +263,4 @@ export const changePasssword = async(userId, oldPassword, newPassword) => {
 
 
 
-export default { registerUser, loginUser, getUser, getUserList, updateUser, changePasssword }
+export default { registerUser, loginUser, getUser, getUserList, updateUser, changePassword }
