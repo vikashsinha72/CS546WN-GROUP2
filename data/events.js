@@ -1,44 +1,21 @@
-
-import { events } from "../config/mongoCollections.js";
-import {ObjectId} from 'mongodb';
+import { users, events } from '../config/mongoCollections.js';
+import { ObjectId } from 'mongodb';
+import helperFuncs from '../helpers.js';
 import validators from '../validators.js';
 
-
-/** 
- * EventSchema = Schema({
-    createdByuserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    eventName: { type: String, required: true },
-    eventDescription: { type: String, required: true },
-    eventDate: { type: String, required: true },
-    eventLocation: { type: String, required: true },
-    category: { type: String, required: true },
-    nearByPort: { type: String, required: true },
-    eventMode: { type: String, required: true },
-    registrationFee: { type: String, required: true },
-    contactPerson: { type: String, required: true },
-    status: { type: String, enum: ['plan', 'published', 'ready', 'executed', 'suspended', 'closed'], default: 'plan' },
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-    subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }]
-  });
-  */
-
-
-  const exportedMethods = {
-
-    async createEvent(
-    eventName,
-    eventDescription,
-    eventDate,
-    eventLocation,
+export const createEvent = async (
+    // I took away username as it is not needed here
+    userId, 
+    eventName, 
+    date, 
+    location, 
     category,
-    nearByPort,
-    eventMode,
+    description, 
+    nearByPort, 
+    eventMode, 
     registrationFee,
-    contactPersonId,
     publish,    // Added this for published/unpublished
-    status
-  ) 
- {
+) => {
 
     // Error handling
     // Changing error handling to a mix of Vikash's validators and mine
@@ -52,10 +29,9 @@ import validators from '../validators.js';
             [description, 'Create description'],
             [nearByPort, 'Create nearByPort'],
         );
-        // date = validators.checkDate(date, 'Create date');   // This will be updated to check the time as well 
+        date = validators.checkDate(date, 'Create date');  
         registrationFee = validators.checkPrice(Number(registrationFee), 'Create fee');
         eventMode = helperFuncs.checkEventMode(eventMode);
-        permission = helperFuncs.checkPermission(permission);
         publish = helperFuncs.checkPublishStatus(publish, 'Create publish/save');
     }
     catch(e) {
@@ -66,10 +42,10 @@ import validators from '../validators.js';
     //initialize empty reviews subdocument
     let reviews = [];
     if (publish === 'publish') {
-        eventStatus = 'published';
+        eventStatus = 'Published';
     }
     else {
-        eventStatus = 'planned';
+        eventStatus = 'Planned';
     }
     
 
@@ -83,7 +59,6 @@ import validators from '../validators.js';
         eventName: eventName,
         date: date,
         category: category,
-        permission: permission,
         description: description,
         location: location,
         nearByPort: nearByPort,
@@ -104,10 +79,10 @@ import validators from '../validators.js';
 
     let newId = insertEv.insertedId.toString();
     return newId;
-},
+}
 
 // Changes: Gets an event from id not a user
-async getEvent(eventId) {
+export const getEvent = async (eventId) => {
     // Error handling
     eventId = helperFuncs.checkEventId(eventId);
     
@@ -120,7 +95,6 @@ async getEvent(eventId) {
             date: 1, 
             location: 1, 
             category: 1,
-            permission: 1,     
             description: 1, 
             nearByPort: 1, 
             eventMode: 1, 
@@ -130,11 +104,11 @@ async getEvent(eventId) {
     
     if (!event) throw "Event could not be found.";
     return event;
-},
+}
 
-async getAllEvents(userId) {
+export const getAllEvents = async (userId) => {
     const eventCollection = await events();
-    let eventChecker = await eventCollection.findOne({userId: userId});
+    let eventChecker = await eventCollection.findOne({userId: userId.toString()});
 
     if (!eventChecker) throw `Cannot find events for that user!`;
 
@@ -143,8 +117,7 @@ async getAllEvents(userId) {
         eventName: 1, 
         date: 1, 
         location: 1, 
-        category: 1,
-        permission: 1,     
+        category: 1,  
         description: 1, 
         nearByPort: 1, 
         eventMode: 1, 
@@ -157,97 +130,24 @@ async getAllEvents(userId) {
       return element;
     })
   
-      //Validations
-      // Input validation
-  
-      try {
-        validators.checkStrings(
-          [eventName, 'Event Name'],
-          [eventDescription, 'Event Description'],
-          [eventLocation, 'Event Location'],
-          [category, 'Category'],
-          [nearByPort, 'Near-By Port'],
-          [eventMode, 'Event Mode'],
-          [contactPersonId, 'Contact PersonId']
+    return eventList;
+}
 
-        );
-        validators.checkDate(eventDate,'Event Date');
-        validators.checkPrice(registrationFee,'Registration Fee');
-        validators.checkBoolean(status, "Status");
-      } catch (e) {
-        throw 'Validation Error :', e;  
-      }
-  
-  
-  
-      const event = {
-        eventName: eventName.trim(),
-        eventDescription: eventDescription.trim(),
-        eventDate: eventDate.trim(),
-        eventLocation: eventLocation.trim(),
-        category: category.trim(),
-        nearByPort: nearByPort.trim(),
-        eventMode: eventMode.trim(),
-        registrationFee,
-        contactPerson,
-        status,
-        subscribers: [],
-        reviews: [],
-        averageReview: 0
-      };
-  
-  
-      try {
-          const eventCollection = await events();
-  
-          const result = await eventCollection.insertOne(event);
-   
-          if (!result.acknowledged || !result.insertedId) {
-              throw `Failed to create the new event  :, ${eventName}`;
-          }
-  
-          event._id = result.insertedId.toString();
-  
-          return event;
-          
-      } catch (e) {  
-        throw 'MongoDB connection error :', e;  
-      }
-  
-  },
-  
-  async getEvents() {
-    try{
+export const updateEventPatch = async (eventId, updatedEvent) => {
+    const updatedEventData = {};
 
-      const eventsCollection = await events();
-      const eventsList = await eventsCollection.find({}, {projection: {eventName:1,  _id: 1}}).toArray();
-      
-      // console.log("eventsList: ", eventsList);
-      
-      if (!eventsList) throw new Error("Event could not be found.");
-      
-      return eventsList;
-    } catch (e) {  
-      throw 'MongoDB connection error :', e;  
+    if (updatedEvent.eventNameEdit) {
+        updatedEventData['eventName'] = validators.checkString(updatedEvent.eventNameEdit, 'Edit Event Name');
     }
-  },
-  
-  async getEvent(eventId) {
-  
-    try {
-  
-        eventId = validators.checkObjectId(eventId, 'Event Id');  
-    } catch (e) {
-        throw 'Validation Error :', e;  
+    if (updatedEvent.dateEdit) {
+        // to do check dates
+        updatedEventData['date'] = date = validators.checkDate(updatedEvent.dateEdit, 'Create date');  
     }
     if (updatedEvent.locationEdit) {
         updatedEventData['location'] = validators.checkString(updatedEvent.locationEdit, 'Edit Event Location');
     }
     if (updatedEvent.categoryEdit) {
         updatedEventData['category'] = validators.checkString(updatedEvent.categoryEdit, 'Edit Event Location');
-    }
-    if (updatedEvent.permEdit) {
-        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permEdit);
     }
     if (updatedEvent.descriptionEdit) {
         updatedEventData['description'] = validators.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
@@ -277,199 +177,40 @@ async getAllEvents(userId) {
 
     if (!updateEvent) throw `Could not update this event`;
 
-    return updateEvent._id.toString();
-},
+    return updateEvent;
+}
 
-async deleteEvent(eventId) {
+export const deleteEvent = async (eventId) => {
     eventId = validators.checkObjectId(eventId);
 
     const eventCollection = await events();
     const userCollection = await users();
     
-        const event = await eventCollection.findOne({ _id: objectId });
-        if (!event) {
-            throw `Event not found. for Event Id: ${eventId}` ;
-        }
-        return event;
-        
-  },
-  
-  /** This is optional as event may not require to be removed. */
-  async removeEvent (eventId) {
-  
-    // Input validation
-    try {
-      validators.checkObjectId(eventId, 'Event Id');
-    } catch (e) {
-      throw 'Validation Error :', e;  
+    // Check if they can delete the event
+    try { 
+        const userId = await userCollection.findOne({
+            'events._id': new ObjectId(eventId)
+        });
+        if (!userId) throw `Cannot find event attatched to a user.`;
     }
-  
-    try {
-        const eventCollection = await events();
-        const objectId =  new ObjectId(eventId);
-    
-    
-        const event = await eventCollection.deleteOne({ _id: objectId });
-        if (product.deletedCount === 0) {
-            throw `Event not found and not deleted for Event Id: ${eventId}` ;
-        }
-        
-        return { _id: eventId, deleted: true };
-  
-    } catch (e) {
-      throw 'MongoDB connection error :', e;  
-    }
-  
-  
-  },
-  
-  /**Update Event */
-  async updateEvent (
-    eventId,
-    eventName,
-    eventDescription,
-    eventDate,
-    eventLocation,
-    category,
-    nearByPort,
-    eventMode,
-    registrationFee,
-    contactPersonId,
-    status
-  ) {
-  
-  
-     // Input validation    
-     try {
-        validators.checkStrings(
-          [eventName, 'Event Name'],
-          [eventDescription, 'Event Description'],
-          [eventLocation, 'Event Location'],
-          [category, 'Category'],
-          [nearByPort, 'Near-By Port'],
-          [eventMode, 'Event Mode']
+    catch(e) {
+        return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+    } 
 
-        );
-        validators.checkObjectId(eventId, 'Event Id');
-        validators.checkDate(eventDate,'Event Date');
-        validators.checkPrice(registrationFee,'Registration Fee');
-        validators.checkObjectId(contactPersonId, 'Contact Person Id');
-        validators.checkBoolean(status, "Status");
-      } catch (e) {
-        throw 'Validation Error :', e;  
-      }
+    // Need error checking on delete but not sure how to do that
+    const deleteEvent = await eventCollection.findOneAndDelete({
+        _id: new ObjectId(eventId)
+    });
 
 
-    const updatedEvent = {
-        eventName: eventName.trim(),
-        eventDescription: eventDescription.trim(),
-        eventDate: eventDate.trim(),
-        eventLocation: eventLocation.trim(),
-        category: category.trim(),
-        nearByPort: nearByPort.trim(),
-        eventMode: eventMode.trim(),
-        registrationFee,
-        contactPersonId,
-        status
-      };
-  
-  
-    try {
-        const eventCollection = await events();
-  
-      const objectId =  new ObjectId(eventId);
-  
-  
-      const result = await eventCollection.findOneAndUpdate(
-        { _id: objectId },
-        { $set: updatedEvent },
-        { returnOriginal: false }
-      );
-      
-      if (result.matchedCount === 0) {
-        throw `Failed to update Event with ID ${objectId}`;
-      }
-  
-      return updatedEvent;
-  
-    } catch (e) {
-      throw 'MongoDB connection error :', e;  
-    }
-  
-    },
+    // Can't use find and delete because it will delete the whole user
+    const deleteUserEvent = await userCollection.findOneAndUpdate(
+        {'events._id': new ObjectId(eventId)},
+        {$pull: {events: {_id: new ObjectId(eventId)}}},
+        {returnDocument: 'after'}
+    );
 
-    async addSubscriber (
-        eventId,
-        userId
-      ) {
-    
-        try {
-          validators.checkObjectId(eventId, 'Event Id');
-          validators.checkObjectId(userId, 'User Id');
-        } catch (e) {
-          throw 'Validation Error :', e;  
-        }
-    
-    
-        try {
-          const eventCollection = await events();
-          const objectId = new ObjectId(eventId);
-          const userObjectId = new ObjectId(userId);
 
-          const event = await eventCollection.findOne({ _id: objectId });
-    
-          if (!event) 
-          {
-              throw `Event not found for Event Id: ${eventId}` ;
-          }
-    
-          event.subscribers.push(userObjectId);
-      
-          await eventCollection.updateOne({ _id: objectId }, { $set: { subscribers: event.subscribers} });
-      
-          return event;
-        } catch (e) {
-          throw 'MongoDB connection error :', e;  
-        }
-    
-      },
-      
-      
-      async removeSubscriber ( eventId, userId) {
-  
-        try {
-            validators.checkObjectId(eventId, 'Event Id');
-            validators.checkObjectId(userId, 'User Id');
-          } catch (e) {
-            throw 'Validation Error :', e;  
-          }
-      
-      
-          try {
-            const eventCollection = await events();
-            const objectId = new ObjectId(eventId);
-            const userObjectId = new ObjectId(userId);
 
-      
-            const event = await eventCollection.findOne({ _id: objectId });
-      
-            if (!event) 
-            {
-                throw `Event not found for Event Id: ${eventId}` ;
-            }
-      
-            event.subscribers.deleteOne(userObjectId);
-        
-            await eventCollection.updateOne({ _id: objectId }, { $set: { subscribers: event.subscribers} });
-        
-            return event;
-          } catch (e) {
-            throw 'MongoDB connection error :', e;  
-          }
-  
-        
-      }
-  }
-  
-  export default exportedMethods;
-  
+    return {deleted: true}
+}

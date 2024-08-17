@@ -29,7 +29,7 @@ router.route('/').get(async (req, res) => {
     if(password == confirmPassword) {
       try {
         const newUser = await registerUser(username, firstName, lastName, emailAddress, password);
-        if (newUser.userInserted) res.redirect('login');
+        if (newUser.userInserted) res.redirect('/auth');
       } catch (error) {
         res.status(400).render('error') //status 400 code
       }
@@ -56,7 +56,7 @@ router.route('/').get(async (req, res) => {
         emailAddress: loggedIn.emailAddress,
         password: loggedIn.password
       }
-      res.redirect('/eventHome');
+      res.redirect('/event/');
     } catch (error) {
       console.error(error)
       res.status(400).render('error');

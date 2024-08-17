@@ -97,7 +97,7 @@ button:hover {
 a {
   color: #007bff;
   text-decoration: none;
-  display: block;
+  display: flex;
   text-align: center;
   margin-top: 20px;
 }
@@ -113,7 +113,7 @@ ol, ul {
   padding-left: 20px;
 }
 
-.error {
+.error-list li {
   color: red;
   text-align: center;
 }
