@@ -1,6 +1,7 @@
 // I've added just a general string helper functions that I think could come in handy. 
 // Feel free to add any you need
 import { ObjectId } from "mongodb";
+import mailer from nodemailer;
 
 const helperFuncs = {
 
