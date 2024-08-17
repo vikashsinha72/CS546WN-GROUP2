@@ -67,7 +67,7 @@ export const registerUser = async (
     let events = [];
 
     //hash password - 8 salt round
-    const hashedPassword = await bcrypt.hash(password, 8);
+    const hashedPassword = await bcryptjs.hash(password, 8);
   
     //now create user object
     const newUser = {
@@ -135,13 +135,6 @@ export const getUser = async (userId) => {
 
 
 export const getUserList = async () => {
-  // try {
-  //     const usersCollection = await users();
-  //     const userList = await usersCollection.find({}, { projection: { username: 1, _id: 1 } }).toArray();
-  //     return userList || [];
-  //   } catch (e) {
-  //     throw 'MongoDB connection error :', e;  
-  //   }
   const usersCollection = await users();
 
   let userList = await usersCollection.find({}).toArray();
