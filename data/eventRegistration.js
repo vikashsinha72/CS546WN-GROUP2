@@ -7,7 +7,7 @@ import helperFuncs from "../helpers.js";
 
 
 const exportedMethods = {
-async createEventRegisteredUser(  
+async UserEventRegistration(  
   eventId,
   userName,
   emailId,
@@ -30,6 +30,7 @@ async createEventRegisteredUser(
     catch(e) {
       throw 'Validation Error: ', e;
     }
+
     const eventCollection = await events();
     const newRegistration = {
       _id: new ObjectId(),
