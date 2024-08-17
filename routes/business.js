@@ -4,13 +4,22 @@
 import {Router} from 'express';
 const router = Router(); 
 
+// http://localhost:3000/profile/66be191f44efb08153b12d90
 router
-    .route('/auth')
-    .get(async (req, res) => {
-        // --- insert get request here ---
-    })
-    .post(async (req, res) => {
-        // --- insert post request here ---
-    });
+.route('/profile/:userId')
+.get(async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await getUser(userId)
+    res.render('profilePage', { user })
+  } catch (error) {
+    console.error()
+    return res.status(400).render('error')
+  }
+})
 
+router.route('/error').get(async (req, res) => {
+    //code here for GET
+    res.status(400).render('error')
+});
 export default router;

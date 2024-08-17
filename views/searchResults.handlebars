@@ -1,7 +1,37 @@
 {{! Simple extension to the main html file}}
 {{! Remember that you don't full html structure for extensions}}
 
-<body>
-    <h1>--- Insert Header Here---</h1>
-    <main></main>
-</body>
+<h1>Search Events</h1>
+<form id="search-form">
+    <label for="name">Event Name:</label>
+    <input type="text" id="name" name="name">
+
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date">
+
+    <label for="category">Category:</label>
+    <input type="text" id="category" name="category">
+
+    <label for="fee">Registration Fee:</label>
+    <select id="fee" name="fee">
+        <option value="">All</option>
+        <option value="Free">Free</option>
+        <option value="Chargable">Chargable</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+<div id="results"></div>
+
+<script>
+    document.getElementById('search-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('/event/search', {
+            method: 'GET',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => document.getElementById('results').innerHTML = data);
+    });
+</script>

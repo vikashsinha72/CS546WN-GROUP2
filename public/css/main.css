@@ -1,0 +1,167 @@
+
+
+/*
+You will style your page using at least 10 CSS selectors for general CSS styling. You will place the CSS in its own file. 
+*/
+
+/*This file should have 10 CSS rulesets */
+/* General styles */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  /****/
+  color:black;
+}
+
+
+
+/* Main content styles */
+main {
+  max-width: 800px;
+  max-height:1000px;
+  margin-top: 500px auto;
+  margin-left:450px;
+  padding: 10px;
+  background-color: #0b3b6b;
+  box-shadow: 0 0 10px rgba(8, 1, 1, 0.1);
+}
+
+
+/* Styling for headers */
+h1, h2, h3 {
+  color: #333;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Paragraphs */
+p {
+  line-height: 1.6;
+}
+
+/* Form styling */
+form {
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  /** display: flex; **/
+  justify-content: center;
+  text-align: center;
+}
+
+
+
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* Input field styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Button styling */
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+/* Link styling */
+a {
+  color: #007bff;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+
+/* Lists */
+ol, ul {
+  padding-left: 20px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+/** Style sheet for horizon  menu in header **/
+/* Basic reset for list styling */
+header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center; /* Center the menu items horizontally */
+  background-color: #333; /* Background color for the menu bar */
+}
+
+/* Styling for each menu item */
+header nav ul li {
+  margin: 0 15px; /* Space between menu items */
+}
+
+/* Styling for the links in the menu */
+header nav ul li a {
+  text-decoration: none;
+  color: #fff; /* Text color for the menu links */
+  padding: 14px 20px;
+  display: block;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+/* Hover effect for the links */
+header nav ul li a:hover {
+  background-color: #575757; /* Background color on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+}
+
+/* Additional styling for active or current page links */
+header nav ul li a.active {
+  background-color: #04AA6D; /* Active link color */
+  border-radius: 5px;
+}

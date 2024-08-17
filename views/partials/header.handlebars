@@ -1,0 +1,16 @@
+<header>
+    <nav>
+        <ul>
+            <li><a href="/auth">Home</a></li>
+            {{#if user}}
+                <li><a href="/event">Events</a></li>
+                <li><a href="/event/create">Create Event</a></li>
+                <li><a href="/user/profile">{{user.firstName}}'s Profile</a></li>
+                <li><a href="/logout">Logout</a></li>
+            {{else}}
+                <li><a href="/auth">Login</a></li>
+                <li><a href="/user/register">Register</a></li>
+            {{/if}}
+        </ul>
+    </nav>
+</header>

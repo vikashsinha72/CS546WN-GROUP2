@@ -3,6 +3,7 @@ import axios from 'axios';
 import bcryptjs from 'bcryptjs'
 import { users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
+import validators from '../validators.js';
 
 
 export const registerUser = async (
@@ -106,7 +107,7 @@ export const loginUser = async (username, password) => {
   const usersCollection = await users();
   const user = await usersCollection.findOne({ username })
 
-  const checkPassword = await bcrypt.compare(password, user.password);
+  const checkPassword = await bcryptjs.compare(password, user.password);
   if (!checkPassword) throw new Error("Password does not match.");
 
   const { firstName, lastName, email } = user;
@@ -133,4 +134,133 @@ export const getUser = async (userId) => {
 }
 
 
-export default { registerUser, loginUser, getUser }
+export const getUserList = async () => {
+  // try {
+  //     const usersCollection = await users();
+  //     const userList = await usersCollection.find({}, { projection: { username: 1, _id: 1 } }).toArray();
+  //     return userList || [];
+  //   } catch (e) {
+  //     throw 'MongoDB connection error :', e;  
+  //   }
+  const usersCollection = await users();
+
+  let userList = await usersCollection.find({}).toArray();
+  if (!userList) throw new Error("Could not get all users.");
+  
+  userList = userList.map((element) => {
+    element._id = element._id.toString();
+    return element;
+  })
+
+  return userList;
+}
+
+
+
+export const updateUser = async(userId, firstName, lastName, emailAddress, password) => {
+    try{
+      validators.checkStrings(
+        [userId, 'User Id'],
+        [firstName, 'First Name'],
+        [lastName, 'Last Name'],
+        [emailAddress, 'Email Address'],
+        [password, 'Password']
+      );
+    
+      // Add further validation
+      validators.checkObjectId(userId, "User Id");
+      validators.checkFirstname(firstName);
+      validators.checkLastname(lastName);
+      validators.checkEmail(emailAddress);
+      validators.checkPassword(password);
+    }
+    catch (e) {
+      throw 'Validation Error :', e;
+    }
+  
+    try {
+      const usersCollection = await users();
+      const emailExists = await usersCollection.findOne({ emailAddress: emailAddress.toLowerCase() });
+      if (emailExists && emailExists._id != userId) throw 'There is already a user with that email address.';
+  
+      const hashedPassword = await bcrypt.hash(password, 8);
+
+      const updatedUser = {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        emailAddress: emailAddress.trim(),
+        hashedPassword: hashedPassword,
+      };
+
+    const objectId =  new ObjectId(userId);
+  
+    const result = await usersCollection.findOneAndUpdate(
+      { _id: objectId },
+      { $set: updatedUser },
+      { returnOriginal: false }
+    );
+    
+    if (result.matchedCount === 0) {
+      throw `Failed to update User with ID ${objectId}`;
+    }
+
+    return updatedUser;
+
+  } catch (e) {
+    throw "MongoDB connection error : ", e;  
+  }
+  
+  
+}
+
+
+
+export const changePassword = async(userId, oldPassword, newPassword) => {
+  try {
+      validators.checkStrings(
+        [userId, 'User Id'],
+        [oldPassword, 'Old Passord'],
+        [newPassword, 'New Password']
+      );
+      // Add further validation
+      validators.checkObjectId(userId, "User Id");
+      validators.checkPassword(oldPassword);
+      validators.checkPassword(newPassword);  
+    }
+    catch (e) {
+      throw 'Validation Error :', e;
+    }
+    try {
+      const usersCollection = await users();
+
+      const updatedUser = new ObjectId(userId);
+      const user = await usersCollection.findOne({ _id: updatedUser });
+
+      if (!user) throw `User not found for User Id: ${userId}` ;
+  
+  
+    const hashedPassword = await bcryptjs.hash(newPassword, 8);
+    updatedUser.hashedPassword = hashedPassword;
+
+  
+    const result = await usersCollection.findOneAndUpdate(
+      { _id: ObjectId },
+      { $set: updatedUser },
+      { returnOriginal: false }
+    );
+    
+    if (result.matchedCount === 0) {
+      throw `Failed to update User with ID ${ObjectId}`;
+    }
+
+    return updatedUser;
+
+  } catch (e) {
+    throw `MongoDB connection error : ${e}`;  
+  }
+  
+}
+
+
+
+export default { registerUser, loginUser, getUser, getUserList, updateUser, changePassword }
