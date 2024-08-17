@@ -141,14 +141,14 @@ checkUrl(url, varName) {
 
 checkPrice(price, varName) {
 
-    if (!price) {
+    if (!price && price != 0) {
         throw `${varName} is missing`;
     }
     if (typeof price !== 'number') {
         throw `${varName} must be a number`;
     }
 
-    if (price <= 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
+    if (price < 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
         throw `${varName} must be a number greater than 0 with up to 2 decimal places.`;
     }
 

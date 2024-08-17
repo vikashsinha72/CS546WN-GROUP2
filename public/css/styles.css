@@ -6,43 +6,90 @@ You will style your page using at least 10 CSS selectors for general CSS styling
 /* General styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(240, 242, 243);
-    color: #f8f7f7f5;
+    background-color: rgb(243, 224, 201);
+    color: black;
     margin: 0;
     padding: 0;
 }
 
 button {
-    background-color: rgb(255, 255, 255);
+    background-color: black;
+    color: white;
+    width: 100px;
+    height: 50px;
+    font-size: 17px;
+    margin-left: 400px;
+    margin-right: 400px;
+}
+
+.category {
+   font-size: 15px; 
 }
 
 /* Main content styles */
 main {
-    max-width: 800px;
-    max-height:1000px;
+    max-width: 1000px;
+    max-height: 2000px;
     margin-top: 500px auto;
-    margin-left:450px;
-    padding: 10px;
-    background-color: #0b3b6b;
-    box-shadow: 0 0 10px rgba(8, 1, 1, 0.1);
+    margin-left: 350px;
+    margin-right: 300px;
+    background-color: white;
+}
+
+
+.topnav {
+    text-align: center;
+    overflow: hidden;
+    background-color: black;
+    max-width:6000px;
+}
+  
+.topnav a {
+    float: left;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+    margin-left: 250px;
+}
+
+.topnav a:hover {
+    text-decoration: underline;
+    color: white;
+    max-height:60px;
+}
+
+.topnav a.active {
+    background-color: #04AA6D;
+    color: white;
 }
 
 /* Headings */
 h1, h2 {
     color: black;
     text-align: center;
-    margin-left:80px
+    margin-left: 200px;
+    margin-right: 150px;
 }
 
 /* Paragraphs */
 p {
-    line-height: 1.6;
+    line-height: 2;
+    text-align: center;
+    font-size: large;
+
 }
 
 /* Forms */
 form {
     display: flex;
     justify-content: center;
+    text-align: center;
+    
+}
+
+.eventForm {
+    color:black;
     margin: 1em 0;
 }
 
@@ -62,6 +109,7 @@ input, button {
 ol, ul {
     padding-left: 20px;
 }
+  
 
 .error {
     color: red;
@@ -78,21 +126,8 @@ ol, ul {
     margin: 0.5em 0;
   }
   
-  .prime {
-    color: #00ff00;
-    text-align: center;
-  }
-  
-  .not-prime {
-    color: #ff0000;
-    text-align: center;
-  }
-
-.createEvent, .editEvent {
+.createEvent {
     display: block;
     text-align: center;
-}
-.error-list li {
-  color: #ff0000;
 }
 

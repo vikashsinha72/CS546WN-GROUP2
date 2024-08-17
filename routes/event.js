@@ -3,24 +3,16 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
-import eventData from '../data/events.js';
 
-import validators from '../validators.js';
 
 const router = Router(); 
+import { ObjectId } from 'mongodb';
+import path from 'path';
+import helperFuncs from '../helpers.js';
+import { users, events } from '../config/mongoCollections.js'
+import eventData from '../data/events.js';
+import validators from '../validators.js';
 
-
-router.route('/').get(async (req, res) => {
-    //code here for GET THIS ROUTE SHOULD NEVER FIRE BECAUSE OF MIDDLEWARE #1 IN SPECS.
-    //return res.json({error: `YOU SHOULD NOT BE HERE! ${req.originalUrl}`});
-    if (req.session.user) {
-
-        return res.render('eventHome', { title: "Events", user: req.session.user});
-
-    }
-    return res.redirect('/auth');    
-});
-    
 router
 .route('/create')
 .get(async (req, res) => {
