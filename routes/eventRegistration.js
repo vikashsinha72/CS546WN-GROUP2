@@ -1,6 +1,7 @@
 import express from 'express';
 import eventsData from '../data/events.js';
 import eventsRegistrationData from '../data/eventRegistration.js';
+import { users, events } from '../config/mongoCollections.js';
 const router = express.Router();
 
 // router.route('/').get((req, res) => {
@@ -44,7 +45,12 @@ const router = express.Router();
 router.route('/')
   .get(async(req, res) => {
     try{
-      const events = await eventsData.getEvents();
+      // currently gets all user events
+      const getUser = req.session.user.username;
+      const userCollection = await users();
+      let userId = await userCollection.findOne({username: getUser});
+      // if user doesn't go through reroute?
+      const events = await eventsData.getAllEvents(userId._id.toString());
       // console.log("events from route: ", events)
       res.render('eventRegistration', { title: 'Event Registration', events, user: req.session.user })   
     } 
