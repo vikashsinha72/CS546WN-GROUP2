@@ -11,10 +11,10 @@
     </head>
     <body>
         <article>
-            <h1>{{user.firstName}}{{user.lastName}}</h1>
+            <h1>{{user.firstName}} {{user.lastName}}</h1>
              <h2>Events</h2> {{!-- pass in event name and date --}}
             <ul>
-                {{#each user.username.events}}
+                {{#each user.events}}
                 <li>{{this.eventName}}</li>
                 {{/each}}
             </ul>
