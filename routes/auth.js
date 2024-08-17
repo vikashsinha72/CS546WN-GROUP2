@@ -56,7 +56,7 @@ router.route('/').get(async (req, res) => {
         emailAddress: loggedIn.emailAddress,
         password: loggedIn.password
       }
-      res.redirect('/event/');
+      res.redirect('/event/home');
     } catch (error) {
       console.error(error)
       res.status(400).render('error');

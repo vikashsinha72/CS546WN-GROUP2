@@ -8,7 +8,23 @@ import path from 'path';
 import helperFuncs from '../helpers.js';
 import validators from '../validators.js';
 import { users, events } from '../config/mongoCollections.js';
-import {createEvent, getEvent, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
+import {createEvent, getEvent, getEventList, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
+
+router
+    .route('/home')
+    .get(async (req, res) => {
+        if (!req.session.user) {
+            res.redirect('/auth/')
+        }
+
+        const eventLister = await getEventList(); 
+        if (eventLister.length === 0) {
+            return res.render(path.resolve('views/homepage'), ({hasEvents: false}));
+        }
+        else {
+            return res.render(path.resolve('views/homepage'), ({event: eventLister, hasEvents: true}));
+        }
+    })
 
 router
     .route('/')
