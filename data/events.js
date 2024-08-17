@@ -10,7 +10,6 @@ export const createEvent = async (
     date, 
     location, 
     category,
-    permission,     // Added this for groups or public
     description, 
     nearByPort, 
     eventMode, 
@@ -30,10 +29,9 @@ export const createEvent = async (
             [description, 'Create description'],
             [nearByPort, 'Create nearByPort'],
         );
-        // date = validators.checkDate(date, 'Create date');   // This will be updated to check the time as well 
+        date = validators.checkDate(date, 'Create date');  
         registrationFee = validators.checkPrice(Number(registrationFee), 'Create fee');
         eventMode = helperFuncs.checkEventMode(eventMode);
-        permission = helperFuncs.checkPermission(permission);
         publish = helperFuncs.checkPublishStatus(publish, 'Create publish/save');
     }
     catch(e) {
@@ -44,10 +42,10 @@ export const createEvent = async (
     //initialize empty reviews subdocument
     let reviews = [];
     if (publish === 'publish') {
-        eventStatus = 'published';
+        eventStatus = 'Published';
     }
     else {
-        eventStatus = 'planned';
+        eventStatus = 'Planned';
     }
     
 
@@ -61,7 +59,6 @@ export const createEvent = async (
         eventName: eventName,
         date: date,
         category: category,
-        permission: permission,
         description: description,
         location: location,
         nearByPort: nearByPort,
@@ -98,7 +95,6 @@ export const getEvent = async (eventId) => {
             date: 1, 
             location: 1, 
             category: 1,
-            permission: 1,     
             description: 1, 
             nearByPort: 1, 
             eventMode: 1, 
@@ -112,7 +108,7 @@ export const getEvent = async (eventId) => {
 
 export const getAllEvents = async (userId) => {
     const eventCollection = await events();
-    let eventChecker = await eventCollection.findOne({userId: userId});
+    let eventChecker = await eventCollection.findOne({userId: userId.toString()});
 
     if (!eventChecker) throw `Cannot find events for that user!`;
 
@@ -121,8 +117,7 @@ export const getAllEvents = async (userId) => {
         eventName: 1, 
         date: 1, 
         location: 1, 
-        category: 1,
-        permission: 1,     
+        category: 1,  
         description: 1, 
         nearByPort: 1, 
         eventMode: 1, 
@@ -146,16 +141,13 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
     }
     if (updatedEvent.dateEdit) {
         // to do check dates
-        updatedEventData['date'] = updatedEvent.dateEdit;
+        updatedEventData['date'] = date = validators.checkDate(updatedEvent.dateEdit, 'Create date');  
     }
     if (updatedEvent.locationEdit) {
         updatedEventData['location'] = validators.checkString(updatedEvent.locationEdit, 'Edit Event Location');
     }
     if (updatedEvent.categoryEdit) {
         updatedEventData['category'] = validators.checkString(updatedEvent.categoryEdit, 'Edit Event Location');
-    }
-    if (updatedEvent.permEdit) {
-        updatedEventData['permission'] = helperFuncs.checkPermission(updatedEvent.permEdit);
     }
     if (updatedEvent.descriptionEdit) {
         updatedEventData['description'] = validators.checkString(updatedEvent.descriptionEdit, 'Edit Event Description');
@@ -185,7 +177,7 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
 
     if (!updateEvent) throw `Could not update this event`;
 
-    return updateEvent._id.toString();
+    return updateEvent;
 }
 
 export const deleteEvent = async (eventId) => {

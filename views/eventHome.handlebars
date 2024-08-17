@@ -2,13 +2,15 @@
 {{! Remember that you don't full html structure for extensions}}
 
 <body>
-    <main>        
+    <main id="eventHome">        
 
         <div id="topOfPage">
         <h3 id="eName">{{eventRes.eventName}}</h3>
         <h3 id="eHost">Hosted By: {{userRes.firstName}} {{userRes.lastName}}</h3>
-        <h3 id="eDate">Date: {{eventRes.date}}</h3>
-        <h3 id="eFee">Price: {{eventRes.registrationFee}}</h3>
+        <h3 id="eStatus">Event Status: {{eventRes.eventStatus}}</h3>
+        <h3 id="eDate">Date: {{formatted.date.date}}</h3>
+        <h3 id="eTime">Time: {{formatted.date.time}}</h3>
+        <h3 id="eFee">Price: {{formatted.fee}}</h3>
         <h3 id="eLocation">Location: {{eventRes.location}}</h3>
         <h3 id="eMode">Mode: {{eventRes.eventMode}}</h3>
         <br>

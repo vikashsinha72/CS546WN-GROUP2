@@ -44,8 +44,7 @@ const helperFuncs = {
 
     checkEventMode(eventMode) {
         if (!eventMode) throw `You must provide a permission`;
-        eventMode = eventMode.toLowerCase().trim();
-        if (eventMode !== 'online' && eventMode !== 'person') throw `Event must be either online or in person.`;
+        if (eventMode !== 'Online' && eventMode !== 'In-Person') throw `Event must be either Online or in person.`;
         return eventMode;
     },
 
@@ -67,13 +66,13 @@ const helperFuncs = {
     // Status can be changed through editing
     checkStatus(pubStat, status, varName) {
         const eventStatus = {
-            unpublished: ['planned', 'ready', 'suspended'],   // on save creation status will auto planned
-            published: ['published', 'executed', 'closed']    // on publish creation status will auto published
+            unpublished: ['Planned', 'Ready', 'Suspended'],   // on save creation status will auto Planned
+            Published: ['Published', 'Executed', 'Closed']    // on publish creation status will auto Published
         };
 
         if (pubStat === 'publish') {
             for (let i = 0; i < 3; i++) {
-                if (status === eventStatus.published[i]) {
+                if (status === eventStatus.Published[i]) {
                     return status;
                 }
             }
@@ -97,7 +96,46 @@ const helperFuncs = {
         if (pubStat !== 'publish' && pubStat !== 'save') throw `${varName} must be either admin or user.`;
 
         return pubStat;
+    },
+
+
+    eventDateTimeFormat(dateTime) {
+        // Separating and reorganizing date and time for formatted easy to read event page
+        const dater = new Date(dateTime);
+
+        const month = dater.getMonth() + 1; // goes from 0-11
+        const year = dater.getFullYear();
+        const day = dater.getDate();
+
+        let hour = dater.getHours();
+        let min = dater.getMinutes();
+        const pmam = hour >= 12 ? 'PM' : 'AM';  // if hour is >= 12 we know its pm 
+        
+        // change hours from military time
+        if (hour !== 0) {
+            hour = hour % 12;
+        }
+        else {
+            hour = 12;
+        }
+
+        const dateTimeObj = {}
+        dateTimeObj.date = `${month}/${day}/${year}`;
+        dateTimeObj.time = `${hour}:${min} ${pmam}`;
+
+        return dateTimeObj;
+
+    },
+
+    eventPriceFormat(regFee) {
+        if (regFee === 0) {
+            return 'Free';
+        }
+        else {
+            return `$${regFee}`;
+        }
     }
+
 }
 
 export default helperFuncs;

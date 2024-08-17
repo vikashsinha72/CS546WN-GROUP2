@@ -3,8 +3,8 @@
 <body class="createEvent">
     <h1>Create Your Event</h1>
     <main class="createEvent">
-        <form class="createEvent" id="eventCreation-form" method="POST">
-            <label for="eventName">
+        <form class="createEvent" id="eventCreation-form" method="POST" action="/event/create">
+            <label for="eventNameInput">
                 Event Name:
                 <input type="text" name="eventNameInput" placeholder="Event Name" value="{{event.eventName}}" id="eventNameInput">
             </label>
@@ -33,24 +33,15 @@
             <label for="modeInput">
                 Event Mode:
                 <select type="eventMode" name="modeInput" value="{{event.mode}}" id="modeInput">
-                   <option value="online">Online</option>
-                   <option value="person">In-Person</option>
+                   <option value="Online">Online</option>
+                   <option value="In-Person">In-Person</option>
                 </select>
             </label>
             <br>
 
             <label for="feeInput">
                 Registration Fee:
-                <input type="text" name="feeInput" placeholder="Event Fee" value="{{event.registrationFee}}" id="feeInput">
-            </label>
-            <br>
-
-            <label for="permInput">
-                Who's Coming:
-                <select type="permission" name="permInput" value="{{event.permission}}" id="permInput">
-                   <option value="public">Public</option>
-                   <option value="private">Private</option>
-                </select>
+                <input type="number" name="feeInput" placeholder="Event Fee" value="{{event.registrationFee}}" id="feeInput">
             </label>
             <br>
 
@@ -58,7 +49,7 @@
             <div class="dropdown">
                 <label for="categoryInput">
                     Category:
-                    <select class = "categoryInput" value="{{event.category}}" name = "categoryInput">
+                    <select id="categoryInput" value="{{event.category}}" name = "categoryInput">
                         <option value="Party">Party</option>
                         <option value="Birthday">Birthday</option>
                         <option value="Wedding">Wedding</option>
@@ -95,5 +86,5 @@
         </ul>
     {{/if}}
     </main>
-    {{! <a href="/profile">Back to your profile</a> once routes are worked out}}
+    <a href="/event/">Back to Your Events</a> 
 </body>

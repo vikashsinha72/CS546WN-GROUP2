@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registration-form');
     const loginForm = document.getElementById('login-form');
-    const eventForm = document.getElementById('event-form');
+    const eventForm = document.getElementById('eventCreation-form');
+    const eventEditForm = document.getElementById('eventEdit-form');
     const eventSearchform = document.getElementById('eventSearch-form');
+    
 
     if (registerForm) {
         registerForm.addEventListener('submit', (event) => {
@@ -84,103 +86,98 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-// Event Creation form
-    if (eventForm) {
-        eventForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const errors = [];
+// // Event Creation form
+//     if (eventForm) {
+//         eventForm.addEventListener('submit', (event) => {
+//             event.preventDefault();
+//             const errors = [];
 
-            const eventName = document.getElementById('eventNameInput').value.trim();
-            const eventDate = document.getElementById('eventDateInput').value.trim();
-            const location = document.getElementById('locationInput').value.trim();
-            const category = document.getElementById('categoryInput').value.trim();
-            const description = document.getElementById('descriptionInput').value.trim();
-            const nearByPort = document.getElementById('nearByPortInput').value.trim();
-            const eventMode = document.getElementById('eventModeInput').value.trim();
-            const registrationFee = document.getElementById('registrationFeeInput').value.trim();
-            const contactPerson = document.getElementById('contactPersonInput').value.trim();
+//             const eventName = document.getElementById('eventNameInput').value.trim();
+//             const eventDate = document.getElementById('dateInput').value.trim();
+//             const location = document.getElementById('locationInput').value.trim();
+//             const category = document.getElementById('categoryInput').value.trim();
+//             const description = document.getElementById('descriptionInput').value.trim();
+//             const nearByPort = document.getElementById('portInput').value.trim();
+//             const eventMode = document.getElementById('modeInput').value.trim();
+//             const registrationFee = document.getElementById('feeInput').value.trim();
 
+//             // Validate Event Name
+//             if (!eventName || eventName.trim().length === 0) {
+//                 errors.push('Event Name must not be empty');
+//             }
+//             // Event Date validation (check if the date is not in the past)
+//             const currentDate = new Date().toISOString().split('T')[0];
+//             if (eventDate === '' || eventDate <= currentDate) {
+//                 isValid = false;
+//                 errorMessage += 'Please enter a valid future date for the event.\n';
+//             }
 
-            // Validate Event Name
-            if (!eventName || eventName.trim().length === 0) {
-                errors.push('Event Name must not be empty');
-            }
-            // Event Date validation (check if the date is not in the past)
-            const currentDate = new Date().toISOString().split('T')[0];
-            if (eventDate === '' || eventDate <= currentDate) {
-                isValid = false;
-                errorMessage += 'Please enter a valid future date for the event.\n';
-            }
+//            // Validate Event Location
+//            if (!location || location.trim().length === 0) {
+//             errors.push('Event Location must not be empty');
+//              }
 
-           // Validate Event Location
-           if (!location || location.trim().length === 0) {
-            errors.push('Event Location must not be empty');
-             }
+//            // Validate Event Category
+//            if (!category || category.trim().length === 0) {
+//             errors.push('Event Category must not be empty');
+//              }
 
-           // Validate Event Category
-           if (!category || category.trim().length === 0) {
-            errors.push('Event Category must not be empty');
-             }
+//            // Validate Event Description
+//            if (!description || description.trim().length === 0) {
+//             errors.push('Event Description must not be empty');
+//              }
 
-           // Validate Event Description
-           if (!description || description.trim().length === 0) {
-            errors.push('Event Description must not be empty');
-             }
+//            // Validate Event Near By Port
+//            if (!nearByPort || nearByPort.trim().length === 0) {
+//             errors.push('Event Near By Port must not be empty');
+//              }
 
-           // Validate Event Near By Port
-           if (!nearByPort || nearByPort.trim().length === 0) {
-            errors.push('Event Near By Port must not be empty');
-             }
+//              // Validate Event Mode
+//            if (!eventMode || eventMode.trim().length === 0) {
+//             errors.push('Event Mode must not be empty');
+//              }
 
-             // Validate Event Mode
-           if (!eventMode || eventMode.trim().length === 0) {
-            errors.push('Event Mode must not be empty');
-             }
-
-           // Validate Event Registration Fee
-           if (!registrationFee || registrationFee.trim().length === 0) {
-            errors.push('Event Registration Fee must not be empty');
-             }
-
-  
-            if (typeof registrationFee !== 'number') {
-                errors.push('Event Registration Fee must be Number');
-            }
-        
-            if (registrationFee <= 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
-                errors.push('Event Registration Fee must be a number greater than 0 with up to 2 decimal places.');
-            }
             
-           // Validate Event Contact Person
-           if (!contactPerson || contactPerson.trim().length === 0) {
-            errors.push('Event Contact Person must not be empty');
-             }
+//            // Validate Event Registration Fee
+//            // it comes in as a string
+//            if (!registrationFee || registrationFee.trim().length === 0) {
+//             errors.push('Event Registration Fee must not be empty');
+//              }
+        
+//             if (Number(registrationFee) <= 0 || !/^\d+(\.\d{1,2})?$/.test(registrationFee)) {
+//                 errors.push('Event Registration Fee must be a number greater than 0 with up to 2 decimal places.');
+//             }
 
-            if (errors.length > 0) {
-                alert(errors.join('\n'));
-            } else {
-                //registerForm.submit();
+//             if (errors.length > 0) {
+//                 alert(errors.join('\n'));
+//             }
+            // } else {
+            //     // When it checks the submit it takes away the value from the submission to the route
+            //     // I have to add it back for the route to work.
+            //     const action = event.submitter.value;
+            //     eventForm.appendChild(action);
+            //     eventForm.submit();
  
                 // AJAX logic for form submission
                 
-                fetch('/event/create', {
-                    method: 'POST',
-                    body: eventForm,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                    alert('Event created successfully!');
-                    window.location.href = '/event';
-                    } else {
-                    alert('Error creating event');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                // fetch('/event/create', {
+                //     method: 'POST',
+                //     body: eventForm,
+                // })
+                // // .then(response => response.json())
+                // .then(data => {
+                //     if (data.success) {
+                //     alert('Event created successfully!');
+                //     window.location.href = '/event/';
+                //     } else {
+                //     alert('Error creating event');
+                //     }
+                // })
+                // .catch(error => console.error('Error:', error));
 
-            }
-        });
-    }
+            // }
+    //     });
+    // }
 
     //Event Search
     if (eventSearchform) {
@@ -242,9 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-
-
 });
 
 

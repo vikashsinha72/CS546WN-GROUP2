@@ -74,7 +74,7 @@ const crochetParty = {
     permission: 'public',
     description: 'Bring your wips and crochet through the night!',
     nearByPort: 'Salt Lake International',
-    eventMode: 'online',
+    eventMode: 'Online',
     registrationFee: '5.00',
     publish: 'save'
 }

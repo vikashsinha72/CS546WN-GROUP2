@@ -67,7 +67,7 @@ export const registerUser = async (
     let events = [];
 
     //hash password - 8 salt round
-    const hashedPassword = await bcrypt.hash(password, 8);
+    const hashedPassword = await bcryptjs.hash(password, 8);
   
     //now create user object
     const newUser = {
@@ -183,7 +183,7 @@ export const updateUser = async(userId, firstName, lastName, emailAddress, passw
       const emailExists = await usersCollection.findOne({ emailAddress: emailAddress.toLowerCase() });
       if (emailExists && emailExists._id != userId) throw 'There is already a user with that email address.';
   
-      const hashedPassword = await bcrypt.hash(password, 8);
+      const hashedPassword = await bcryptjs.hash(password, 8);
 
       const updatedUser = {
         firstName: firstName.trim(),
