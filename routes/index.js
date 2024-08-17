@@ -1,5 +1,5 @@
 import authRoutes from './auth.js';
-import userRoutes from './user.js';
+import userRoutes from './users.js';
 import eventRoutes from './event.js';
 import eventRegistrationRoutes from './eventRegistration.js';
 import searchRoutes from './search.js';

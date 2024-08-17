@@ -214,3 +214,5 @@ export const deleteEvent = async (eventId) => {
 
     return {deleted: true}
 }
+
+export default {deleteEvent, updateEventPatch, getAllEvents, getEvent, createEvent};
