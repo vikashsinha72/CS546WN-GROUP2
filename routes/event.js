@@ -6,6 +6,8 @@ import {Router} from 'express';
 import xss from 'xss';
 
 import eventData from '../data/events.js';
+import reviewData from '../data/reviews.js';
+
 import validators from '../validators.js';
 
 const router = Router(); 
@@ -40,50 +42,75 @@ router
     //code here for POST
 
     try {
-    const eventNameInput = xss(req.body.eventNameInput);
-    const eventDateInput = xss(req.body.eventDateInput);
-    const locationInput = xss(req.body.locationInput);
-    const categoryInput = xss(req.body.categoryInput);
-    const descriptionInput = xss(req.body.descriptionInput);
-    const nearByPortInput = xss(req.body.nearByPortInput);
-    const eventModeInput = xss(req.body.eventModeInput);
-    const registrationFeeInput = xss(req.body.registrationFeeInput);
-    const contactPersonInput = xss(req.body.contactPersonInput);
+        const eventNameInput = xss(req.body.eventNameInput);
+        const eventDateInput = xss(req.body.eventDateInput);
+        const locationInput = xss(req.body.locationInput);
+        const categoryInput = xss(req.body.categoryInput);
+        const descriptionInput = xss(req.body.descriptionInput);
+        const nearByPortInput = xss(req.body.nearByPortInput);
+        const eventModeInput = xss(req.body.eventModeInput);
+        const registrationFeeInput = xss(req.body.registrationFeeInput);
+        const contactPersonInput = xss(req.body.contactPersonInput);
 
-    if (!eventNameInput || !eventDateInput || !locationInput || !categoryInput || !descriptionInput || !nearByPortInput || !eventModeInput || !registrationFeeInput || !contactPersonInput) {
-        throw 'All fields must be supplied.';
-    }
+        if (!eventNameInput || !eventDateInput || !locationInput || !categoryInput || !descriptionInput || !nearByPortInput || !eventModeInput || !registrationFeeInput || !contactPersonInput) {
+            throw 'All fields must be supplied.';
+        }
 
-        // Add further validation
+            // Add further validation
 
-        validators.checkStrings(
-            [eventNameInput, 'Event Name'],
-            [descriptionInput, 'Event Description'],
-            [locationInput, 'Event Location'],
-            [categoryInput, 'Category'],
-            [nearByPortInput, 'Near-By Port'],
-            [eventModeInput, 'Event Mode'],
-            [contactPersonInput, 'Contact PersonId']
+            validators.checkStrings(
+                [eventNameInput, 'Event Name'],
+                [descriptionInput, 'Event Description'],
+                [locationInput, 'Event Location'],
+                [categoryInput, 'Category'],
+                [nearByPortInput, 'Near-By Port'],
+                [eventModeInput, 'Event Mode'],
+                [contactPersonInput, 'Contact PersonId']
+            );
+            validators.checkDate(eventDateInput,'Event Date');
+            validators.checkPrice(registrationFeeInput,'Registration Fee');
 
-        );
-        validators.checkDate(eventDateInput,'Event Date');
-        validators.checkPrice(registrationFeeInput,'Registration Fee');
+
+    try {
 
         let eventCreated = await eventData.create(eventNameInput, descriptionInput, eventDateInput, locationInput, categoryInput, nearByPortInput, eventModeInput, registrationFeeInput, contactPersonInput, true);
-        
         if(eventCreated._id)
         {      
-            return res.redirect('/event');
+            //return res.redirect('/event');
+            return res.json({
+                success: true,
+                event: eventCreated
+            });
         }
         else
         {
-            return res.status(500).render('event', { title:"Event Creation Error", error: "Internal Server Error"});
+            //return res.status(500).render('event', { title:"Event Creation Error", error: "Internal Server Error"});
+            return res.status(500).json({
+                success: false,
+                error: "Internal Server Error"
+            });
     
         }
 
     } catch (e) {
-    return res.status(400).render('event', { title:"event", error: e });
+        //return res.status(400).render('event', { title:"event", error: e });
+        return res.status(500).json({
+            success: false,
+            error: e.message
+        });
     }
+
+} catch (e) {
+    //return res.status(400).render('event', { title:"event", error: e });
+    return res.status(400).json({
+        success: false,
+        error: e
+    });
+}
+
+
+
+
 
 });
 
@@ -155,7 +182,7 @@ router
     if (req.session.user) {
 
         const eventId = xss(req.params.id);
-        const userId = req.user.userId;
+        const userId = req.session.user.userId;
         if(!eventId || !userId)
         {
             return res.status(500).json({success: false, "error": "Not a valid request. User is not authorized or eventId missing."});
@@ -164,7 +191,7 @@ router
         else{
             try{
 
-                let eventSubscribed = await eventData.addSubscriber(eventNameInput, eventDateInput, locationInput, categoryInput, registrationFeeInput);
+                let eventSubscribed = await eventData.addSubscriber(eventId, userId);
 
                 if(eventSubscribed)
                 {      
@@ -191,10 +218,76 @@ router
 })
 .post(async (req, res) => {
     //code here for POST
-    const eventId = xss(req.body.id);
-    req.redirect(`/event/subscribe/${eventId}`);
+    let eventId = xss(req.body.id);
+    if(!eventId)
+        eventId = xss(req.params.id);
+    if(!eventId)
+        {
+            return res.status(500).json({success: false, "error": "Not a valid request, eventId missing."});
+
+        }
+        
+        res.redirect(`/event/subscribe/${eventId}`);
     
 });
+
+
+
+//Event Rating:
+router
+.route('/review/:id')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+        return res.render('eventHome', { title: "Events", user: req.session.user});
+
+    }
+
+    return res.redirect('/auth');    
+
+})
+.post(async (req, res) => {
+    //code here for POST
+    try {
+        const eventId = xss(req.params.id);
+        const userId = req.session.user.userId;
+
+        const reviewCommentInput = xss(req.body.reviewCommentInput);
+        const ratingInput = xss(req.body.ratingInput);
+
+        if (!ratingInput) {
+            throw 'Rating must not be empty. Select a rating.';
+        }
+
+
+        let eventReviewed = await reviewData.createReview(eventId,
+            userId,
+            reviewCommentInput,
+            ratingInput );
+        
+        if(eventReviewed)
+        {      
+            return res.json({
+                success: true,
+                updatedEvent: eventReviewed
+            });
+        }
+        else
+        {
+            return res.status(500).json({success: false,  "error": "Internal Server Error" });
+    
+        }
+
+    } catch (e) {
+        return res.status(400).json({success: false,  "error": e });
+    };
+    
+
+});
+
+
 
 
 export default router;

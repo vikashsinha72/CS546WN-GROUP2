@@ -35,7 +35,7 @@ import validators from '../validators.js';
     nearByPort,
     eventMode,
     registrationFee,
-    contactPersonId,
+    contactPerson,
     status
   ) {
   
@@ -50,7 +50,7 @@ import validators from '../validators.js';
           [category, 'Category'],
           [nearByPort, 'Near-By Port'],
           [eventMode, 'Event Mode'],
-          [contactPersonId, 'Contact PersonId']
+          [contactPerson, 'Contact PersonId']
 
         );
         validators.checkDate(eventDate,'Event Date');
@@ -70,9 +70,9 @@ import validators from '../validators.js';
         category: category.trim(),
         nearByPort: nearByPort.trim(),
         eventMode: eventMode.trim(),
-        registrationFee,
-        contactPerson,
-        status,
+        registrationFee:registrationFee,
+        contactPerson:contactPerson.trim(),
+        status:status,
         subscribers: [],
         reviews: [],
         averageReview: 0

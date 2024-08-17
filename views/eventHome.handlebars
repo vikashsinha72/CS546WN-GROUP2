@@ -5,6 +5,8 @@
 <div id="eventSearch">
 <h2>Search Events</h2>
 <form id="eventSearch-form" action="/event/search" method="POST">
+<input type="hidden" id="userId" value="{{user.userId}}">
+
   <label for="eventNameInput">Event Name:</label>
   <input type="text" id="eventNameInput" name="eventNameInput">
   
@@ -12,14 +14,11 @@
   <input type="text" id="categoryInput" name="categoryInput">
   
   <label for="dateInput">Date:</label>
-  <input type="date" id="dateInput" name="dateInput">
+  <input type="date" id="dateInput" name="dateInput" placeholder="mm/dd/yyyy">
   
   <label for="registrationFeeInput">Registration Fee:</label>
-  <select id="registrationFeeInput" name="registrationFeeInput">
-    <option value="">Any</option>
-    <option value="free">Free</option>
-    <option value="chargeable">Chargeable</option>
-  </select>
+  <input type="text" id="registrationFeeInput" name="registrationFeeInput" value="0.00" required>
+
   
   <button type="submit">Search Event</button>
 </form>
@@ -42,7 +41,7 @@
   <input type="text" id="eventNameInput" name="eventNameInput" required>
   
   <label for="eventDateInput">Date:</label>
-  <input type="date" id="eventDateInput" name="eventDateInput" required>
+  <input type="date" id="eventDateInput" name="eventDateInput" placeholder="mm/dd/yyyy" required>
   
   <label for="locationInput">Location:</label>
   <input type="text" id="locationInput" name="locationInput" required>
@@ -54,7 +53,7 @@
   <textarea id="descriptionInput" name="descriptionInput" required></textarea>
   
   <label for="nearByPortInput">Near By Port:</label>
-  <input type="text" id="nearByPortInput" name="nearByPortInput">
+  <input type="text" id="nearByPortInput" name="nearByPortInput" required>
   
   <label for="eventModeInput">Event Mode:</label>
   <select id="eventModeInput" name="eventModeInput" required>
@@ -63,10 +62,8 @@
   </select>
   
   <label for="registrationFeeInput">Registration Fee:</label>
-  <select id="registrationFeeInput" name="registrationFeeInput" required>
-    <option value="free">Free</option>
-    <option value="chargeable">Chargeable</option>
-  </select>
+  <input type="text" id="registrationFeeInput" name="registrationFeeInput" value="0.00" required>
+
   
   <label for="contactPersonInput">Contact Person:</label>
   <input type="text" id="contactPersonInput" name="contactPersonInput" required>

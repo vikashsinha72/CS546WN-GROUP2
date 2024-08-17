@@ -98,7 +98,7 @@ checkArray(arr, varName, valueType='string', emptyCheck=true) {
 
 
 // TODO: improvise to check date in a fomrat passed as parameter
-checkDate(date, varName) {
+checkDate(date, varName, datefomat) {
 
     if (!date) {
         throw `${varName} is missing`;
@@ -111,11 +111,23 @@ checkDate(date, varName) {
         throw `${varName} cannot be an empty string or empty spaces`;
     }
 
-    if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date)) {
-        throw `${varName} dateReleased must be a valid date in mm/dd/yyyy format.`;
-      }
+    const dateType = new Date(date);
+    if( dateType instanceof Date && !isNaN(dateType)){
 
-    return date;
+        /*      if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date)) {
+                    throw `${varName} must be a valid date in mm/dd/yyyy format.`;
+                }
+        */
+    // Regular expression to match mm/dd/yyyy format
+        /*  const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const match = dateInput.match(datePattern); */
+
+        return date;
+    }
+    else {
+        throw `${varName} must be a valid date`;
+
+    }
 },
 
 checkUrl(url, varName) {
@@ -144,12 +156,14 @@ checkPrice(price, varName) {
     if (!price) {
         throw `${varName} is missing`;
     }
-    if (typeof price !== 'number') {
+    price = parseFloat(price); // Convert the string to a number
+
+    if (typeof price !== 'number' || isNaN(price)) {
         throw `${varName} must be a number`;
     }
 
-    if (price <= 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
-        throw `${varName} must be a number greater than 0 with up to 2 decimal places.`;
+    if (price < 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
+        throw `${varName} must be not be negative and up to 2 decimal places.`;
     }
 
     return price;
@@ -160,7 +174,10 @@ checkRating(rating, varName) {
     if (!rating) {
         throw `${varName} is missing`;
     }
-    if (typeof rating !== 'number') {
+
+    rating = parseInt(rating); // Convert the string to a number
+
+    if (typeof rating !== 'number' || isNaN(rating)) {
         throw `${varName} must be a number`;
     }
 
