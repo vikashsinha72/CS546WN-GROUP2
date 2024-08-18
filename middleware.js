@@ -49,11 +49,12 @@ const redirectAuthenticatedRegister = async (req, res, next) => {
         else{
             return next();
         }
-     } //else {
-    //     if (req.originalUrl !== '/auth') {
-    //         return res.redirect('/auth');
-    //     }
-    // }
+     } 
+ /*     else {
+         if (req.originalUrl !== '/auth') {
+             return res.redirect('/auth');
+         }
+     } */
     
     return next();
 };
