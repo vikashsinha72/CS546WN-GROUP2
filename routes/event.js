@@ -428,24 +428,16 @@ router
 
         const requestBody = req.body;
         const eventCollection = await events();
-        let eventCheck;
-        let requestId;
+        let requestId = req.params.id;
 
         // Not valid user
         try {
-            requestId = validators.checkObjectId(req.params.id, 'Delete ID');
+            requestId = validators.checkObjectId(requestId, 'Delete ID');
         } catch (e) {
             return res.render(path.resolve('views/login'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
         }
 
         // Not valid event or User not authorized to delete the event
-        try {
-            eventCheck = await eventCollection.findOne({userId: new ObjectId(idCheck)});
-        } catch (e) {
-            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
-        }
-
-
         try {
             const userCollection = await users(); 
             const userId = await userCollection.findOne({
@@ -454,14 +446,14 @@ router
             if (!userId) throw `Cannot find event attatched to a user.`
         }
         catch(e) {
-            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true, user: req.session.user}));
+            return res.render(path.resolve('views/eventList'), ({errors: e, hasErrors: true, user: req.session.user}));
         }
 
         try {
             if (requestBody.delete === 'delete') {
                 let deletion = await deleteEvent(requestId);
                 if (deletion.deleted === true) {
-                    res.redirect('/event/');
+                    return res.redirect('/event/');
                 }
                 else {
                     throw `Could not delete event.`
@@ -469,7 +461,7 @@ router
             }
         }
         catch(e) {
-            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true, user: req.session.user}));
+            return res.render(path.resolve('views/eventList'), ({errors: e, hasErrors: true, user: req.session.user}));
         }
 
 
