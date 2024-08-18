@@ -118,98 +118,141 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-// // Event Creation form
-//     if (eventForm) {
-//         eventForm.addEventListener('submit', (event) => {
-//             event.preventDefault();
-//             const errors = [];
+// Event Creation form
+if (eventForm) {
+    eventForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const errors = [];
 
-//             const eventName = document.getElementById('eventNameInput').value.trim();
-//             const eventDate = document.getElementById('dateInput').value.trim();
-//             const location = document.getElementById('locationInput').value.trim();
-//             const category = document.getElementById('categoryInput').value.trim();
-//             const description = document.getElementById('descriptionInput').value.trim();
-//             const nearByPort = document.getElementById('portInput').value.trim();
-//             const eventMode = document.getElementById('modeInput').value.trim();
-//             const registrationFee = document.getElementById('feeInput').value.trim();
+        const eventName = eventForm.querySelector('#eventNameInput').value.trim();
+        const eventDate = eventForm.querySelector('#dateInput').value.trim();
+        const location = eventForm.querySelector('#locationInput').value.trim();
+        const category = eventForm.querySelector('#categoryInput').value.trim();
+        const description = eventForm.querySelector('#descriptionInput').value.trim();
+        const nearByPort = eventForm.querySelector('#portInput').value.trim();
+        const eventMode = eventForm.querySelector('#modeInput').value.trim();
+        const registrationFee = eventForm.querySelector('#feeInput').value.trim();
+        const publish = eventForm.querySelector('#pubStat').value.trim();
+        const save = eventForm.querySelector('#saveStat').value.trim();
+        // const contactPerson = eventForm.querySelector('#contactPersonInput').value.trim();
 
-//             // Validate Event Name
-//             if (!eventName || eventName.trim().length === 0) {
-//                 errors.push('Event Name must not be empty');
-//             }
-//             // Event Date validation (check if the date is not in the past)
-//             const currentDate = new Date().toISOString().split('T')[0];
-//             if (eventDate === '' || eventDate <= currentDate) {
-//                 isValid = false;
-//                 errorMessage += 'Please enter a valid future date for the event.\n';
-//             }
 
-//            // Validate Event Location
-//            if (!location || location.trim().length === 0) {
-//             errors.push('Event Location must not be empty');
-//              }
+        // Validate Event Name
+        if (!eventName || eventName.length === 0) {
+            errors.push('Event Name must not be empty :' + eventName);
+        }
 
-//            // Validate Event Category
-//            if (!category || category.trim().length === 0) {
-//             errors.push('Event Category must not be empty');
-//              }
+        // Event Date validation (check if the date is not in the past)
+        const currentDate = new Date().toISOString().split('T')[0];
 
-//            // Validate Event Description
-//            if (!description || description.trim().length === 0) {
-//             errors.push('Event Description must not be empty');
-//              }
+        if (!eventDate  || eventDate <=  currentDate ) {
+            isValid = false;
+            errors.push('Please enter a valid future date for the event.');
+        }
 
-//            // Validate Event Near By Port
-//            if (!nearByPort || nearByPort.trim().length === 0) {
-//             errors.push('Event Near By Port must not be empty');
-//              }
 
-//              // Validate Event Mode
-//            if (!eventMode || eventMode.trim().length === 0) {
-//             errors.push('Event Mode must not be empty');
-//              }
+       // Validate Event Location
+       if (!location || location.length === 0) {
+        errors.push('Event Location must not be empty:' + location);
+         }
 
-            
-//            // Validate Event Registration Fee
-//            // it comes in as a string
-//            if (!registrationFee || registrationFee.trim().length === 0) {
-//             errors.push('Event Registration Fee must not be empty');
-//              }
+       // Validate Event Category
+       if (!category || category.trim().length === 0) {
+        errors.push('Event Category must not be empty');
+         }
+
+       // Validate Event Description
+       if (!description || description.trim().length === 0) {
+        errors.push('Event Description must not be empty');
+         }
+
+       // Validate Event Near By Port
+       if (!nearByPort || nearByPort.trim().length === 0) {
+        errors.push('Event Near By Port must not be empty');
+         }
+
+         // Validate Event Mode
+       if (!eventMode || eventMode.trim().length === 0) {
+        errors.push('Event Mode must not be empty');
+         }
+
+
+       // Validate Event Registration Fee
+       if (!registrationFee || registrationFee.trim().length === 0) {
+        errors.push('Event Registration Fee must not be empty');
+         }
+
+
+         price = parseFloat(registrationFee); // Convert the string to a number
+
+         if (!registrationFee || isNaN(price)) {
+             errors.push('Please enter a valid numeric fee value.');
+         }  
+    
+        if (registrationFee < 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
+            errors.push('Event Registration Fee must be not be negative and up to 2 decimal places.');
+        }
+
         
-//             if (Number(registrationFee) <= 0 || !/^\d+(\.\d{1,2})?$/.test(registrationFee)) {
-//                 errors.push('Event Registration Fee must be a number greater than 0 with up to 2 decimal places.');
-//             }
+       // Validate Event Contact Person
+    //    if (!contactPerson || contactPerson.trim().length === 0) {
+    //     errors.push('Event Contact Person must not be empty');
+    //      }
 
-//             if (errors.length > 0) {
-//                 alert(errors.join('\n'));
-//             }
-            // } else {
-            //     // When it checks the submit it takes away the value from the submission to the route
-            //     // I have to add it back for the route to work.
-            //     const action = event.submitter.value;
-            //     eventForm.appendChild(action);
-            //     eventForm.submit();
- 
-                // AJAX logic for form submission
-                
-                // fetch('/event/create', {
-                //     method: 'POST',
-                //     body: eventForm,
-                // })
-                // // .then(response => response.json())
-                // .then(data => {
-                //     if (data.success) {
-                //     alert('Event created successfully!');
-                //     window.location.href = '/event/';
-                //     } else {
-                //     alert('Error creating event');
-                //     }
-                // })
-                // .catch(error => console.error('Error:', error));
 
-            // }
-    //     });
-    // }
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
+        } else {
+            //registerForm.submit();
+            try{
+            // AJAX logic for form submission
+            let requestConfig = {
+                method: 'POST',
+                url: '/event/create',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    eventNameInput: eventName,
+                    dateInput: eventDate,
+                    locationInput : location ,
+                    categoryInput: category,
+                    descriptionInput : description,
+                    portInput :  nearByPort,
+                    modeInput : eventMode,
+                    feeInput : registrationFee,
+                    pubStat: publish ? publish : save
+                    // contactPersonInput :  contactPerson
+                })
+              };
+
+            //Make AJAX Call
+            $.ajax(requestConfig)
+            .done((response) => {
+                // `response` is already parsed JSON
+
+                if (response.success) {
+                    // Handle successful search results
+                    //displaySearchResults(response.events);
+                    // alert(`${response.event.eventName} Event created sussessfully.`);
+                    window.location.href = `/event/${response.event}`;
+
+                } else {
+
+                    alert(`Error in creating event : ${response.error}`);
+                }
+            })
+            .fail((error) => {
+                const parsedResponse = JSON.parse(error.responseText);
+                alert(`An error occurred while creating event. : ${parsedResponse.error}` );
+            });
+
+        }catch(e)
+        {
+            alert("eventForm: " +e);
+        }
+
+        }
+    });
+}
 
     //Event Search
     if (eventSearchform) {
