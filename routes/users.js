@@ -42,6 +42,8 @@ router
 .get(async (req, res) => {
   const userId = req.params.id
   if (!userId) return res.status(400).render('error');
+  console.log('Session User ID:', req.session.userId);
+  console.log('URL User ID:', userId);
 
   try {
     const user = await getUser(userId)
@@ -72,10 +74,9 @@ router
     if (newPassword !== confirmPassword) res.status(400)('error');
 
     //hash the password again for the database
-    const newHashedPassword = bcryptjs.hash(newPassword, 8)
+    // const newHashedPassword = await bcryptjs.hash(newPassword, 8)
 
-
-    await changePassword(userId, password, newHashedPassword);
+    await changePassword(userId, newPassword);
 
     res.redirect(`/user/profile/${userId}`);
   } catch (error) {

@@ -208,16 +208,14 @@ export const updateUser = async(userId, firstName, lastName, emailAddress, passw
 
 
 
-export const changePassword = async(userId, oldPassword, newPassword) => {
+export const changePassword = async(userId, newPassword) => {
   try {
       validators.checkStrings(
         [userId, 'User Id'],
-        [oldPassword, 'Old Passord'],
         [newPassword, 'New Password']
       );
-      // Add further validation
+   //   Add further validation
       validators.checkObjectId(userId, "User Id");
-      validators.checkPassword(oldPassword);
       validators.checkPassword(newPassword);  
     }
     catch (e) {
@@ -226,18 +224,17 @@ export const changePassword = async(userId, oldPassword, newPassword) => {
     try {
       const usersCollection = await users();
 
-      const updatedUser = new ObjectId(userId);
-      const user = await usersCollection.findOne({ _id: updatedUser });
+      const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
 
       if (!user) throw `User not found for User Id: ${userId}` ;
   
-      const confirmPassword = await bcryptjs.compare(oldPassword, user.password);
-      if (!confirmPassword) throw new Error("Old password is incorrect.");
+      // const confirmPassword = await bcryptjs.compare(oldPassword, user.password);
+      // if (!confirmPassword) throw new Error("Old password is incorrect.");
 
       const hashedPassword = await bcryptjs.hash(newPassword, 8);
   
     const result = await usersCollection.findOneAndUpdate(
-      { _id: updatedUser },
+      { _id: new ObjectId(userId) },
       { $set: {password: hashedPassword} },
       { returnDocument: 'after' }
     );
@@ -245,8 +242,8 @@ export const changePassword = async(userId, oldPassword, newPassword) => {
     if (result.matchedCount === 0) {
       throw `Failed to update User with ID ${ObjectId}`;
     }
-
-    return result.value;
+    result._id = result._id.toString();
+    return result;
 
   } catch (e) {
     throw `MongoDB connection error : ${e}`;  
