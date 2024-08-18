@@ -238,14 +238,14 @@ export const changePassword = async(userId, oldPassword, newPassword) => {
 
       if (!user) throw `User not found for User Id: ${userId}` ;
   
-  
-    const hashedPassword = await bcryptjs.hash(newPassword, 8);
-    updatedUser.hashedPassword = hashedPassword;
+      const confirmPassword = await bcryptjs.compare(oldPassword, user.hashedPassword);
+      if (!confirmPassword) throw new Error("Old password is incorrect.");
 
+      const hashedPassword = await bcryptjs.hash(newPassword, 8);
   
     const result = await usersCollection.findOneAndUpdate(
       { _id: ObjectId },
-      { $set: updatedUser },
+      { $set: {hashedPassword: hashedPassword} },
       { returnOriginal: false }
     );
     

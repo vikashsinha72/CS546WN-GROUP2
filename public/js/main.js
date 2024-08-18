@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const changePasswordForm = document.getElementById('password-form');
 
     if (changePasswordForm) {
-        registerForm.addEventListener('submit', (event) => {
+        changePasswordForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const errors = [];
 
