@@ -47,7 +47,6 @@ router
     const user = await getUser(userId)
     res.render('changePassword', { user })
   } catch (error) {
-    console.error()
     return res.status(400).render('error')
   }
 })

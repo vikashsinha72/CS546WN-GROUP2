@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 errors.push('Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.');
             }
             
-            if (!newPassword || !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[\S]{8,}$/.test(newPassword)) {
+            if (!newPassword || !/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[^\s]{8,}$/.test(newPassword)) {
                 errors.push('Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.');
             }
 
