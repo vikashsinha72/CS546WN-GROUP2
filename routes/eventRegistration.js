@@ -69,7 +69,7 @@ router.route('/')
       bestEndDate} = req.body;
     
     try {
-    const newEventRegistration = await eventsRegistrationData.UserEventRegistration(
+    const newEventRegistration = await eventsRegistrationData.userEventRegistration(
       eventId,
       userName,
       emailId,

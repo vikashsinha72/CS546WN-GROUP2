@@ -6,7 +6,7 @@ import helperFuncs from "../helpers.js";
 
 
 const exportedMethods = {
-async createEventRegisteredUser(  
+async userEventRegistration(  
   eventId,
   userName,
   emailId,
