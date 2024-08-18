@@ -46,8 +46,7 @@ router.route('/')
       bestStartDate,
       bestEndDate
     );
-      res.status(200).json(newEventRegistration);
-      return res.redirect.eventFunctions('/');   
+      return res.redirect.eventFunctions('/event/home');   
     }
   catch (e) {
     res.status(400).json({ error: e });
