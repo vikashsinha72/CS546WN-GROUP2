@@ -7,6 +7,7 @@ import helperFuncs from "../helpers.js";
 
 const exportedMethods = {
 async userEventRegistration(  
+  userId,
   eventId,
   userName,
   emailId,
@@ -15,13 +16,13 @@ async userEventRegistration(
   bestEndDate) {
 
     try {
-      userId = validators.checkObjectId(userId, 'Create Event userId');
       validators.checkStrings(
           [eventId, 'eventId'],
           [userName, 'userName'],
           [emailId, 'emailId'],
           [phoneNumber, 'phoneNumber']
       );
+      userId = helperFuncs.checkUserId(userId, 'Create Event userId');
       eventId = helperFuncs.checkEventId((eventId), 'eventId validation');
       userName = validators.checkUsername((userName), 'userName validation');
       emailId = validators.checkEmail(emailId);
