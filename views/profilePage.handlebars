@@ -20,11 +20,11 @@
             </ul>
             <h2>Reviews</h2> {{!-- pass in event name and review --}}
              {{!-- <ul>
-                {{#each character.comics.items}} -- REPLACE WITH USER REVIEWS
-                <li>{{this.name}}</li>
+                {{#each user.reviews} -- REPLACE WITH USER REVIEWS
+                <li>{{this.review}}</li>
                 {{/each}}
             </ul> --}}
-            <a href="/user/allUsers">See All Users</a>
+            {{!-- <a href="/user/allUsers">See All Users</a> --}}
             {{#if this.user}}
             <a href="/user/changePassword/{{user._id}}">Change Password</a>
             {{/if}}
