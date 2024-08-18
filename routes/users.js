@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { getUserList, getUser, changePassword } from '../data/users.js'; 
-import pkg from 'bcryptjs';
+import bcryptjs from 'bcryptjs';
 
-const {compare, hash} = pkg;
 const router = Router();
 
 router.route('/').get(async (req, res) => {
@@ -78,7 +77,7 @@ router
 
     await changePassword(userId, password, newHashedPassword);
 
-    res.redirect('profilePage');
+    res.redirect(`/user/profile/${userId}`);
   } catch (error) {
     console.error(error)
     res.status(400).render('error');
