@@ -43,7 +43,7 @@ async createEventRegisteredUser(
     const eventCollection = await events();
     const updateInfo = await eventCollection.updateOne(
       { _id: ObjectId(events.event._id) },
-      { $push: { registration: newRegistration } }
+      { $push: { registration: {registerInfo: newRegistration } } }
     );
   
     if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
@@ -53,7 +53,7 @@ async createEventRegisteredUser(
       const userCollection = await users();
       const updateUserInfo = await userCollection.updateOne(
         { _id: ObjectId(users.user._id)},
-        { $push: { registeredEvent: newEvent } }
+        { $push: { registeredEvent: {registerInfo: newEvent} } }
       );
       if (updateUserInfo.modifiedCount === 0) throw 'Could not register the event to the user profile';
     }
