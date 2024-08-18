@@ -23,18 +23,18 @@ router
   }
 })
 
-router
-.route('/allUsers')
-.get(async (req, res) => {
-  const { usernames } = req.body;
-  try {
-    const users = await getUserList(usernames)
-    res.render('allUsers', { users })
-  } catch (error) {
-    console.error()
-    return res.status(400).render('error')
-  }
-})
+// router
+// .route('/allUsers')
+// .get(async (req, res) => {
+//   const { usernames } = req.body;
+//   try {
+//     const users = await getUserList(usernames)
+//     res.render('allUsers', { users })
+//   } catch (error) {
+//     console.error()
+//     return res.status(400).render('error')
+//   }
+// })
 
 
 router
