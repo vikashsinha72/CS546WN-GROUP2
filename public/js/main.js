@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registration-form');
     const loginForm = document.getElementById('login-form');
     const eventForm = document.getElementById('eventCreation-form');
-    const eventEditForm = document.getElementById('eventEdit-form');
     const eventSearchform = document.getElementById('eventSearch-form');
     const changePasswordForm = document.getElementById('password-form');
 

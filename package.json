@@ -5,7 +5,8 @@
     "main": "app.js",
     "type": "module",
     "scripts": {
-        "start": "node app.js"
+        "start": "node app.js",
+        "seed": "node seed.js"
     },
     "author": "Bhamidipati,Sriya 20017428, Brule, Alexis 20021566, Qureshi, Anam 20018851,Vikash Sinha 20022550",
     "license": "ISC",

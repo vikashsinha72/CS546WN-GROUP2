@@ -85,8 +85,8 @@
                 </select>
             </label>
 
-            <button type="submit" name="action" value="save">Save For Later</button>
-            <button type="submit" name="action" value="publish">Publish Event</button>
+            <button type="submit" id="saveStat" name="action" value="save">Save For Later</button>
+            <button type="submit" id="pubStat" name="action" value="publish">Publish Event</button>
         </form>
         <form class="deleteEvent" id="eventDelete-form" method="POST" action="/event/edit/{{event._id}}" >
             <input type="hidden" name="_method" value="DELETE">

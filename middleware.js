@@ -1,5 +1,5 @@
 // Middleware for different browser methods namely post/put
-const rewriteMethods = ('/edit/:id', (req, res, next) => {
+const rewriteMethods = ((req, res, next) => {
     if (req.body && req.body._method) {
         req.method = req.body._method;
         delete req.body._method;
