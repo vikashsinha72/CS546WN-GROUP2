@@ -50,7 +50,7 @@ router.route('/')
       const userCollection = await users();
       let userId = await userCollection.findOne({username: getUser});
       // if user doesn't go through reroute?
-      const events = await eventsData.getAllEvents(userId._id.toString());
+      const events = await eventsData.getEventList();
       // console.log("events from route: ", events)
       res.render('eventRegistration', { title: 'Event Registration', events, user: req.session.user })   
     } 
