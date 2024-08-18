@@ -5,7 +5,45 @@
       This site allows you to register,schedule, manage and sell events in an efficient and organized manner.
       Get started today by signing up for a free account!
    </p>
-   <h2 id="homeHeading">Events:</h2>
+
+
+
+ <div id="eventSearch">
+<h2>Search for Events</h2>
+<form id="eventSearch-form" action="/event/search" method="POST">
+<input type="hidden" id="userId" value="{{user.userId}}">
+
+  <label for="eventNameInput">Event Name:</label>
+  <input type="text" id="eventNameInput" name="eventNameInput">
+  
+  <label for="categoryInput">Category:</label>
+  <input type="text" id="categoryInput" name="categoryInput">
+  
+  <label for="dateInput">Date:</label>
+  <input type="date" id="dateInput" name="dateInput" placeholder="mm/dd/yyyy">
+  
+  <label for="registrationFeeInput">Registration Fee:</label>
+  <input type="text" id="registrationFeeInput" name="registrationFeeInput" value="0.00" required>
+
+  
+  <button type="submit">Search Event</button>
+</form>
+</div>
+
+<div id="eventList">
+    <h2>Event Search Result</h2>
+    <div id="eventSearchList"></div>
+<ul>
+    {{#each events}}
+    <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>
+    {{/each}}
+</ul>
+</div>
+
+
+
+
+   <h2 id="homeHeading">My Events:</h2>
    {{#if hasEvents}}
    <div id="events-contain">
     <ul class="events-list">

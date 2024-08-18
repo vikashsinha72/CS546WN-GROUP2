@@ -8,6 +8,9 @@ import path from 'path';
 import helperFuncs from '../helpers.js';
 import validators from '../validators.js';
 import { users, events } from '../config/mongoCollections.js';
+import eventData from '../data/events.js';
+import reviewData from '../data/reviews.js';
+
 import {createEvent, getEvent, getEventList, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
 import xss from 'xss';
 
@@ -483,4 +486,183 @@ router
 
 
    })
+
+
+
+// Added code for review, subscription
+
+router
+.route('/search')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+        return res.render('eventHome', { title: "Events", user: req.session.user});
+
+    }
+
+    return res.redirect('/auth');    
+
+})
+.post(async (req, res) => {
+    //code here for POST
+    try {
+        const eventNameInput = xss(req.body.eventNameInput);
+        const eventDateInput = xss(req.body.eventDateInput);
+        const locationInput = xss(req.body.locationInput);
+        const categoryInput = xss(req.body.categoryInput);
+        const registrationFeeInput = xss(req.body.registrationFeeInput);
+
+
+        if (!eventNameInput && !eventDateInput && !locationInput && !categoryInput  && !registrationFeeInput ) {
+            throw 'All fields must not be empty.';
+        }
+
+
+        if(eventDateInput)
+            validators.checkDate(eventDateInput,'Event Date');
+
+        if(registrationFeeInput)
+            validators.checkPrice(registrationFeeInput,'Registration Fee');
+
+        let eventSearched = await eventData.searchEvent(eventNameInput, eventDateInput, locationInput, categoryInput, registrationFeeInput);
+        
+        if(eventSearched)
+        {      
+            return res.json({
+                success: true,
+                events: eventSearched
+            });
+        }
+        else
+        {
+            return res.status(500).json({success: false,  "error": "Internal Server Error" });
+    
+        }
+
+    } catch (e) {
+        return res.status(400).json({success: false,  "error": e });
+    };
+    
+
+});
+
+
+router
+.route('/subscribe/:id')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+        const eventId = xss(req.params.id);
+        const userId = req.session.user.userId;
+        if(!eventId || !userId)
+        {
+            return res.status(500).json({success: false, "error": "Not a valid request. User is not authorized or eventId missing."});
+
+        }
+        else{
+            try{
+
+                let eventSubscribed = await eventData.addSubscriber(eventId, userId);
+
+                if(eventSubscribed)
+                {      
+                    return res.json({
+                        success: true,
+                        event: eventSubscribed
+                    });
+                }
+                else
+                {
+                    return res.status(500).json({success: false, "error": "Internal Server Error"});
+            
+                }
+
+            } catch (e) {
+                return res.status(400).json({success: false,  "error": e });
+            };
+
+        }
+        
+
+    }
+    return res.redirect('/auth');    
+})
+.post(async (req, res) => {
+    //code here for POST
+    let eventId = xss(req.body.id);
+    if(!eventId)
+        eventId = xss(req.params.id);
+    if(!eventId)
+        {
+            return res.status(500).json({success: false, "error": "Not a valid request, eventId missing."});
+
+        }
+        
+        res.redirect(`/event/subscribe/${eventId}`);
+    
+});
+
+
+
+//Event Rating:
+router
+.route('/review/:id')
+.get(async (req, res) => {
+    //code here for GET
+
+    if (req.session.user) {
+
+        return res.render('eventHome', { title: "Events", user: req.session.user});
+
+    }
+
+    return res.redirect('/auth');    
+
+})
+.post(async (req, res) => {
+    //code here for POST
+    try {
+        const eventId = xss(req.params.id);
+        const userId = req.session.user.userId;
+
+        const reviewCommentInput = xss(req.body.reviewCommentInput);
+        const ratingInput = xss(req.body.ratingInput);
+
+        if (!ratingInput) {
+            throw 'Rating must not be empty. Select a rating.';
+        }
+
+
+        let eventReviewed = await reviewData.createReview(eventId,
+            userId,
+            reviewCommentInput,
+            ratingInput );
+        
+        if(eventReviewed)
+        {      
+            return res.json({
+                success: true,
+                updatedEvent: eventReviewed
+            });
+        }
+        else
+        {
+            return res.status(500).json({success: false,  "error": "Internal Server Error" });
+    
+        }
+
+    } catch (e) {
+        return res.status(400).json({success: false,  "error": e });
+    };
+    
+
+})
+
+
+
+
 export default router;

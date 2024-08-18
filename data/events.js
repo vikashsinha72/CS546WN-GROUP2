@@ -245,4 +245,120 @@ export const deleteEvent = async (eventId) => {
     return {deleted: true}
 }
 
-export default {deleteEvent, getEventList, updateEventPatch, getAllEvents, getEvent, createEvent};
+
+//Method for search, add subscriber, delete subscriber
+export const searchEvent = async (
+    eventName,
+    eventDate, 
+    locationInput, 
+    category, 
+    registration
+  )  => {
+
+    try {
+      const eventCollection = await events();
+
+      // Building the query object
+      const query = {};
+
+      if (eventName) {
+        query.eventName = { $regex: eventName, $options: 'i' }; // Case-insensitive search
+      }
+      if (eventDate) {
+        query.eventDate = eventDate;
+      }
+      if (locationInput) {
+        query.locationInput = { $regex: locationInput, $options: 'i' };
+      }
+      if (category) {
+        query.category = { $regex: category, $options: 'i' };
+      }
+      if (registration) {
+        query.registrationFee = registration;
+      }
+
+      const eventList = await eventCollection.find(query).toArray();
+      return eventList || [];        
+
+    } catch (e) {
+      throw 'MongoDB connection error :', e;  
+    }
+  
+  }
+
+
+  export const addSubscriber = async (
+      eventId,
+      userId
+    ) => {
+  
+      try {
+        validators.checkObjectId(eventId, 'Event Id');
+        validators.checkObjectId(userId, 'User Id');
+      } catch (e) {
+        throw 'Validation Error :', e;  
+      }
+  
+  
+      try {
+        const eventCollection = await events();
+        const objectId = new ObjectId(eventId);
+        const userObjectId = new ObjectId(userId);
+
+        const event = await eventCollection.findOne({ _id: objectId });
+  
+        if (!event) 
+        {
+            throw `Event not found for Event Id: ${eventId}` ;
+        }
+  
+        event.subscribers.push(userObjectId);
+    
+        await eventCollection.updateOne({ _id: objectId }, { $set: { subscribers: event.subscribers} });
+    
+        return event;
+      } catch (e) {
+        throw 'MongoDB connection error :', e;  
+      }
+  
+    }
+    
+    export const removeSubscriber = async (
+        eventId, userId) => {
+      try {
+          validators.checkObjectId(eventId, 'Event Id');
+          validators.checkObjectId(userId, 'User Id');
+        } catch (e) {
+          throw 'Validation Error :', e;  
+        }
+    
+    
+        try {
+          const eventCollection = await events();
+          const objectId = new ObjectId(eventId);
+          const userObjectId = new ObjectId(userId);
+
+    
+          const event = await eventCollection.findOne({ _id: objectId });
+    
+          if (!event) 
+          {
+              throw `Event not found for Event Id: ${eventId}` ;
+          }
+    
+          event.subscribers.deleteOne(userObjectId);
+      
+          await eventCollection.updateOne({ _id: objectId }, { $set: { subscribers: event.subscribers} });
+      
+          return event;
+        } catch (e) {
+          throw 'MongoDB connection error :', e;  
+        }
+
+      
+    }
+
+
+
+
+export default {searchEvent,addSubscriber, removeSubscriber, deleteEvent, getEventList, updateEventPatch, getAllEvents, getEvent, createEvent};
