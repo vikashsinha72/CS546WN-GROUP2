@@ -3,6 +3,7 @@ import eventsData from '../data/events.js';
 import eventsRegistrationData from '../data/eventRegistration.js';
 import { users, events } from '../config/mongoCollections.js';
 const router = express.Router();
+import eventsFunctions from './event.js';
 
 
 router.route('/')
@@ -46,12 +47,12 @@ router.route('/')
       bestEndDate
     );
       res.status(200).json(newEventRegistration);
+      return res.redirect.eventFunctions('/');   
     }
   catch (e) {
     res.status(400).json({ error: e });
-  }
+  }  
   })
-
 
 export default router;
   
