@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getUserList, getUser, changePassword } from '../data/users.js'; 
 import bcryptjs from 'bcryptjs';
+import xss from 'xss'
 
 const router = Router();
 
@@ -55,9 +56,9 @@ router
   const userId = req.params.id
   if (!userId) return res.status(400).render('error')
   
-  const password = req.body.passwordInput;
-  const newPassword = req.body.newPasswordInput;
-  const confirmPassword = req.body.confirmPasswordInput;
+  const password = xss(req.body.passwordInput);
+  const newPassword = xss(req.body.newPasswordInput);
+  const confirmPassword = xss(req.body.confirmPasswordInput);
 
   try {
     const user = await getUser(userId)

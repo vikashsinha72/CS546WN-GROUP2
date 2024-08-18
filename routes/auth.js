@@ -3,6 +3,7 @@
 
 import {Router} from 'express';
 import { loginUser, registerUser } from '../data/users.js'
+import xss from 'xss';
 
 const router = Router(); 
 
@@ -19,12 +20,12 @@ router.route('/').get(async (req, res) => {
   })
   .post(async (req, res) => {
     //code here for POST
-    const username = req.body.usernameInput;
-    const firstName = req.body.firstNameInput;
-    const lastName = req.body.lastNameInput;
-    const emailAddress = req.body.emailAddressInput;
-    const password = req.body.passwordInput;
-    const confirmPassword = req.body.confirmPasswordInput;
+    const username = xss(req.body.usernameInput);
+    const firstName = xss(req.body.firstNameInput);
+    const lastName = xss(req.body.lastNameInput);
+    const emailAddress = xss(req.body.emailAddressInput);
+    const password = xss(req.body.passwordInput);
+    const confirmPassword = xss(req.body.confirmPasswordInput);
 
     if(password == confirmPassword) {
       try {
@@ -48,8 +49,8 @@ router.route('/').get(async (req, res) => {
   })
   .post(async (req, res) => {
     //code here for POST
-    const username = req.body.usernameInput;
-    const password = req.body.passwordInput;
+    const username = xss(req.body.usernameInput);
+    const password = xss(req.body.passwordInput);
     try {
       const loggedIn = await loginUser(username, password);
       if (!loggedIn) return res.redirect('/register');
