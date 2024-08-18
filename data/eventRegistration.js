@@ -1,13 +1,12 @@
 
-import { events } from "../config/mongoCollections.js";
+import { events, users } from "../config/mongoCollections.js";
 import {ObjectId} from 'mongodb';
 import validators from '../validators.js';
 import helperFuncs from "../helpers.js";
 
 
-
 const exportedMethods = {
-async UserEventRegistration(  
+async createEventRegisteredUser(  
   eventId,
   userName,
   emailId,
@@ -30,8 +29,7 @@ async UserEventRegistration(
     catch(e) {
       throw 'Validation Error: ', e;
     }
-
-    const eventCollection = await events();
+  
     const newRegistration = {
       _id: new ObjectId(),
       userName,
@@ -41,14 +39,26 @@ async UserEventRegistration(
       bestEndDate
     };
   
+    //Adding user to event
+    const eventCollection = await events();
     const updateInfo = await eventCollection.updateOne(
-      { _id: new ObjectId(eventId) },
+      { _id: ObjectId(events.event._id) },
       { $push: { registration: newRegistration } }
     );
   
     if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
+
+    else {
+      //Adding event to user profile
+      const userCollection = await users();
+      const updateUserInfo = await userCollection.updateOne(
+        { _id: ObjectId(users.user._id)},
+        { $push: { registeredEvent: newEvent } }
+      );
+      if (updateUserInfo.modifiedCount === 0) throw 'Could not register the event to the user profile';
+    }
   
-    return newRegistration;
+    return newRegistration, newEvent;
   }  
 }
 
