@@ -8,3 +8,5 @@ The site has multiple useful core features such as event registration, event sea
  Whether you’re hosting a small gathering or a large scale conference, our system will cater to all your event management needs.
 
  Additional, some advance features will also be added to event management system.
+
+ To run the seed file on this please run the command: 'npm run seed' otherwise you can do an 'npm install' to install the dependencies needed then 'npm start' to start the program. The program runs on http://localhost:3000.
