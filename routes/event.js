@@ -2,8 +2,6 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
-import xss from 'xss';
-
 const router = Router(); 
 import { ObjectId } from 'mongodb';
 import path from 'path';
@@ -11,6 +9,7 @@ import helperFuncs from '../helpers.js';
 import validators from '../validators.js';
 import { users, events } from '../config/mongoCollections.js';
 import {createEvent, getEvent, getEventList, getAllEvents, updateEventPatch, deleteEvent} from '../data/events.js';
+import xss from 'xss';
 
 router
     .route('/home')
@@ -74,7 +73,9 @@ router
         let errors = [];
         
         // Error checking
+        // All inputs will be sanitized before use as xss only works for strings
         try {
+            inputs.eventName = xss(inputs.eventName);
             inputs.eventNameInput = validators.checkString(inputs.eventNameInput, 'POST Event Name');
         }
         catch(e) {
@@ -82,6 +83,7 @@ router
         }
 
         try {
+            inputs.locationInput = xss(inputs.locationInput);
             inputs.locationInput = validators.checkString(inputs.locationInput, 'POST Event location');
         }
         catch(e) {
@@ -89,6 +91,7 @@ router
         }
 
         try {
+            inputs.categoryInput = xss(inputs.categoryInput);
             inputs.categoryInput = validators.checkString(inputs.categoryInput, 'POST Event category');
         }
         catch(e) {
@@ -96,6 +99,7 @@ router
         }
 
         try {
+            inputs.descriptionInput = xss(inputs.descriptionInput);
             inputs.descriptionInput = validators.checkString(inputs.descriptionInput, 'POST Event description');
         }
         catch(e) {
@@ -103,6 +107,7 @@ router
         }
 
         try {
+            inputs.portInput = xss(inputs.portInput);
             inputs.portInput = validators.checkString(inputs.portInput, 'POST Event nearByPort');
         }
         catch(e) {
@@ -110,6 +115,7 @@ router
         }
 
         try {
+            inputs.dateInput = xss(inputs.dateInput);
             inputs.dateInput = validators.checkDate(inputs.dateInput, 'POST dateInput');
         }
         catch(e) {
@@ -117,6 +123,7 @@ router
         }
 
         try {
+            inputs.modeInput = xss(inputs.modeInput);
             inputs.modeInput = helperFuncs.checkEventMode(inputs.modeInput);
         }
         catch(e) {
@@ -125,6 +132,7 @@ router
 
         // Fee
         try {
+            inputs.feeInput = xss(inputs.feeInput);
             inputs.feeInput =  validators.checkPrice(inputs.feeInput, 'POST fee');
         }
         catch(e) {
@@ -239,7 +247,6 @@ router
         let eventsCollection = await events();
         let userCollection = await users();
         let eventId;
-        let userIdCheck;
 
         // if the event cannot be found
         try {
@@ -291,6 +298,7 @@ router
         }
 
         const requestBody = req.body; 
+        req.params.id = xss(req.params.id);
         let errors = [];
         let formatted = {};
         req.params.id = helperFuncs.checkEventId(req.params.id);
@@ -303,9 +311,10 @@ router
         }
 
         // checking parameters
-        
+        // Sanitizing all parameters before use
         try {
             if (requestBody.eventNameEdit) {
+                requestBody.eventNameEdit = xss(requestBody.eventNameEdit);
                 requestBody.eventNameEdit = validators.checkString(requestBody.eventNameEdit, 'Edit Event Name');
             }
         }
@@ -315,6 +324,7 @@ router
 
         try {
             if (requestBody.dateEdit) {
+                requestBody.dateEdit = xss(requestBody.dateEdit);
                 requestBody.dateEdit = validators.checkDate(requestBody.dateEdit, 'Edit date');
                 formatted.date = helperFuncs.eventDateTimeFormat(requestBody.dateEdit);
             }
@@ -328,6 +338,7 @@ router
 
         try {
             if (requestBody.locationEdit) {
+                requestBody.locationEdit = xss(requestBody.locationEdit);
                 requestBody.locationEdit = validators.checkString(requestBody.locationEdit, 'Edit Event Location');
             }
         }
@@ -336,6 +347,7 @@ router
         }
         try {
             if (requestBody.categoryEdit) {
+                requestBody.categoryEdit = xss(requestBody.categoryEdit);
                 requestBody.categoryEdit = validators.checkString(requestBody.categoryEdit, 'Edit Event category');
             }
         }
@@ -345,6 +357,7 @@ router
 
         try {
             if (requestBody.descriptionEdit) {
+                requestBody.descriptionEdit = xss(requestBody.descriptionEdit);
                 requestBody.descriptionEdit = validators.checkString(requestBody.descriptionEdit, 'Edit Event Description');
             }
         }
@@ -354,6 +367,7 @@ router
 
         try{
             if (requestBody.portEdit) {
+                requestBody.portEdit = xss(requestBody.portEdit);
                 requestBody.portEdit = validators.checkString(requestBody.portEdit, 'Edit Event Port');
             }
         }
@@ -363,6 +377,7 @@ router
 
         try{
             if (requestBody.modeEdit) {
+                requestBody.modeEdit = xss(requestBody.modeEdit);
                 requestBody.modeEdit = helperFuncs.checkEventMode(requestBody.modeEdit);
             }
         }
@@ -372,6 +387,7 @@ router
 
         try {
             if (requestBody.feeEdit) {
+                requestBody.feeEdit = xss(requestBody.feeEdit);
                 requestBody.feeEdit = validators.checkPrice(Number(requestBody.feeEdit), 'Edit Registration Fee');
                 formatted.fee = helperFuncs.eventPriceFormat(requestBody.feeEdit);
             }
@@ -385,6 +401,7 @@ router
 
         try{
             if (requestBody.action) {
+                requestBody.action = xss(requestBody.action);
                 requestBody.action = helperFuncs.checkPublishStatus(requestBody.action);
             
                 // If an event is going from saved to published we assign it the new status
@@ -399,6 +416,7 @@ router
 
         try{
             if (requestBody.statusEdit) {
+                requestBody.statusEdit = xss(requestBody.statusEdit);
                 requestBody.statusEdit = helperFuncs.checkStatus(requestBody.action, requestBody.statusEdit, 'Edit Event Status');
             }
         }
@@ -426,9 +444,8 @@ router
             res.redirect('/auth/')
         }
 
-        const requestBody = req.body;
-        const eventCollection = await events();
-        let requestId = req.params.id;
+        const requestBody = xss(req.body);  // doesn't need separate check as it is passed a string of eventId
+        let requestId = xss(req.params.id);
 
         // Not valid user
         try {
