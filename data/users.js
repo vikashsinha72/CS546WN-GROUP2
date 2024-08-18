@@ -2,7 +2,7 @@ import 'express-session';
 import axios from 'axios';
 import bcryptjs from 'bcryptjs'
 import { users } from '../config/mongoCollections.js'
-import { ObjectId } from 'mongodb'
+import { ObjectId, ReturnDocument } from 'mongodb'
 import validators from '../validators.js';
 
 
@@ -231,22 +231,22 @@ export const changePassword = async(userId, oldPassword, newPassword) => {
 
       if (!user) throw `User not found for User Id: ${userId}` ;
   
-      const confirmPassword = await bcryptjs.compare(oldPassword, user.hashedPassword);
+      const confirmPassword = await bcryptjs.compare(oldPassword, user.password);
       if (!confirmPassword) throw new Error("Old password is incorrect.");
 
       const hashedPassword = await bcryptjs.hash(newPassword, 8);
   
     const result = await usersCollection.findOneAndUpdate(
-      { _id: ObjectId },
-      { $set: {hashedPassword: hashedPassword} },
-      { returnOriginal: false }
+      { _id: updatedUser },
+      { $set: {password: hashedPassword} },
+      { returnDocument: 'after' }
     );
     
     if (result.matchedCount === 0) {
       throw `Failed to update User with ID ${ObjectId}`;
     }
 
-    return updatedUser;
+    return result.value;
 
   } catch (e) {
     throw `MongoDB connection error : ${e}`;  
