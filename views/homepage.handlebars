@@ -5,6 +5,25 @@
       This site allows you to register,schedule, manage and sell events in an efficient and organized manner.
       Get started today by signing up for a free account!
    </p>
+   <h2 id="homeHeading">Events:</h2>
+   {{#if hasEvents}}
+   <div id="events-contain">
+    <ul class="events-list">
+      {{#each event}}
+        <li>
+          <a href="/event/{{_id}}" id="homeName">{{eventName}}</a>
+          <p id="homeDate">Date: {{date.date}}</p>
+          <p id="homeTime">Time: {{date.time}}</p>
+          <p id="homeDescript">{{description}}</p>
+        </li>
+      {{/each}}
+    </ul>
+   </div>
+   {{/if}}
+   {{#else}}
+      <h2 id="noEvent">No Events Yet!</h2>
+      <a href="/events/create" id="createHomeLink">Create One Here!</a>
+   {{/else}}
     <footer>
       <p>
         For more information, contact:

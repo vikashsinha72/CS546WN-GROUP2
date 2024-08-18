@@ -106,6 +106,33 @@ export const getEvent = async (eventId) => {
     return event;
 }
 
+export const getEventList = async () => {
+    // This skeleton code comes from Vikash
+
+    try {
+      const eventCollection = await events();
+      const eventList = await eventCollection.find({publish: 'publish'}, { 
+        projection: {
+            _id: 1,
+             eventName: 1,
+             date: 1,
+             description: 1
+            } 
+    }).toArray();
+    if (eventList.length != 0) {
+        eventList.forEach((obj) => {
+            obj.date = helperFuncs.eventDateTimeFormat(obj.date);
+            obj._id = obj._id.toString();
+        });
+    }
+    return eventList;
+    } catch (e) {
+        console.log('MongoDB connection error :', e);  
+      throw 'MongoDB connection error :', e;  
+    }
+  
+}
+
 export const getAllEvents = async (userId) => {
     const eventCollection = await events();
     let eventChecker = await eventCollection.findOne({userId: userId.toString()});
@@ -215,4 +242,4 @@ export const deleteEvent = async (eventId) => {
     return {deleted: true}
 }
 
-export default {deleteEvent, updateEventPatch, getAllEvents, getEvent, createEvent};
+export default {deleteEvent, getEventList, updateEventPatch, getAllEvents, getEvent, createEvent};
