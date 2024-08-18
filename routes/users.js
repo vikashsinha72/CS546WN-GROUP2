@@ -42,12 +42,10 @@ router
 .get(async (req, res) => {
   const userId = req.params.id
   if (!userId) return res.status(400).render('error');
-  console.log('Session User ID:', req.session.userId);
-  console.log('URL User ID:', userId);
 
   try {
     const user = await getUser(userId)
-    res.render('changePassword', { user })
+    return res.render('changePassword', { user })
   } catch (error) {
     return res.status(400).render('error')
   }
@@ -55,7 +53,7 @@ router
 .patch(async (req, res) => {
   //code here for POST
   const userId = req.params.id
-  if (!userId) res.status(400).render('error')
+  if (!userId) return res.status(400).render('error')
   
   const password = req.body.passwordInput;
   const newPassword = req.body.newPasswordInput;
@@ -67,27 +65,27 @@ router
 
     //check if the password is the same as the original password
     const oldPasswordCheck = await bcryptjs.compare(password, user.password)
-    if (!oldPasswordCheck) res.status(400).render('error')
+    if (!oldPasswordCheck) return res.status(400).render('error')
 
 
     //check if the passwords match
-    if (newPassword !== confirmPassword) res.status(400)('error');
+    if (newPassword !== confirmPassword) return res.status(400)('error');
 
     //hash the password again for the database
     // const newHashedPassword = await bcryptjs.hash(newPassword, 8)
 
     await changePassword(userId, newPassword);
 
-    res.redirect(`/user/profile/${userId}`);
+    return res.redirect(`/user/profile/${userId}`);
   } catch (error) {
     console.error(error)
-    res.status(400).render('error');
+    return res.status(400).render('error');
   }
 });
 
 router.route('/error').get(async (req, res) => {
     //code here for GET
-    res.status(400).render('error')
+    return res.status(400).render('error')
   });
   
 

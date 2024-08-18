@@ -11,7 +11,7 @@ router
   const { userId } = req.params;
   try {
     const user = await getUser(userId)
-    res.render('profilePage', { user })
+    return res.render('profilePage', { user })
   } catch (error) {
     console.error()
     return res.status(400).render('error')
@@ -20,6 +20,6 @@ router
 
 router.route('/error').get(async (req, res) => {
     //code here for GET
-    res.status(400).render('error')
+    return res.status(400).render('error')
 });
 export default router;

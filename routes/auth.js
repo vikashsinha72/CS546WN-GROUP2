@@ -15,7 +15,7 @@ router.route('/').get(async (req, res) => {
   .route('/register')
   .get(async (req, res) => {
     //code here for GET
-    res.render('register');
+    return res.render('register');
   })
   .post(async (req, res) => {
     //code here for POST
@@ -29,9 +29,9 @@ router.route('/').get(async (req, res) => {
     if(password == confirmPassword) {
       try {
         const newUser = await registerUser(username, firstName, lastName, emailAddress, password);
-        if (newUser.userInserted) res.redirect('/auth');
+        if (newUser.userInserted) return res.redirect('/auth');
       } catch (error) {
-        res.status(400).render('error') //status 400 code
+        return res.status(400).render('error') //status 400 code
       }
     }
   });
@@ -52,7 +52,7 @@ router.route('/').get(async (req, res) => {
     const password = req.body.passwordInput;
     try {
       const loggedIn = await loginUser(username, password);
-      if (!loggedIn) res.redirect('/register');
+      if (!loggedIn) return res.redirect('/register');
       req.session.user = {
         username: loggedIn.username,
         firstName: loggedIn.firstName,
@@ -60,10 +60,10 @@ router.route('/').get(async (req, res) => {
         emailAddress: loggedIn.emailAddress,
         userId: loggedIn.userId
       }
-      res.redirect('/event/home');
+      return res.redirect('/event/home');
     } catch (error) {
       console.error(error)
-      res.status(400).render('error');
+      return res.status(400).render('error');
     }
 });
 
@@ -88,7 +88,7 @@ router
 
 router.route('/error').get(async (req, res) => {
     //code here for GET
-    res.status(400).render('error')
+    return res.status(400).render('error')
   });
 
 export default router;
