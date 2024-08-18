@@ -44,8 +44,8 @@ router
   if (!userId) return res.status(400).render('error');
 
   try {
-    const users = await getUser(userId)
-    res.render('changePassword', { users })
+    const user = await getUser(userId)
+    res.render('changePassword', { user })
   } catch (error) {
     console.error()
     return res.status(400).render('error')
