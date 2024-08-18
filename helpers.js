@@ -130,6 +130,7 @@ const helperFuncs = {
     },
 
     eventPriceFormat(regFee) {
+        regFee = parseFloat(regFee);
         if (regFee === 0 || regFee === 0.00) {
             return 'Free';
         }
