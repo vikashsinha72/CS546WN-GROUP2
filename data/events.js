@@ -169,15 +169,12 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
     if (eventFind.eventStatus === 'Closed' || eventFind.eventStatus === 'Executed') {
         throw `You cannot edit closed events.`
     };
-    
+
+    // Fee and date are separately checked 
     const updatedEventData = {};
 
     if (updatedEvent.eventNameEdit) {
         updatedEventData['eventName'] = validators.checkString(updatedEvent.eventNameEdit, 'Edit Event Name');
-    }
-    if (updatedEvent.dateEdit) {
-        // to do check dates
-        updatedEventData['date'] = date = validators.checkDate(updatedEvent.dateEdit, 'Create date');  
     }
     if (updatedEvent.locationEdit) {
         updatedEventData['location'] = validators.checkString(updatedEvent.locationEdit, 'Edit Event Location');
@@ -193,9 +190,6 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
     }
     if (updatedEvent.modeEdit) {
         updatedEventData['eventMode'] = helperFuncs.checkEventMode(updatedEvent.modeEdit);
-    }
-    if (updatedEvent.feeEdit) {
-        updatedEventData['registrationFee'] = validators.checkPrice(updatedEvent.feeEdit);
     }
     if (updatedEvent.action) {
         updatedEventData['publish'] = helperFuncs.checkPublishStatus(updatedEvent.action);

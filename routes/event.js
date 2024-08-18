@@ -316,8 +316,7 @@ router
         try {
             if (requestBody.dateEdit) {
                 requestBody.dateEdit = validators.checkDate(requestBody.dateEdit, 'Edit date');
-                requestBody.dateEdit = helperFuncs.eventDateTimeFormat(requestBody.dateEdit);
-                formatted.date = requestBody.dateEdit;
+                formatted.date = helperFuncs.eventDateTimeFormat(requestBody.dateEdit);
             }
             else {
                 formatted.date = reloader.date;
@@ -374,8 +373,7 @@ router
         try {
             if (requestBody.feeEdit) {
                 requestBody.feeEdit = validators.checkPrice(Number(requestBody.feeEdit), 'Edit Registration Fee');
-                requestBody.feeEdit = helperFuncs.eventPriceFormat(requestBody.feeEdit);
-                formatted.fee = requestBody.feeEdit;
+                formatted.fee = helperFuncs.eventPriceFormat(requestBody.feeEdit);
             }
             else {
                 formatted.fee = helperFuncs.eventPriceFormat(reloader.registrationFee);
@@ -388,11 +386,9 @@ router
         try{
             if (requestBody.action) {
                 requestBody.action = helperFuncs.checkPublishStatus(requestBody.action);
-                let eventCollection = await events();
-                let finder = await eventCollection.findOne({_id: new ObjectId(req.params.id)});
-
+            
                 // If an event is going from saved to published we assign it the new status
-                if (requestBody.action === 'publish' && finder.publish === 'save') {
+                if (requestBody.action === 'publish' && reloader.publish === 'save') {
                     requestBody.statusEdit = 'Published';
                 }
             }

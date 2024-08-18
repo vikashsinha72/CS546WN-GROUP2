@@ -1,4 +1,4 @@
-<body class="editEvent">
+
     <h1>Edit Your Event</h1>
     <h2>Only fill out the ones you have to change!</h2>
     <main class="editEvent">
@@ -15,7 +15,7 @@
             
             <label for="dateEdit">
                 Date:
-                <input type="datetime-local" name="dateEdit" placeholder="{{event.date}}" id="dateEdit"
+                <input type="datetime-local" name="dateEdit" value="{{event.date}}" id="dateEdit"
                 min="2024-01-01">
             </label>
             <br>
@@ -34,7 +34,7 @@
 
             <label for="modeEdit">
                 Event Mode:
-                <select name="modeEdit" placeholder="{{event.mode}}" id="modeEdit">
+                <select name="modeEdit" value="{{event.mode}}" id="modeEdit">
                    <option value="Online">Online</option>
                    <option value="In-Person">In-Person</option>
                 </select>
@@ -51,7 +51,7 @@
             <div class="dropdown">
                 <label for="categoryEdit">
                     Category:
-                    <select id="categoryEdit" placeholder="{{event.category}}" name = "categoryEdit">
+                    <select id="categoryEdit" value="{{event.category}}" name = "categoryEdit">
                         <option value="Party">Party</option>
                         <option value="Birthday">Birthday</option>
                         <option value="Wedding">Wedding</option>
@@ -78,7 +78,7 @@
 
             <label for="statusEdit">
                 Change Event Status? 
-                <select name="statusEdit" placeholder="{{event.status}}" id="statusEdit">
+                <select name="statusEdit" value="{{event.status}}" id="statusEdit">
                     <option value="Planned">Planned: Default Status</option>
                     <option value="Ready">Ready: Prepared to Publish</option>
                     <option value="Suspended">Suspended: On hold to be Published</option>
@@ -118,4 +118,3 @@
     {{/if}}
     </main>
     <a href="/event/">Back to your events</a>
-</body>
