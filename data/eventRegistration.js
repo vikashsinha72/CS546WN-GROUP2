@@ -1,5 +1,5 @@
 
-import { events } from "../config/mongoCollections.js";
+import { events, users } from "../config/mongoCollections.js";
 import {ObjectId} from 'mongodb';
 import validators from '../validators.js';
 import helperFuncs from "../helpers.js";
