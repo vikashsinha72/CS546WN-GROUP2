@@ -7,6 +7,7 @@
         <ul>
             {{#each eventRes}}
             <li><a href="/event/{{this._id}}">{{this.eventName}}</a></li>
+            <li>{{this.eventStatus}}</li>
             {{/each}}
         </ul>
         {{/if}}
