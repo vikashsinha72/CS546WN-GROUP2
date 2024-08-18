@@ -36,51 +36,54 @@ router
   }
 })
 
-// router
-// .route('/changePassword/:id') // user/changePassword/:id // route this in the profile page if the user is logged in
-// .get(async (req, res) => {
-//   const userId = req.session.user._id
-//   if (!userId) return res.status(400).render('error');
 
-//   try {
-//     const users = await getUser(userId)
-//     res.render('changePassword', { users })
-//   } catch (error) {
-//     console.error()
-//     return res.status(400).render('error')
-//   }
-// })
-// .post(async (req, res) => {
-//   //code here for POST
-//   const userId = req.session.user._id
-//   if (!userId) res.status(400).render('error')
+router
+.route('/changePassword/:id') // user/changePassword/:id // route this in the profile page if the user is logged in
+.get(async (req, res) => {
+  const userId = req.params.id
+  if (!userId) return res.status(400).render('error');
+
+  try {
+    const users = await getUser(userId)
+    res.render('changePassword', { users })
+  } catch (error) {
+    console.error()
+    return res.status(400).render('error')
+  }
+})
+.patch(async (req, res) => {
+  //code here for POST
+  const userId = req.params.id
+  if (!userId) res.status(400).render('error')
   
-//   const password = req.body.passwordInput;
-//   const newPassword = req.body.newPasswordInput;
-//   const confirmPassword = req.body.confirmPasswordInput;
+  const password = req.body.passwordInput;
+  const newPassword = req.body.newPasswordInput;
+  const confirmPassword = req.body.confirmPasswordInput;
 
-//   try {
-//     const user = await getUser(userId)
-//     if (!user) res.redirect('/eventHome');
+  try {
+    const user = await getUser(userId)
+    if (!user) res.redirect('/eventHome');
 
-//     //check if the password is the same as the original password
-//     const oldPasswordCheck = await bcryptjs.compare(password, user.password)
-//     if (!oldPasswordCheck) res.status(400).render('error')
+    //check if the password is the same as the original password
+    const oldPasswordCheck = await bcryptjs.compare(password, user.password)
+    if (!oldPasswordCheck) res.status(400).render('error')
 
-//     //check if the passwords match
-//     const newPasswordCheck = await bcryptjs.compare(newPassword, confirmPassword)
 
-//     //hash the password again for the database
-//     const newHashedPassword = bcryptjs.hash(newPasswordCheck, 8)
+    //check if the passwords match
+    if (newPassword !== confirmPassword) res.status(400)('error');
 
-//     await changePassword(userId, password, newHashedPassword);
+    //hash the password again for the database
+    const newHashedPassword = bcryptjs.hash(newPassword, 8)
 
-//     res.redirect('profilePage');
-//   } catch (error) {
-//     console.error(error)
-//     res.status(400).render('error');
-//   }
-// });
+
+    await changePassword(userId, password, newHashedPassword);
+
+    res.redirect('profilePage');
+  } catch (error) {
+    console.error(error)
+    res.status(400).render('error');
+  }
+});
 
 router.route('/error').get(async (req, res) => {
     //code here for GET
