@@ -4,12 +4,10 @@ import {ObjectId} from 'mongodb';
 import validators from '../validators.js';
 import helperFuncs from "../helpers.js";
 
-
 const exportedMethods = {
-async userEventRegistration(  
+async userEventRegistration( 
   userId,
   eventId,
-  userName,
   emailId,
   phoneNumber,
   bestStartDate,
@@ -17,6 +15,7 @@ async userEventRegistration(
 
     try {
       validators.checkStrings(
+          [userId, 'userId'],
           [eventId, 'eventId'],
           [userName, 'userName'],
           [emailId, 'emailId'],
@@ -30,9 +29,10 @@ async userEventRegistration(
     catch(e) {
       throw 'Validation Error: ', e;
     }
-  
+
     const newRegistration = {
       _id: new ObjectId(),
+      userId,
       userName,
       emailId,
       phoneNumber,
@@ -43,8 +43,8 @@ async userEventRegistration(
     //Adding user to event
     const eventCollection = await events();
     const updateInfo = await eventCollection.updateOne(
-      { _id: ObjectId(events.event._id) },
-      { $push: { registration: {registerInfo: newRegistration } } }
+      { _id: eventId },
+      { $push: { registration: newRegistration } }
     );
   
     if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
@@ -53,8 +53,8 @@ async userEventRegistration(
       //Adding event to user profile
       const userCollection = await users();
       const updateUserInfo = await userCollection.updateOne(
-        { _id: ObjectId(users.user._id)},
-        { $push: { registeredEvent: {registerInfo: newEvent} } }
+        { _id: userId },
+        { $push: { event: newEvent} }
       );
       if (updateUserInfo.modifiedCount === 0) throw 'Could not register the event to the user profile';
     }

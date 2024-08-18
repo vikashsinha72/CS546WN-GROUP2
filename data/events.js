@@ -67,7 +67,8 @@ export const createEvent = async (
         publish: publish,
         eventStatus: eventStatus,
         subscribers: [],    // this is for event subscribers or register users
-        reviews: [],    // this is for event reviews
+        reviews: [],
+        registeredUsers: [],    // this is for event reviews
         averageReview: 0    // this is for event reviews
     }
 
