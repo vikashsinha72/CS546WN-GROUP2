@@ -111,9 +111,21 @@ checkDate(date, varName) {
         throw `${varName} cannot be an empty string or empty spaces`;
     }
 
-    if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date)) {
-        throw `${varName} dateReleased must be a valid date in mm/dd/yyyy format.`;
-      }
+    // if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date)) {
+    //     throw `${varName} dateReleased must be a valid date in mm/dd/yyyy format.`;
+    //   }
+    // This will be date/time format input from datetime-local handlebars
+    // Form is: YYYY-MM-DDT00:00
+    // regex expressions meanings:
+    // ^\d{4} for YYYY
+    // - for the literals in the input
+    // (0[1-9]|1[0-2]) for MM
+    // (0[1-9]|[12][0-9]|3[01]) for DD
+    // [01]\d|2[0-3] HH in time
+
+    if (!/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01]\d|2[0-3]):?([0-5]\d)$/.test(date)) {
+        throw `${varName} dateReleased must be a valid date in YYYY/MM/DDT00:00 format.`;
+    }
 
     return date;
 },
@@ -141,14 +153,14 @@ checkUrl(url, varName) {
 
 checkPrice(price, varName) {
 
-    if (!price) {
+    if (!price && price != 0) {
         throw `${varName} is missing`;
     }
     if (typeof price !== 'number') {
         throw `${varName} must be a number`;
     }
 
-    if (price <= 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
+    if (price < 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
         throw `${varName} must be a number greater than 0 with up to 2 decimal places.`;
     }
 

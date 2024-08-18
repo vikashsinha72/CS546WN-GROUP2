@@ -1,0 +1,40 @@
+
+<header></header>
+ <h1>Event Registration</h1>
+    <form action="/eventRegistration" method="POST" id = "registrationForm">
+        <table>
+        <tr>
+                <label type= "text" id ="userName">User name</label>
+                <input type= "text" id="userName" name="userName">
+    
+        </tr>
+        <tr>
+                <label type= "text" id = "eventName">View Available Events</label>
+                 <select class = "eventId" name = "eventId">
+                    {{#each events}}
+                        <option value="{{this._id}}">{{this.eventName}}</option>
+                    {{/each}}
+                </select>
+        </tr>
+        <tr>
+                <label type= "text" id = "emailId">Email Id</label>
+                <input type= "text" id = "emailId" name ="emailId">
+        </tr>
+        <tr>
+                <label type="text" id = "phoneNumber">Phone Number</label>
+                <input type="text" id = "phoneNumber" name="phoneNumber">
+        </tr>
+          <tr>
+                <label type= "text" id = "date">Best Time to call</label>
+                <input type="datetime-local" name="bestStartDate">
+                <p>to</p>
+                <label type= "text" id = "date"></label>
+                <input type="datetime-local" name="bestEndDate">
+        </tr>
+        <br>
+        </tr>
+        <br>
+                <button>Submit</button>      
+        </tr>
+    </table>
+    </form>

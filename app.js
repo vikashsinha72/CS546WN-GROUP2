@@ -1,34 +1,39 @@
 import express from 'express';
-import session from 'express-session';
+const app = express(); 
+import configRoutes from './routes/index.js';
 import exphbs from 'express-handlebars';
+import session from 'express-session';
+import { events } from './config/mongoCollections.js';  // middleware
+import { ObjectId } from 'mongodb';   // middleware
 import {
-  logRequest,
-  rootRequest,
-  redirectAuthenticatedLogin,
-  redirectAuthenticatedRegister,
-  ensureAuthenticated,
-  ensureLogout
-} from './middleware.js';
+    logRequest,
+    rootRequest,
+    redirectAuthenticatedLogin,
+    redirectAuthenticatedRegister,
+    ensureAuthenticated,
+    ensureLogout
+  } from './middleware.js';
+import helperFuncs from './helpers.js';
 
 
-const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));
+const staticDir = express.static('public');
+
+// Middleware for different browser methods namely post/put
+const rewriteMethods = ('/edit/:id', (req, res, next) => {
+    if (req.body && req.body._method) {
+        req.method = req.body._method;
+        delete req.body._method;
+    }
+    next();
+});
+
+app.engine('handlebars', exphbs.engine({defaultLayout: 'main'}));    // setting engine to use handlebars and custom engines
 app.set('view engine', 'handlebars');
 
-import configRoutes from './routes/index.js';
-
-
-// Middleware setup
-
-// Middleware to parse JSON bodies
+app.use('/public', staticDir);
 app.use(express.json());
-
-// Middleware to parse URL-encoded bodies
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static('public'));
+app.use(express.urlencoded({extended: true}));      // Parsing req
 
 
 app.use(session({
@@ -37,14 +42,13 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {maxAge: 1800000} // 1800000 milli seconds
-  }));
-  
-  
-  
-  // Logging middleware
-  
+}));
+
+    // Logging middleware
+
+  app.use(rewriteMethods);
   // Apply logging middleware to all routes
-  app.use( logRequest);
+  app.use(logRequest);
   
   
   // Route middleware
@@ -63,12 +67,11 @@ app.use(session({
   
   //logout
   app.use('/logout', ensureLogout);
-  
-  configRoutes(app);
-  
-  app.listen(PORT, () => {
-    console.log(`Event Management Server is running on http://localhost:${PORT}`);
-  });
-  
-  
 
+configRoutes(app);
+
+// Set up port
+app.listen(3000, () => {
+    console.log("We've now got a server!");
+    console.log('Your routes will be running on http://localhost:3000');
+  });

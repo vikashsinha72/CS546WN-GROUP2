@@ -3,10 +3,13 @@
         <ul>
             <li><a href="/auth">Home</a></li>
             {{#if user}}
+            <head>
                 <li><a href="/event">Events</a></li>
                 <li><a href="/event/create">Create Event</a></li>
+                <li><a href="/eventRegistration">Event Registration</a></li>
                 <li><a href="/user/profile">{{user.firstName}}'s Profile</a></li>
                 <li><a href="/logout">Logout</a></li>
+            </head>
             {{else}}
                 <li><a href="/auth">Login</a></li>
                 <li><a href="/user/register">Register</a></li>

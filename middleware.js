@@ -67,9 +67,9 @@ const ensureAuthenticated = async (req, res, next) => {
         return next();
     }
 
-    if (req.originalUrl !== '/event') {
-        return res.redirect('/event');
-    }
+    // if (req.originalUrl !== '/event') {
+    //     return res.redirect('/event');
+    // }
     
     return next();
 };

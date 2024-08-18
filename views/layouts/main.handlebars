@@ -6,17 +6,14 @@
     <meta charset="utf-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>    {{! Using this for a dynamic title, please pass your titles when calling in routes}}
-    <link rel="stylesheet" href="/css/main.css">
-    {{! This will dynamically load a css file}}
-    {{#if stylesheet}}
-        <link rel="stylesheet" href="/css/{{stylesheet}}.css">
-    {{/if}}
+    <link rel="stylesheet" href="/public/css/main.css">
   </head>
   
   <body>
-    {{ header}}
+    {{header}}
     {{{body}}}      {{! Remeber the 3 brackets for specific dynamic elements}}
-    {{footer}}   
-    <script src="/js/main.js"></script>
+    {{footer}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+    <script src="/public/js/main.js"></script>
   </body>
 </html>
