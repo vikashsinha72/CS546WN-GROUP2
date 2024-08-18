@@ -2,6 +2,8 @@
 // --- Remember res.render will require a {title: ?} and {stylesheet: ?} argument for ALL calls rendering an html
 
 import {Router} from 'express';
+import xss from 'xss';
+
 const router = Router(); 
 import { ObjectId } from 'mongodb';
 import path from 'path';
@@ -14,15 +16,15 @@ router
     .route('/home')
     .get(async (req, res) => {
         if (!req.session.user) {
-            res.redirect('/auth/')
+            res.redirect('/auth')
         }
 
         const eventLister = await getEventList(); 
         if (eventLister.length === 0) {
-            return res.render(path.resolve('views/homepage'), ({hasEvents: false}));
+            return res.render(path.resolve('views/homepage'), ({hasEvents: false, user: req.session.user}));
         }
         else {
-            return res.render(path.resolve('views/homepage'), ({event: eventLister, hasEvents: true}));
+            return res.render(path.resolve('views/homepage'), ({event: eventLister, hasEvents: true, user: req.session.user}));
         }
     })
 
@@ -31,7 +33,7 @@ router
     .get(async (req, res) => {
         // check if logged in user
         if (!req.session.user) {
-            res.redirect('/auth/')
+            res.redirect('/auth')
         }
 
         let userCollection = await users();
@@ -42,15 +44,15 @@ router
             if (currentUser) {
                 let eventRes = await getAllEvents(currentUser._id);
                 if (eventRes.length === 0) {
-                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes, user: req.session.user}));
                 }
                 else {
-                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes}));
+                    return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', eventRes: eventRes, user: req.session.user}));
                 }
             }
         }
         catch(e) {
-            return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', errors: e, hasErrors: true}));
+            return res.render(path.resolve('views/eventsList'), ({title: 'Event List:', errors: e, hasErrors: true , user: req.session.user}));
         }
     
     })
@@ -64,7 +66,7 @@ router
             res.redirect('/auth/')
         }
 
-        res.render(path.resolve('views/createEvent'), {title: 'Create Event'});
+        res.render(path.resolve('views/createEvent'), {title: 'Create Event', user: req.session.user});
         
     })
     .post(async (req, res) => {
@@ -123,7 +125,7 @@ router
 
         // Fee
         try {
-            inputs.feeInput =  validators.checkPrice(Number(inputs.feeInput), 'POST fee');
+            inputs.feeInput =  validators.checkPrice(inputs.feeInput, 'POST fee');
         }
         catch(e) {
             errors.push(e);
@@ -131,7 +133,11 @@ router
 
         // If there are any errors
         if (errors.length > 0) {
-            return res.status(400).render(path.resolve('views/createEvent'), {errors: errors, hasErrors: true});
+            return res.status(500).json({
+                success: false,
+                error: errors
+            });
+            //return res.status(400).render(path.resolve('views/createEvent'), {errors: errors, hasErrors: true, user: req.session.user});
         }
 
         let user = req.session.user
@@ -171,7 +177,7 @@ router
             // return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
             return res.json({
                 success: false, 
-                event: "Internal Server Error"
+                event: `Internal Server Error:  ${e}`
             });
         }
         
@@ -207,14 +213,14 @@ router
             
             if (eventId.publish !== 'publish') {    // If event is published
                 if (userId._id.toString() !== eventId.userId) {
-                    return res.render(path.resolve('views/eventsList'), ({title: 'Unauthorized', errors: 'You do not have access to this event.', hasErrors: true}));
+                    return res.render(path.resolve('views/eventsList'), ({title: 'Unauthorized', errors: 'You do not have access to this event.', hasErrors: true, user: req.session.user}));
                 }
                 else {
-                    return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, formatted: formatted, title: eventId.eventName, hasErrors: false}));
+                    return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, formatted: formatted, title: eventId.eventName, hasErrors: false, user: req.session.user}));
                 }
             }
             else {     
-                res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, formatted: formatted, title: eventId.eventName, hasErrors: false}));
+                res.render(path.resolve('views/eventHome'), ({eventRes: eventId, userRes: userId, formatted: formatted, title: eventId.eventName, hasErrors: false, user: req.session.user}));
             }
         });
 
@@ -240,7 +246,7 @@ router
             eventId = await eventsCollection.findOne(new ObjectId(eventUrl));
         }
         catch (e) {
-            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event.', hasErrors: true}));
+            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event.', hasErrors: true, user: req.session.user}));
         }
 
 
@@ -254,24 +260,24 @@ router
             userIdCheck = await userCollection.findOne({"events._id": eventId._id});   
         }
         catch (e) {
-            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true}));
+            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
         }
 
         // Check access
         // If the event is published you can't edit everything
         if (userId === eventId.userId) {
             if (eventId.publish !== 'publish') {
-                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: false}));
+                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: false, user: req.session.user}));
             }
             else if (eventId.status === 'Closed' || eventId.status === 'Executed'){
-                return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot edit closed/executed events.', hasErrors: true}));
+                return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot edit closed/executed events.', hasErrors: true, user: req.session.user}));
             }
             else {
-                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: true}));
+                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: true, user: req.session.user}));
             }
         }
         else {
-            return res.render(path.resolve('views/eventHome'), ({errors: 'Unauthorized to edit event.', hasErrors: true}));
+            return res.render(path.resolve('views/eventHome'), ({errors: 'Unauthorized to edit event.', hasErrors: true, user: req.session.user}));
         }
    }) 
    .patch(async (req, res) => {
@@ -290,7 +296,7 @@ router
 
         // check for content
         if (!requestBody || Object.keys(requestBody).length === 0) {
-            return res.status(400).render(path.resolve('views/editEvent'), ({errors: 'There are no fields in request body.', hasErrors: true}));
+            return res.status(400).render(path.resolve('views/editEvent'), ({errors: 'There are no fields in request body.', hasErrors: true, user: req.session.user}));
         }
 
         // checking parameters
@@ -402,7 +408,7 @@ router
         }
 
         if (errors.length > 0) {
-            return res.status(400).render(path.resolve('views/editEvent'), {errors: errors, hasErrors: true});
+            return res.status(400).render(path.resolve('views/editEvent'), {errors: errors, hasErrors: true, user: req.session.user});
         }
 
         let updatePost = await updateEventPatch(req.params.id, requestBody);
@@ -411,7 +417,7 @@ router
             return res.redirect(updatePost)
         }
         else {
-            return res.render(path.resolve('views/editEvent'), ({errors: errors, hasErrors: true}));
+            return res.render(path.resolve('views/editEvent'), ({errors: errors, hasErrors: true, user: req.session.user}));
         }
    })
    .delete(async (req, res) => {
@@ -430,14 +436,14 @@ router
         try {
             requestId = validators.checkObjectId(req.params.id, 'Delete ID');
         } catch (e) {
-            return res.render(path.resolve('views/login'), ({errors: 'Cannot find event attatched to current user', hasErrors: true}));
+            return res.render(path.resolve('views/login'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
         }
 
         // Not valid event or User not authorized to delete the event
         try {
             eventCheck = await eventCollection.findOne({userId: new ObjectId(idCheck)});
         } catch (e) {
-            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true}));
+            return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
         }
 
 
@@ -449,7 +455,7 @@ router
             if (!userId) throw `Cannot find event attatched to a user.`
         }
         catch(e) {
-            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true, user: req.session.user}));
         }
 
         try {
@@ -464,7 +470,7 @@ router
             }
         }
         catch(e) {
-            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true}));
+            return res.render(path.resolve('views/editEvent'), ({errors: e, hasErrors: true, user: req.session.user}));
         }
 
 

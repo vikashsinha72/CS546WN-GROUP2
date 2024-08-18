@@ -110,8 +110,8 @@ export const loginUser = async (username, password) => {
   const checkPassword = await bcryptjs.compare(password, user.password);
   if (!checkPassword) throw new Error("Password does not match.");
 
-  const { firstName, lastName, email } = user;
-  return { username, firstName, lastName, email };
+  const { firstName, lastName, email, _id } = user;
+  return { username, firstName, lastName, email, userId: _id };
 
 };
 

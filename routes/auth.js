@@ -40,6 +40,10 @@ router.route('/').get(async (req, res) => {
   .route('/auth')
   .get(async (req, res) => {
     //code here for GET
+      if (req.session.user) {
+        return res.redirect('/event');
+    }
+
     res.render('login')
   })
   .post(async (req, res) => {
@@ -54,7 +58,7 @@ router.route('/').get(async (req, res) => {
         firstName: loggedIn.firstName,
         lastName: loggedIn.lastName,
         emailAddress: loggedIn.emailAddress,
-        password: loggedIn.password
+        userId: loggedIn.userId
       }
       res.redirect('/event/home');
     } catch (error) {

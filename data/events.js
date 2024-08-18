@@ -30,7 +30,7 @@ export const createEvent = async (
             [nearByPort, 'Create nearByPort'],
         );
         date = validators.checkDate(date, 'Create date');  
-        registrationFee = validators.checkPrice(Number(registrationFee), 'Create fee');
+        registrationFee = validators.checkPrice(registrationFee, 'Create fee');
         eventMode = helperFuncs.checkEventMode(eventMode);
         publish = helperFuncs.checkPublishStatus(publish, 'Create publish/save');
     }
@@ -40,7 +40,7 @@ export const createEvent = async (
 
     let eventStatus = '';
     //initialize empty reviews subdocument
-    let reviews = [];
+
     if (publish === 'publish') {
         eventStatus = 'Published';
     }
@@ -66,7 +66,9 @@ export const createEvent = async (
         registrationFee: registrationFee,
         publish: publish,
         eventStatus: eventStatus,
-        reviews: reviews    // this is for event reviews
+        subscribers: [],    // this is for event subscribers or register users
+        reviews: [],    // this is for event reviews
+        averageReview: 0    // this is for event reviews
     }
 
     const userCollection = await users();

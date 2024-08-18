@@ -138,6 +138,9 @@ if (eventForm) {
         const save = eventForm.querySelector('#saveStat').value.trim();
         // const contactPerson = eventForm.querySelector('#contactPersonInput').value.trim();
 
+        try {
+            
+      
 
         // Validate Event Name
         if (!eventName || eventName.length === 0) {
@@ -230,6 +233,7 @@ if (eventForm) {
             $.ajax(requestConfig)
             .done((response) => {
                 // `response` is already parsed JSON
+                alert("Create Event: " + JSON.stringify(response))
 
                 if (response.success) {
                     // Handle successful search results
@@ -249,10 +253,15 @@ if (eventForm) {
 
         }catch(e)
         {
-            alert("eventForm: " +e);
+            alert("eventForm submit: [Contact Admin]" +e);
         }
 
         }
+
+    } catch (error) {
+        alert("eventForm: [Contact Admin] " + error);
+
+    }
     });
 }
 

@@ -11,8 +11,8 @@ const rewriteMethods = ('/edit/:id', (req, res, next) => {
 
 /**create log for each request */
 const logRequest = async (req, res, next) => {
-    const authenticated = req.session.user ? 'user' : 'guest';
-    console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${authenticated})`);
+    const authenticated = req.session.user ? req.session.user.firstName + " "  + req.session.user.lastName: 'guest';
+    console.log(`[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl}:${res.statusCode} (${authenticated})`);
     return next();
 } 
 
@@ -25,7 +25,13 @@ const rootRequest = async (req, res, next) => {
     if (req.session.user) {
 
         /** ignore role check and forward request as next */
+        if (req.originalUrl === '/') {
+            console.log(" root Request");
+            return res.redirect('/event');
+        }
+
         return next();
+
 
     } else {
         if (req.originalUrl === '/') {

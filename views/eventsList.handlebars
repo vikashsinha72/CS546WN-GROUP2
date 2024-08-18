@@ -1,7 +1,6 @@
 {{! Simple extension to the main html file}}
 {{! Remember that you don't full html structure for extensions}}
 
-<body>
     <h1>Your Events:</h1>
     <main>
         {{#if eventRes.length}}
@@ -25,6 +24,7 @@
                 {{/each}}
             </ul>
         {{/if}}
+
+        <a href="/event/create">Create an Event</a>
+
     </main>
-    <a href="/event/create">Create an Event</a>
-</body>

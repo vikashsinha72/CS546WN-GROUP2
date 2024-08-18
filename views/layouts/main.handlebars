@@ -10,10 +10,14 @@
   </head>
   
   <body>
-    {{header}}
+    {{> header}}
     {{{body}}}      {{! Remeber the 3 brackets for specific dynamic elements}}
-    {{footer}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+    {{> footer}}   
     <script src="/public/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.js"
+        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <form  id="userSession-form" style="display:none;">
+      <input type="hidden" id="userId" value="{{user.userId}}"> {{! Use templating syntax to inject userId}}
+    </form>
   </body>
 </html>

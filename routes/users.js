@@ -6,7 +6,8 @@ const {compare, hash} = pkg;
 const router = Router();
 
 router.route('/').get(async (req, res) => {
-  return res.json({error: 'YOU SHOULD NOT BE HERE!'});
+      return res.redirect('/auth')
+  //return res.json({error: 'YOU SHOULD NOT BE HERE!'});
 });
 
 // http://localhost:3000/profile/66be191f44efb08153b12d90 -- for local testing

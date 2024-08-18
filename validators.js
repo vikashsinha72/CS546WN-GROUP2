@@ -111,6 +111,7 @@ checkDate(date, varName) {
         throw `${varName} cannot be an empty string or empty spaces`;
     }
 
+
     // if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date)) {
     //     throw `${varName} dateReleased must be a valid date in mm/dd/yyyy format.`;
     //   }
@@ -127,7 +128,21 @@ checkDate(date, varName) {
         throw `${varName} dateReleased must be a valid date in YYYY/MM/DDT00:00 format.`;
     }
 
-    return date;
+
+    const dateType = new Date(date);
+    if( dateType instanceof Date && !isNaN(dateType)){
+
+    // Regular expression to match mm/dd/yyyy format
+        /*  const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            const match = dateInput.match(datePattern); */
+
+        return date;
+    }
+    else {
+        throw `${varName} must be a valid date`;
+
+    }
+
 },
 
 checkUrl(url, varName) {
@@ -153,26 +168,32 @@ checkUrl(url, varName) {
 
 checkPrice(price, varName) {
 
-    if (!price && price != 0) {
+    if (!price) {
         throw `${varName} is missing`;
     }
-    if (typeof price !== 'number') {
+    const priceNum = parseFloat(price); // Convert the string to a number
+
+    if (typeof priceNum !== 'number' || isNaN(priceNum)) {
         throw `${varName} must be a number`;
     }
 
-    if (price < 0 || !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
-        throw `${varName} must be a number greater than 0 with up to 2 decimal places.`;
+    if (priceNum < 0 || !/^\d+(\.\d{1,2})?$/.test(priceNum.toString())) {
+        throw `${varName} must be not be negative and up to 2 decimal places.`;
     }
 
     return price;
 },
+
 
 checkRating(rating, varName) {
 
     if (!rating) {
         throw `${varName} is missing`;
     }
-    if (typeof rating !== 'number') {
+
+    rating = parseInt(rating); // Convert the string to a number
+
+    if (typeof rating !== 'number' || isNaN(rating)) {
         throw `${varName} must be a number`;
     }
 
@@ -185,7 +206,7 @@ checkRating(rating, varName) {
 
 checkBoolean(bolVal, varName) {
 
-    if (bolVal=== undefined) {
+    if (!bolVal) {
         throw `${varName} is missing`;
     }
 
