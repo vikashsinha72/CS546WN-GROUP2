@@ -73,8 +73,8 @@
                 <input type="text" name="portInput" placeholder="Event Nearest Port" value="{{event.nearByPort}}" id="portInput">
             </label>
             <br>
-            <button type="submit" name="action" value="save">Save For Later</button>
-            <button type="submit" name="action" value="publish">Publish Event</button>
+            <button type="submit" id="saveStat" name="action" value="save">Save For Later</button>
+            <button type="submit" id="pubStat" name="action" value="publish">Publish Event</button>
         </form>
     {{#if hasErrors}}
     <ul class="error-list">

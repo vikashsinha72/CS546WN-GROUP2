@@ -154,17 +154,25 @@ router
                 inputs.portInput, 
                 inputs.modeInput,
                 inputs.feeInput, 
-                inputs.action
+                inputs.pubStat
             );
 
             // redirect to event page
-            if (typeof submission === 'string') {
-                submission = '/event/' + submission;
-                return res.redirect(submission);
-            }
+            // if (typeof submission === 'string') {
+            //     submission = '/event/' + submission;
+            //     return res.redirect(submission);
+            // }
+            return res.json({
+                success: true, 
+                event: submission
+            });
         }
         catch(e) {
-            return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
+            // return res.status(500).render(path.resolve('views/createEvent'), {event: inputs, errors: e, hasErrors: true});
+            return res.json({
+                success: false, 
+                event: "Internal Server Error"
+            });
         }
         
     });
