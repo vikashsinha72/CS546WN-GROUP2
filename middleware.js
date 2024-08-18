@@ -1,3 +1,13 @@
+// Middleware for different browser methods namely post/put
+const rewriteMethods = ('/edit/:id', (req, res, next) => {
+    if (req.body && req.body._method) {
+        req.method = req.body._method;
+        delete req.body._method;
+    }
+    next();
+});
+
+
 
 /**create log for each request */
 const logRequest = async (req, res, next) => {
@@ -49,11 +59,12 @@ const redirectAuthenticatedRegister = async (req, res, next) => {
         else{
             return next();
         }
-     } //else {
-    //     if (req.originalUrl !== '/auth') {
-    //         return res.redirect('/auth');
-    //     }
-    // }
+     } 
+ /*     else {
+         if (req.originalUrl !== '/auth') {
+             return res.redirect('/auth');
+         }
+     } */
     
     return next();
 };
@@ -86,6 +97,7 @@ const ensureLogout = async (req, res, next) => {
 };
 
 export {
+    rewriteMethods,
     logRequest,
     rootRequest,
     redirectAuthenticatedLogin,
