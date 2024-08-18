@@ -25,6 +25,9 @@ async userEventRegistration(
       eventId = helperFuncs.checkEventId((eventId), 'eventId validation');
       userName = validators.checkUsername((userName), 'userName validation');
       emailId = validators.checkEmail(emailId);
+      bestStartDate = validators.checkDate((bestStartDate), 'bestStartDate vaildation')
+      bestEndDate = validators.checkDate((bestEndDate), 'bestEndDate vaildation')
+
     }
     catch(e) {
       throw 'Validation Error: ', e;
