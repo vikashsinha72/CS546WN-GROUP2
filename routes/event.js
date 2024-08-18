@@ -263,21 +263,24 @@ router
             return res.render(path.resolve('views/eventsList'), ({errors: 'Cannot find event attatched to current user', hasErrors: true, user: req.session.user}));
         }
 
+        let formatted = {};
+        formatted.date = helperFuncs.eventDateTimeFormat(eventId.date);
+        formatted.fee = helperFuncs.eventPriceFormat(eventId.registrationFee);
         // Check access
         // If the event is published you can't edit everything
         if (userId === eventId.userId) {
             if (eventId.publish !== 'publish') {
                 return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: false, user: req.session.user}));
             }
-            else if (eventId.status === 'Closed' || eventId.status === 'Executed'){
-                return res.render(path.resolve('views/eventHome'), ({errors: 'Cannot edit closed/executed events.', hasErrors: true, user: req.session.user}));
+            else if (eventId.eventStatus === 'Closed' || eventId.eventStatus === 'Executed'){
+                return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, formatted: formatted, errors: 'Cannot edit closed/executed events.', hasErrors: true, user: req.session.user}));
             }
             else {
-                return res.render(path.resolve('views/editEvent'), ({event: eventId, title: eventId.eventName, published: true, user: req.session.user}));
+                return res.render(path.resolve('views/editEvent'), ({eventRes: eventId, formatted: formatted, title: eventId.eventName, published: true, user: req.session.user}));
             }
         }
         else {
-            return res.render(path.resolve('views/eventHome'), ({errors: 'Unauthorized to edit event.', hasErrors: true, user: req.session.user}));
+            return res.render(path.resolve('views/eventHome'), ({eventRes: eventId, formatted: formatted, errors: 'Unauthorized to edit event.', hasErrors: true, user: req.session.user}));
         }
    }) 
    .patch(async (req, res) => {

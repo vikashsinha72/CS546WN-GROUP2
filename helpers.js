@@ -119,7 +119,8 @@ const helperFuncs = {
         else {
             hour = 12;
         }
-
+        // Keeps integrity of minutes
+        min = min.toString().padStart(2, '0');
         const dateTimeObj = {}
         dateTimeObj.date = `${month}/${day}/${year}`;
         dateTimeObj.time = `${hour}:${min} ${pmam}`;
@@ -129,11 +130,12 @@ const helperFuncs = {
     },
 
     eventPriceFormat(regFee) {
-        if (regFee === 0) {
+        if (regFee === 0 || regFee === 0.00) {
             return 'Free';
         }
         else {
-            return `$${regFee}`;
+            // Keeps integrity of cents
+            return `$${regFee.toFixed(2)}`;
         }
     }
 

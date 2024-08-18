@@ -133,13 +133,9 @@ if (eventForm) {
         const nearByPort = eventForm.querySelector('#portInput').value.trim();
         const eventMode = eventForm.querySelector('#modeInput').value.trim();
         const registrationFee = eventForm.querySelector('#feeInput').value.trim();
-        const publish = eventForm.querySelector('#pubStat').value.trim();
-        const save = eventForm.querySelector('#saveStat').value.trim();
-        // const contactPerson = eventForm.querySelector('#contactPersonInput').value.trim();
-
+        let publish = eventForm.querySelector('#pubStat').value.trim();
+        
         try {
-            
-      
 
         // Validate Event Name
         if (!eventName || eventName.length === 0) {
@@ -203,6 +199,10 @@ if (eventForm) {
     //     errors.push('Event Contact Person must not be empty');
     //      }
 
+        // validate pubstat
+        if (event.submitter.matches('button#saveStat')) {
+            publish = 'save';
+        }
 
         if (errors.length > 0) {
             alert(errors.join('\n'));
@@ -223,7 +223,7 @@ if (eventForm) {
                     portInput :  nearByPort,
                     modeInput : eventMode,
                     feeInput : registrationFee,
-                    pubStat: publish ? publish : save
+                    pubStat: publish
                     // contactPersonInput :  contactPerson
                 })
               };

@@ -142,7 +142,7 @@ export const getAllEvents = async (userId) => {
     if (!eventChecker) throw `Cannot find events for that user!`;
 
     // excluded openClose and publish from users
-    let eventList = await eventCollection.find({}).project({
+    let eventList = await eventCollection.find({userId: userId.toString()}).project({
         eventName: 1, 
         date: 1, 
         location: 1, 
@@ -150,7 +150,8 @@ export const getAllEvents = async (userId) => {
         description: 1, 
         nearByPort: 1, 
         eventMode: 1, 
-        registrationFee: 1
+        registrationFee: 1,
+        eventStatus: 1
     }).toArray();
     if (!eventList) throw new Error("Could not get all events.");
     
@@ -163,6 +164,12 @@ export const getAllEvents = async (userId) => {
 }
 
 export const updateEventPatch = async (eventId, updatedEvent) => {
+    const eventCollection = await events(); 
+    const eventFind = await eventCollection.findOne({_id: new ObjectId(eventId)});
+    if (eventFind.eventStatus === 'Closed' || eventFind.eventStatus === 'Executed') {
+        throw `You cannot edit closed events.`
+    };
+    
     const updatedEventData = {};
 
     if (updatedEvent.eventNameEdit) {
@@ -197,7 +204,7 @@ export const updateEventPatch = async (eventId, updatedEvent) => {
         updatedEventData['eventStatus'] = helperFuncs.checkStatus(updatedEvent.action, updatedEvent.statusEdit, 'Edit Event Status');
     }
 
-    const eventCollection = await events();
+    
     let updateEvent = await eventCollection.findOneAndUpdate(
         {_id: new ObjectId(eventId)},
         {$set: updatedEventData},
