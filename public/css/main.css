@@ -118,6 +118,7 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="username"],
 select {
     width: 90%;
     padding: 10px;
