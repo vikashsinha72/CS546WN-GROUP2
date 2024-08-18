@@ -1,12 +1,11 @@
 
-<header></header>
  <h1>Event Registration</h1>
-    <form action="/eventRegistration" method="POST" id = "registrationForm">
+  <main class="createEvent">
+    <form class="EventRegistration" action="/event/home" method="POST" id = "registrationForm">
         <table>
         <tr>
                 <label type= "text" id ="userName">User name</label>
                 <input type= "text" id="userName" name="userName">
-    
         </tr>
         <tr>
                 <label type= "text" id = "eventName">View Available Events</label>
@@ -34,7 +33,8 @@
         <br>
         </tr>
         <br>
-                <button>Submit</button>      
+                <button type="submit" id="submitEventRegistration" name="action" value="publish">Submit Form</button>
         </tr>
     </table>
+    </main>
     </form>

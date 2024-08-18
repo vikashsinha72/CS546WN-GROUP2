@@ -4,43 +4,6 @@ import eventsRegistrationData from '../data/eventRegistration.js';
 import { users, events } from '../config/mongoCollections.js';
 const router = express.Router();
 
-// router.route('/').get((req, res) => {
-//     res.render('homepage', { title: 'Event Management System' });
-// })
-
-// router.route('/createEvent').get((req, res) => {
-//     res.render('createEvent', { title: 'Create Event' });
-// })
-//     .post(async (req, res) => {
-//       const { userName, 
-//         eventName, 
-//         date, 
-//         location, 
-//         category, 
-//         description, 
-//         nearByPort, 
-//         eventMode, 
-//         registrationFee,
-//         contactPerson} = req.body;
-//       try {
-//         const newEvent = await eventsData.createEvent(
-//           userName, 
-//           eventName, 
-//           date, 
-//           location, 
-//           category, 
-//           description, 
-//           nearByPort, 
-//           eventMode, 
-//           registrationFee,
-//           contactPerson
-//          );
-//           res.status(200).json(newEvent);
-//     }
-//     catch (e) {
-//       res.status(400).json({ error: e });
-//     }
-//     })
 
 router.route('/')
   .get(async(req, res) => {
@@ -59,6 +22,7 @@ router.route('/')
       res.status(500).json({error: e });
     }   
 }) 
+//Used XSS to clean and verify string inputs
   .post(async (req, res) => {
     const { 
       eventId,
@@ -67,6 +31,10 @@ router.route('/')
       phoneNumber,
       bestStartDate,
       bestEndDate} = req.body;
+
+      xss(req.body.eventId);
+      xss(req.body.userName);
+      xss(req.body.phoneNumber);
     
     try {
     const newEventRegistration = await eventsRegistrationData.userEventRegistration(
