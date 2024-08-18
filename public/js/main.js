@@ -281,7 +281,7 @@ if (eventSearchform) {
 
 
         // Event Name validation (Optional, so no strict validation)
-        if (!eventName || eventName.length > 100) {
+        if (!eventName && eventName.length > 100) {
             errors.push('Event Name should not be empty and upto 100 characters.');
         }
 
@@ -296,11 +296,15 @@ if (eventSearchform) {
             errors.push('Please enter a valid future date for the event.');
         }            
 
-        price = parseFloat(registrationFee); // Convert the string to a number
+        
+        let price = 0.00;
+        if(registrationFee)
+            price = parseFloat(registrationFee); // Convert the string to a number
 
-        if (!registrationFee || isNaN(price)) {
+        if ( isNaN(price)) {
             errors.push('Please enter a valid numeric fee value.');
         }            
+        price = "0.00";
 
         if (errors.length > 0) {
             alert(errors.join('\n'));
@@ -317,7 +321,7 @@ if (eventSearchform) {
                     eventNameInput: eventName,
                     categoryInput: category,
                     dateInput: date,
-                    registrationFeeInput: registrationFee 
+                    registrationFeeInput: price 
                 })
               };
 
