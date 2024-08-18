@@ -3,12 +3,16 @@ import eventsData from '../data/events.js';
 import eventsRegistrationData from '../data/eventRegistration.js';
 import { users, events } from '../config/mongoCollections.js';
 const router = express.Router();
-import eventsFunctions from './event.js';
-
 
 router.route('/')
   .get(async(req, res) => {
     try{
+
+      // check if logged in user
+      if (!req.session.user) {
+          res.redirect('/auth')
+      }
+    
       // currently gets all user events
       const getUser = req.session.user.username;
       const userCollection = await users();
@@ -25,18 +29,14 @@ router.route('/')
 }) 
 //Used XSS to clean and verify string inputs
   .post(async (req, res) => {
-    const { 
-      eventId,
-      userName,
-      emailId,
-      phoneNumber,
-      bestStartDate,
-      bestEndDate} = req.body;
 
-      xss(req.body.eventId);
-      xss(req.body.userName);
-      xss(req.body.phoneNumber);
-    
+      eventId = xss(req.body.eventId);
+      userName = xss(req.body.userName);
+      phoneNumber = xss(req.body.phoneNumber);
+      bestStartDate = xss(req.body.bestStartDate);
+      bestEndDate = xss(req.body.bestEndDate);
+      emailId = xss(req.body.emailId);
+
     try {
     const newEventRegistration = await eventsRegistrationData.userEventRegistration(
       eventId,
