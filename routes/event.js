@@ -250,6 +250,7 @@ router
         let eventsCollection = await events();
         let userCollection = await users();
         let eventId;
+        let userIdCheck;
 
         // if the event cannot be found
         try {
