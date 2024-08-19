@@ -118,7 +118,9 @@ export const getEventList = async () => {
             _id: 1,
              eventName: 1,
              date: 1,
-             description: 1
+             description: 1,
+             averageRating: 1,
+             reviews: 1
             } 
     }).toArray();
     if (eventList.length != 0) {

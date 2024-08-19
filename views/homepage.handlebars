@@ -53,6 +53,14 @@
           <p id="homeDate">Date: {{date.date}}</p>
           <p id="homeTime">Time: {{date.time}}</p>
           <p id="homeDescript">{{description}}</p>
+            <div>
+              <h3>Review rating: {{averageRating}}</h5>
+                <p>
+                  {{#each reviews}}
+                    {{review}}
+                  {{/each}}
+                </p>
+          </div>
         </li>
       {{/each}}
     </ul>
