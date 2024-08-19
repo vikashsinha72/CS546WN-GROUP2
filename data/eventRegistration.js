@@ -53,7 +53,7 @@ async userEventRegistration(
       { $push: { registration: newRegistration } }
     );
   
-    if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
+    if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event, Already Registered.';
 
     else {
       //Adding event to user profile
