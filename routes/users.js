@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUserList, getUser, changePassword } from '../data/users.js'; 
+import users, { getUser, changePassword } from '../data/users.js'; 
 import bcryptjs from 'bcryptjs';
 import xss from 'xss'
 
@@ -51,6 +51,7 @@ router
     return res.status(400).render('error')
   }
 })
+
 .patch(async (req, res) => {
   //code here for POST
   const userId = req.params.id
