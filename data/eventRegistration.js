@@ -1,5 +1,5 @@
 
-import { events, users, registeredUsers } from "../config/mongoCollections.js";
+import { events, users } from "../config/mongoCollections.js";
 import {ObjectId} from 'mongodb';
 import validators from '../validators.js';
 import helperFuncs from "../helpers.js";
@@ -25,8 +25,8 @@ async userEventRegistration(
       eventId = helperFuncs.checkEventId((eventId), 'eventId validation');
       userName = validators.checkUsername((userName), 'userName validation');
       emailId = validators.checkEmail(emailId);
-      bestStartDate = validators.checkDate((bestStartDate), 'bestStartDate vaildation')
-      bestEndDate = validators.checkDate((bestEndDate), 'bestEndDate vaildation')
+      bestStartDate = validators.checkDate((bestStartDate), 'bestStartDate validation');
+      bestEndDate = validators.checkDate((bestEndDate), 'bestStartDate validation');
 
     }
     catch(e) {
@@ -44,22 +44,25 @@ async userEventRegistration(
     };
   
     //Adding user to event
-    const registeredUsersCollection = await registeredUsers();
-    const registrationInfo = await registeredUsersCollection.insertOne(newRegistration);
-    return registrationInfo;
-    // if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
-
-    // else {
-    //   //Adding event to user profile
-    //   const userCollection = await users();
-    //   const updateUserInfo = await userCollection.updateOne(
-    //     { _id: userId },
-    //     { $push: { event: newEvent} }
-    //   );
-    //   if (updateUserInfo.modifiedCount === 0) throw 'Could not register the event to the user profile';
-    // }
+    const eventCollection = await events();
+    const updateInfo = await eventCollection.updateOne(
+      { _id: eventId },
+      { $push: { registration: newRegistration } }
+    );
   
-    // return newRegistration, newEvent;
+    if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
+
+    else {
+      //Adding event to user profile
+      const userCollection = await users();
+      const updateUserInfo = await userCollection.updateOne(
+        { _id: userId },
+        { $push: { event: newEvent} }
+      );
+      if (updateUserInfo.modifiedCount === 0) throw 'Could not register the event to the user profile';
+    }
+  
+    return newRegistration, newEvent;
   }  
 }
 

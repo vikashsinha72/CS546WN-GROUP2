@@ -14,7 +14,7 @@ export const createEvent = async (
     nearByPort, 
     eventMode, 
     registrationFee,
-    publish,    // Added this for published/unpublished
+    publish   // Added this for published/unpublished
 ) => {
 
     // Error handling
