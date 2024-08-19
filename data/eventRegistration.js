@@ -8,25 +8,27 @@ const exportedMethods = {
 async userEventRegistration( 
   userId,
   eventId,
+  userName,
   emailId,
   phoneNumber,
   bestStartDate,
-  bestEndDate) {
+  bestEndDate
+) {
 
     try {
       validators.checkStrings(
-          [userId, 'userId'],
+          [userName, 'userName'],
           [eventId, 'eventId'],
           [userName, 'userName'],
           [emailId, 'emailId'],
           [phoneNumber, 'phoneNumber']
       );
-      userId = helperFuncs.checkUserId(userId, 'Create Event userId');
+/*       userId = helperFuncs.checkUserId(userId, 'Create Event userId');
       eventId = helperFuncs.checkEventId((eventId), 'eventId validation');
       userName = validators.checkUsername((userName), 'userName validation');
       emailId = validators.checkEmail(emailId);
-      bestStartDate = validators.checkDate((bestStartDate), 'bestStartDate validation');
-      bestEndDate = validators.checkDate((bestEndDate), 'bestStartDate validation');
+      bestStartDate = validators.checkDate((bestStartDate), 'bestStartDate vaildation')
+      bestEndDate = validators.checkDate((bestEndDate), 'bestEndDate vaildation') */
 
     }
     catch(e) {
@@ -36,6 +38,7 @@ async userEventRegistration(
     const newRegistration = {
       _id: new ObjectId(),
       userId,
+      eventId,
       userName,
       emailId,
       phoneNumber,
@@ -50,7 +53,7 @@ async userEventRegistration(
       { $push: { registration: newRegistration } }
     );
   
-    if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event';
+    if (updateInfo.modifiedCount === 0) throw 'Could not register the user to the event, Already Registered.';
 
     else {
       //Adding event to user profile
