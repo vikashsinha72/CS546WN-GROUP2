@@ -46,12 +46,12 @@ router.route('/')
       bestStartDate,
       bestEndDate
     );
-      return newEventRegistration;
+
     }
   catch (e) {
     res.status(400).json({ error: e });
   }  
-  return res.redirect('/event/home');   
+  return res.render('eventHome', { title: "Events", user: req.session.user, newEventRegistration});
   })
 
 export default router;
