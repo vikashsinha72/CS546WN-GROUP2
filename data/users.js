@@ -19,6 +19,7 @@ export const registerUser = async (
     username = username.trim()
     if (!username) throw new Error("Username cannot be empty.")
     if (username.length < 4 || username.length > 15) throw new Error("Username must be between 4 and 15 characters long.")
+    username = username.toLowerCase();
 
     //firstName error handling - check for numbers
     if (!firstName) throw new Error("Must provide a first name.");
