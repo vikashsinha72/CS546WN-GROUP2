@@ -1,0 +1,35 @@
+[{
+  "_id": {
+    "$oid": "66b9d0947e3e59cab7b6234c"
+  },
+  "firstName": "Vikash",
+  "lastName": "Sinha",
+  "emailAddress": "vikash.sinha@gmail.com",
+  "password": "$2b$16$MTesByjJ6gug.dKY4vk6wuB2kShz.sogU2JWDwGWMcfYjWZOJK.j.",
+  "role": "admin"
+},
+{
+  "_id": {
+    "$oid": "66c1438804dacf6dfae3373d"
+  },
+  "username": "vikash",
+  "password": "$2a$08$wzgCO1YFd3AO4iEwR5xvFOaceWsooG.mozGHEbUc4ZEnmcy9PTxSS",
+  "emailAddress": "vikash.sinha@gmail.com",
+  "firstName": "Vikash",
+  "lastName": "Sinha",
+  "reviews": [],
+  "events": [
+    {
+      "_id": {
+        "$oid": "66c1445c04dacf6dfae3373e"
+      },
+      "eventName": "Event 1"
+    },
+    {
+      "_id": {
+        "$oid": "66c1b3db71ef5f60f26ca6ad"
+      },
+      "eventName": "My 1 Event"
+    }
+  ]
+}]
