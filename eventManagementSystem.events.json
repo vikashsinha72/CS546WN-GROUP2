@@ -1,0 +1,95 @@
+[
+{
+  "_id": {
+    "$oid": "66bf93f34c66d3ba47b98999"
+  },
+  "eventName": "My 2 Event",
+  "eventDescription": "Dss",
+  "eventDate": "2024-08-17",
+  "eventLocation": "Aliso Viejo, CA 92656",
+  "category": "Business",
+  "nearByPort": "SNA",
+  "eventMode": "virtual",
+  "registrationFee": "0.00",
+  "contactPerson": "V Sinha",
+  "status": true,
+  "subscribers": [
+    {
+      "$oid": "66b9d0947e3e59cab7b6234c"
+    }
+  ],
+  "reviews": [
+    {
+      "_id": {
+        "$oid": "66c12390e52a8f6c37d134a1"
+      },
+      "reviewDate": "2024-08-17",
+      "userId": {
+        "$oid": "66b9d0947e3e59cab7b6234c"
+      },
+      "review": "Good",
+      "rating": "1"
+    },
+    {
+      "_id": {
+        "$oid": "66c27693cecca2b94d1af4d4"
+      },
+      "reviewDate": "2024-08-18",
+      "userId": {
+        "$oid": "66c1438804dacf6dfae3373d"
+      },
+      "review": "Good",
+      "rating": "2"
+    }
+  ],
+  "averageRating": 6
+},
+{
+  "_id": {
+    "$oid": "66c1445c04dacf6dfae3373e"
+  },
+  "userId": "66c1438804dacf6dfae3373d",
+  "eventName": "Event 1",
+  "date": "2024-08-24T17:45",
+  "category": "Party",
+  "description": "Birthday",
+  "location": "Aliso Viejo, CA 92656",
+  "nearByPort": "SNA",
+  "eventMode": "Online",
+  "registrationFee": 0,
+  "publish": "save",
+  "eventStatus": "Planned",
+  "reviews": []
+},
+{
+  "_id": {
+    "$oid": "66c1b3db71ef5f60f26ca6ad"
+  },
+  "userId": "66c1438804dacf6dfae3373d",
+  "eventName": "My 1 Event",
+  "date": "2024-08-22T01:40",
+  "category": "Party",
+  "description": "Birthday",
+  "location": "Aliso Viejo, CA 92656",
+  "nearByPort": "SNA",
+  "eventMode": "Online",
+  "registrationFee": "0.00",
+  "publish": "publish",
+  "eventStatus": "Published",
+  "subscribers": [],
+  "reviews": [
+    {
+      "_id": {
+        "$oid": "66c290829b2c6014b05eb2ba"
+      },
+      "reviewDate": "2024-08-19",
+      "userId": {
+        "$oid": "66c1438804dacf6dfae3373d"
+      },
+      "review": "My 1 Event good party",
+      "rating": "3"
+    }
+  ],
+  "averageReview": 0,
+  "averageRating": 3
+}]
