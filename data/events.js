@@ -110,6 +110,7 @@ export const getEvent = async (eventId) => {
 
 export const getEventList = async () => {
     // This skeleton code comes from Vikash
+    //Addedtwo fields
 
     try {
       const eventCollection = await events();
