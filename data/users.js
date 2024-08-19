@@ -71,7 +71,7 @@ export const registerUser = async (
   
     //now create user object
     const newUser = {
-       "username": username,
+       "username": sername.toLowerCase(),
        "password": hashedPassword,
        "emailAddress": emailAddress.toLowerCase(),
        "firstName": firstName,

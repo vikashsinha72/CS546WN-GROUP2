@@ -1,4 +1,6 @@
 import express from 'express';
+import xss from 'xss';
+
 import eventsData from '../data/events.js';
 import eventsRegistrationData from '../data/eventRegistration.js';
 import { users, events } from '../config/mongoCollections.js';
@@ -29,16 +31,18 @@ router.route('/')
 }) 
 //Used XSS to clean and verify string inputs
   .post(async (req, res) => {
+    try{
 
-      eventId = xss(req.body.eventId);
-      userName = xss(req.body.userName);
-      phoneNumber = xss(req.body.phoneNumber);
-      bestStartDate = xss(req.body.bestStartDate);
-      bestEndDate = xss(req.body.bestEndDate);
-      emailId = xss(req.body.emailId);
+      const eventId = xss(req.body.eventId);
+      const userName = xss(req.body.userName);
+      const phoneNumber = xss(req.body.phoneNumber);
+      const bestStartDate = xss(req.body.bestStartDate);
+      const bestEndDate = xss(req.body.bestEndDate);
+      const emailId = xss(req.body.emailId);
 
     try {
     const newEventRegistration = await eventsRegistrationData.userEventRegistration(
+      req.session.user.userId,
       eventId,
       userName,
       emailId,
@@ -46,11 +50,20 @@ router.route('/')
       bestStartDate,
       bestEndDate
     );
-      return res.redirect.eventFunctions('/event/home');   
+      return res.redirect('/event');   
     }
   catch (e) {
     res.status(400).json({ error: e });
   }  
+
+}
+catch(e){
+  console.log("Error in eventRegistration : " +e)
+
+  return res.redirect('/event');   
+
+
+}
   })
 
 export default router;
